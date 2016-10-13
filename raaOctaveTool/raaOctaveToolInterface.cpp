@@ -37,9 +37,6 @@ raaOctaveToolInterface::raaOctaveToolInterface()
 	pLS->setLocalStateSetModes(osg::StateAttribute::ON);
 	m_pVirtualScene->addChild(pLS);
 
-//	m_pVirtualScene->addChild(pLight);
-
-//	m_pVirtualScene->addChild(osgDB::readNodeFile("C:/robbie/data/OpenSceneGraph-Data-3.0.0/cow.osg"));
 	m_pVirtualScene->addChild(makeGrid(10.0f, 10.0f, 10, 10));
 
 	osg::Geode *pG0 = new osg::Geode();
@@ -65,6 +62,7 @@ raaOctaveToolInterface::raaOctaveToolInterface()
 
 	m_pController = new raaOctaveController(this);
 	m_pController->readConfig("C:\\robbie\\data\\octave_config.raa");
+/*
 	const osg::BoundingSphere& bs = m_pVirtualScene->getBound();
 	float fZNear = 1.0f*bs.radius();
 	float fZFar = 3.0f*bs.radius();
@@ -74,18 +72,11 @@ raaOctaveToolInterface::raaOctaveToolInterface()
 
 	fZNear *= 0.9f;
 	fZFar *= 1.1f;
+*/
 	m_pController->viewpoint()->addListener(this);
-	osg::Matrixf m;
-//	m.makeLookAt(bs.center() + osg::Vec3(0.0f, 2.0f, 0.0f)*bs.radius(), bs.center(), osg::Vec3(0.0f, 0.0f, 1.0f));
 
-//	m.makeLookAt(osg::Vec3f(-15.0f, 0.0f, 0.0f), osg::Vec3f(0.0f, 0.0f, 0.0f), osg::Vec3f(0.0f, 0.0f, 1.0f));
-//	m_pController->viewpoint()->setVirtualMatrix(m);
 
 	updateView();
-
-//	m.makeLookAt(m_avPhysical[csm_uiPos], m_avPhysical[csm_uiPos] + m_avPhysical[csm_uiDir], m_avPhysical[csm_uiUp]);
-//	m_pController->viewpoint()->setVirtualMatrix(m);
-
 	m_bLockCamera = false;
 
 	connect(physical_translation_radio, SIGNAL(clicked(bool)), SLOT(phyTrans(bool)));
@@ -403,8 +394,6 @@ void raaOctaveToolInterface::timerUpdate()
 			m_avPhysical[csm_uiPos] -= m_avPhysical[csm_uiUp] * 0.03f;
 			bChanged = true;
 		}
-
-
 	}
 
 	if (bChanged) updateView();
@@ -415,15 +404,12 @@ void raaOctaveToolInterface::lockCamera(int iVal)
 	if(iVal==Qt::Checked)
 	{
 		m_CameraManipulatorMatrix = gl_widget->getView(0)->getCameraManipulator()->getMatrix();
-//		m_pManpulator = gl_widget->getView(0)->getCameraManipulator();
-//		gl_widget->getView(0)->setCameraManipulator(0);
 		m_bLockCamera = true;
 		updateView();
 	}
 	else
 	{
 		gl_widget->getView(0)->getCameraManipulator()->setByMatrix(m_CameraManipulatorMatrix);
-//		gl_widget->getView(0)->setCameraManipulator(m_pManpulator);
 		m_bLockCamera = false;
 	}
 }
@@ -468,7 +454,6 @@ osg::Geode* raaOctaveToolInterface::makeGrid(float fWidth, float fDepth, unsigne
 	pGeom->setNormalArray(pNorms, osg::Array::BIND_PER_VERTEX);
 	pGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, pVerts->size()));
 	pGeode->addChild(pGeom);
-//	gl_widget->addToScene(0, pGeode);
 
 	return pGeode;
 }
@@ -476,12 +461,6 @@ osg::Geode* raaOctaveToolInterface::makeGrid(float fWidth, float fDepth, unsigne
 void raaOctaveToolInterface::updateView()
 {
 	osg::Matrix mRot, mTrans;
-/*
-	mRot.set(m_avPhysical[csm_uiRight][0], m_avPhysical[csm_uiRight][1], m_avPhysical[csm_uiRight][2], 0.0f,
-		m_avPhysical[csm_uiDir][0], m_avPhysical[csm_uiDir][1], m_avPhysical[csm_uiDir][2], 0.0f,
-		m_avPhysical[csm_uiUp][0], m_avPhysical[csm_uiUp][1], m_avPhysical[csm_uiUp][2], 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);	
-*/
 
 	mRot.set(m_avPhysical[csm_uiRight][0], m_avPhysical[csm_uiDir][0], m_avPhysical[csm_uiUp][0], 0.0f,
 			m_avPhysical[csm_uiRight][1], m_avPhysical[csm_uiDir][1], m_avPhysical[csm_uiUp][1], 0.0f,
@@ -496,7 +475,6 @@ void raaOctaveToolInterface::updateView()
 		m_pPhysicalViewpoint->setMatrix(mRot*mTrans);
 
 	if (m_bLockCamera)
-		//		gl_widget->getView(0)->getCameraManipulator()->setByMatrix(mRot*mTrans);
 		gl_widget->getView(0)->getCamera()->setViewMatrix(mRot*mTrans);
 
 }

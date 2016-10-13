@@ -2,6 +2,9 @@
 #include "raaOctaveControllerTypes.h"
 #include "raaScreen.h"
 
+osg::Matrixf raaScreen::sm_RotationScale;
+bool raaScreen::sm_bIntialised=false;
+
 raaScreenListener::raaScreenListener()
 {
 }
@@ -12,6 +15,7 @@ raaScreenListener::~raaScreenListener()
 
 raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, raaOctaveViewPoint *pViewpoint)
 {
+	initialise();
 	m_fNear = 0.5f;
 	m_fFar = 1000.0f;
 	m_pListener = 0;
@@ -57,21 +61,6 @@ osg::Matrixf raaScreen::screenProjection()
 	return m_mScreenProjection;
 }
 
-osg::Matrixf raaScreen::screenProjectionRotation()
-{
-	return m_mScreenProjectionRotation;
-}
-
-osg::Matrixf raaScreen::screenProjectionTranslation()
-{
-	return m_mScreenProjectionTranslation;
-}
-
-osg::Matrixf raaScreen::screenTransform()
-{
-	return m_mScreenTransform;
-}
-
 void raaScreen::viewpointChanged(raaOctaveViewPoint* pViewpoint)
 {
 	if(pViewpoint->currentScreenUpdate()!=m_uiCurrentViewpointUpdate || m_uiCurrentScreenUpdate!=m_uiScreenUpdateCount)
@@ -89,26 +78,19 @@ void raaScreen::setScreen(osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::V
 	m_vScreen[raaOctaveControllerTypes::csm_uiTR] = vTR;
 	m_vScreen[raaOctaveControllerTypes::csm_uiTL] = vTL;
 
-	m_vCentre = m_vScreen[0];
-	m_vCentre += m_vScreen[1];
-	m_vCentre += m_vScreen[2];
-	m_vCentre += m_vScreen[3];
-	m_vCentre /= 4.0f;
+	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiLeft] = m_vScreen[raaOctaveControllerTypes::csm_uiBL] - m_vScreen[raaOctaveControllerTypes::csm_uiTL];
+	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight] =  m_vScreen[raaOctaveControllerTypes::csm_uiTR] - m_vScreen[raaOctaveControllerTypes::csm_uiBR];
+	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiTop] =  m_vScreen[raaOctaveControllerTypes::csm_uiTL] - m_vScreen[raaOctaveControllerTypes::csm_uiTR];
+	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom]  = m_vScreen[raaOctaveControllerTypes::csm_uiBR] - m_vScreen[raaOctaveControllerTypes::csm_uiBL];
 
-	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiLeft] = m_vEdge[raaOctaveControllerTypes::csm_uiLeft] = m_vScreen[raaOctaveControllerTypes::csm_uiBL] - m_vScreen[raaOctaveControllerTypes::csm_uiTL];
-	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight] = m_vEdge[raaOctaveControllerTypes::csm_uiRight] = m_vScreen[raaOctaveControllerTypes::csm_uiTR] - m_vScreen[raaOctaveControllerTypes::csm_uiBR];
-	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiTop] = m_vEdge[raaOctaveControllerTypes::csm_uiTop] = m_vScreen[raaOctaveControllerTypes::csm_uiTL] - m_vScreen[raaOctaveControllerTypes::csm_uiTR];
-	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom] = m_vEdge[raaOctaveControllerTypes::csm_uiBottom] = m_vScreen[raaOctaveControllerTypes::csm_uiBR] - m_vScreen[raaOctaveControllerTypes::csm_uiBL];
-
-	m_fEdgeLen[raaOctaveControllerTypes::csm_uiLeft] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiLeft].normalize();
-	m_fEdgeLen[raaOctaveControllerTypes::csm_uiRight] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight].normalize();
-	m_fEdgeLen[raaOctaveControllerTypes::csm_uiTop] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiTop].normalize();
-	m_fEdgeLen[raaOctaveControllerTypes::csm_uiBottom] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom].normalize();
+	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiLeft].normalize();
+	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight].normalize();
+	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiTop].normalize();
+	m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom].normalize();
 
 	m_vNormal = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom] ^ (m_vEdgeNorm[raaOctaveControllerTypes::csm_uiLeft] * -1.0f);
 	m_vNormal.normalize();
 
-	
 	if (m_pListener)m_pListener->screenChanged(this);
 	m_uiScreenUpdateCount++;
 
@@ -123,91 +105,40 @@ void raaScreen::setName(std::string sName)
 
 void raaScreen::calcProjectionMatrix(raaOctaveViewPoint* pViewpoint)
 {
-
+	osg::Vec3f va, pe;
 	float m[16];
 
-	osg::Vec3f va, vb, vc, vr, vu, vn;
-	osg::Vec3f pa, pb, pc, pe;
-
-	pa.set(m_vScreen[raaOctaveControllerTypes::csm_uiBL][0], m_vScreen[raaOctaveControllerTypes::csm_uiBL][1], m_vScreen[raaOctaveControllerTypes::csm_uiBL][2]);
-	pb.set(m_vScreen[raaOctaveControllerTypes::csm_uiBR][0], m_vScreen[raaOctaveControllerTypes::csm_uiBR][1], m_vScreen[raaOctaveControllerTypes::csm_uiBR][2]);
-	pc.set(m_vScreen[raaOctaveControllerTypes::csm_uiTL][0], m_vScreen[raaOctaveControllerTypes::csm_uiTL][1], m_vScreen[raaOctaveControllerTypes::csm_uiTL][2]);
 	pe = pe*pViewpoint->physicalMatrix();
-	float n = m_fNear;
-	float f = m_fFar;
+	va = m_vScreen[raaOctaveControllerTypes::csm_uiBL] - pe;
+	float d = -(m_vNormal*va);
 
-	vr = pb - pa;
-	vu = pc - pa;
-	vr.normalize();
-	vu.normalize();
-	vn = vr^vu;
-	vn.normalize();
+	m_mScreenProjection.makeFrustum((m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom] * va)*m_fNear / d, (m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom] * (m_vScreen[raaOctaveControllerTypes::csm_uiBR] - pe))*m_fNear / d,(m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight] * va)*m_fNear / d,(m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight] * (m_vScreen[raaOctaveControllerTypes::csm_uiTL] - pe))*m_fNear / d, m_fNear, m_fFar);
 
-	va = pa - pe;
-	vb = pb - pe;
-	vc = pc - pe;
-	n = 0.1f;
-	float d = -(vn*va);
-	double l = (vr * va)*n/d;
-	double r = (vr * vb)*n/d;
-	double b =(vu * va)*n/d;
-	double t = (vu * vc)*n/d;
+	m[0] = 1.0f;m[1] = 0.0f;m[2] = 0.0f;m[3] = 0.0f;
+	m[4] = 0.0f;m[5] = 1.0f;m[6] = 0.0f;m[7] = 0.0f;
+	m[8] = 0.0f;m[9] = 0.0f;m[10] = 1.0f;m[11] = 0.0f;
+	m[12] = -pe[0];m[13] = -pe[1];m[14] =- pe[2];m[15] = 1.0f;
+	m_mScreenProjectionTranslation.set(m);
 
-	m_mScreenProjection.makeFrustum(l, r, b, t, n, f);
+	m[0] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom][0];m[1] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom][1];m[2] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom][2];m[3] = 0.0f;
+	m[4] = -m_vNormal[0];m[5] = -m_vNormal[1];m[6] = -m_vNormal[2];m[7] = 0.0f;
+	m[8] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight][0];m[9] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight][1];m[10] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight][2];m[11] = 0.0f;
+	m[12] = 0.0f;m[13] = 0.0f;m[14] = 0.0f;m[15] = 1.0f;
+	m_mScreenProjectionRotation.set(m);
 
-	float mt[16];
-	mt[0] = 1.0f;
-	mt[1] = 0.0f;
-	mt[2] = 0.0f;
-	mt[3] = 0.0f;
-
-	mt[4] = 0.0f;
-	mt[5] = 1.0f;
-	mt[6] = 0.0f;
-	mt[7] = 0.0f;
-
-	mt[8] = 0.0f;
-	mt[9] = 0.0f;
-	mt[10] = 1.0f;
-	mt[11] = 0.0f;
-
-	mt[12] = -pe[0];
-	mt[13] = -pe[1];
-	mt[14] =- pe[2];
-	mt[15] = 1.0f;
-
-	m_mScreenProjectionTranslation.set(mt);
-
-	float mr[16];
-
-	mr[0] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom][0];
-	mr[1] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom][1];
-	mr[2] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom][2];
-	mr[3] = 0.0f;
-
-	mr[4] = -m_vNormal[0];
-	mr[5] = -m_vNormal[1];
-	mr[6] = -m_vNormal[2];
-	mr[7] = 0.0f;
-
-	mr[8] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight][0];
-	mr[9] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight][1];
-	mr[10] = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiRight][2];
-	mr[11] = 0.0f;
-
-	mr[12] = 0.0f;
-	mr[13] = 0.0f;
-	mr[14] = 0.0f;
-	mr[15] = 1.0f;
-
-	m_mScreenProjectionRotation.set(mr);
-	osg::Matrixf mR;
-	mR.makeRotate(osg::DegreesToRadians(90.0f), osg::Vec3f(1.0f, 0.0f, 0.0f));
-	osg::Matrixf mS;
-	mS.makeScale(-1.0f, -1.0f, -1.0f);
-
-	m_mScreenProjection = m_mScreenProjectionTranslation*m_mScreenProjectionRotation*mR*mS*m_mScreenProjection;
+	m_mScreenProjection = m_mScreenProjectionTranslation*m_mScreenProjectionRotation*sm_RotationScale*m_mScreenProjection;
 
 	if (m_pListener)m_pListener->screenMatrixChanged(this);
+}
 
+void raaScreen::initialise()
+{
+	if(!sm_bIntialised)
+	{		
+		osg::Matrix mR, mS;
+		mR.makeRotate(osg::DegreesToRadians(90.0f), osg::Vec3f(1.0f, 0.0f, 0.0f));
+		mS.makeScale(-1.0f, -1.0f, -1.0f);
+		sm_RotationScale = mR*mS;
+		sm_bIntialised = true;
+	}
 }
