@@ -61,7 +61,7 @@ osg::Matrixf raaScreen::screenProjection()
 	return m_mScreenProjection;
 }
 
-void raaScreen::viewpointChanged(raaOctaveViewPoint* pViewpoint)
+void raaScreen::physicalViewpointChanged(raaOctaveViewPoint* pViewpoint)
 {
 	if(pViewpoint->currentScreenUpdate()!=m_uiCurrentViewpointUpdate || m_uiCurrentScreenUpdate!=m_uiScreenUpdateCount)
 	{
@@ -69,6 +69,10 @@ void raaScreen::viewpointChanged(raaOctaveViewPoint* pViewpoint)
 		m_uiCurrentScreenUpdate = m_uiScreenUpdateCount;
 		calcProjectionMatrix(pViewpoint);
 	}
+}
+
+void raaScreen::virtualViewpointChanged(raaOctaveViewPoint* pViewpoint)
+{
 }
 
 void raaScreen::setScreen(osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, raaOctaveViewPoint *pViewpoint)

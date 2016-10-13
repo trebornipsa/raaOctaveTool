@@ -40,7 +40,8 @@ public:
 	osg::Matrixf screenProjection();
 
 protected:
-	void viewpointChanged(raaOctaveViewPoint *pViewpoint);
+	virtual void physicalViewpointChanged(raaOctaveViewPoint *pViewpoint);
+	virtual void virtualViewpointChanged(raaOctaveViewPoint* pViewpoint);
 	void setScreen(osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, raaOctaveViewPoint *pViewpoint);
 	void setName(std::string sName);
 	void calcProjectionMatrix(raaOctaveViewPoint *pViewpoint);

@@ -136,6 +136,11 @@ osg::Group* raaDisplayScreen::root()
 	return m_pRoot;
 }
 
-void raaDisplayScreen::viewpointChanged(raaOctaveViewPoint* pViewpoint)
+void raaDisplayScreen::physicalViewpointChanged(raaOctaveViewPoint* pViewpoint)
 {
+}
+
+void raaDisplayScreen::virtualViewpointChanged(raaOctaveViewPoint* pViewpoint)
+{
+	m_pCamera->setViewMatrix(pViewpoint->virtualMatrix());
 }

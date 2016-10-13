@@ -14,7 +14,8 @@ public:
 	virtual ~raaOctaveViewPointListener();
 
 protected:
-	virtual void viewpointChanged(raaOctaveViewPoint* pViewpoint) = 0;
+	virtual void physicalViewpointChanged(raaOctaveViewPoint* pViewpoint) = 0;
+	virtual void virtualViewpointChanged(raaOctaveViewPoint* pViewpoint) = 0;
 };
 
 typedef std::list<raaOctaveViewPointListener*> raaOctaveViewPointListeners;

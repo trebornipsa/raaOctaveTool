@@ -24,6 +24,11 @@ raaOctaveToolInterface::raaOctaveToolInterface()
 	m_avPhysical[csm_uiRight] = osg::Vec3f(1.0f, 0.0f, 0.0f);
 	m_avPhysical[csm_uiDir] = osg::Vec3f(0.0f, 1.0f, 0.0f);
 
+	m_avVirtual[csm_uiPos] = osg::Vec3f(0.0f, 0.0f, 0.0f);
+	m_avVirtual[csm_uiUp] = osg::Vec3f(0.0f, 0.0f, 1.0f);
+	m_avVirtual[csm_uiRight] = osg::Vec3f(1.0f, 0.0f, 0.0f);
+	m_avVirtual[csm_uiDir] = osg::Vec3f(0.0f, 1.0f, 0.0f);
+
 	setupUi(this);
 
 	gl_widget->addToScene(0, makeGrid(10.0f, 10.0f, 10, 10));
@@ -284,43 +289,43 @@ void raaOctaveToolInterface::virZDownReleased()
 
 void raaOctaveToolInterface::timerUpdate()
 {
-	bool bChanged = false;
+	bool bPhysicalChanged = false;
 
 	if(m_abPhysical[csm_uiTranslate])
 	{
 		if (m_abPhysical[csm_uiUpY])
 		{
 			m_avPhysical[csm_uiPos] += m_avPhysical[csm_uiDir] * 0.03f;
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 		if (m_abPhysical[csm_uiDownY])
 		{
 			m_avPhysical[csm_uiPos] -= m_avPhysical[csm_uiDir] * 0.03f;
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 		
 		if (m_abPhysical[csm_uiUpX])
 		{
 			m_avPhysical[csm_uiPos] += m_avPhysical[csm_uiRight] * 0.03f;
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 
 		if (m_abPhysical[csm_uiDownX])
 		{
 			m_avPhysical[csm_uiPos] -= m_avPhysical[csm_uiRight] * 0.03f;
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 		
 		if (m_abPhysical[csm_uiUpZ])
 		{
 			m_avPhysical[csm_uiPos] += m_avPhysical[csm_uiUp] * 0.03f;
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 		
 		if (m_abPhysical[csm_uiDownZ])
 		{
 			m_avPhysical[csm_uiPos] -= m_avPhysical[csm_uiUp] * 0.03f;
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 
 	}
@@ -334,7 +339,7 @@ void raaOctaveToolInterface::timerUpdate()
 
 			m_avPhysical[csm_uiDir] = m_avPhysical[csm_uiUp] ^ m_avPhysical[csm_uiRight];
 			m_avPhysical[csm_uiDir].normalize();
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 		
 		if (m_abPhysical[csm_uiDownY])
@@ -344,7 +349,7 @@ void raaOctaveToolInterface::timerUpdate()
 
 			m_avPhysical[csm_uiDir] = m_avPhysical[csm_uiUp] ^ m_avPhysical[csm_uiRight];
 			m_avPhysical[csm_uiDir].normalize();
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 		
 		if (m_abPhysical[csm_uiUpX])
@@ -354,7 +359,7 @@ void raaOctaveToolInterface::timerUpdate()
 
 			m_avPhysical[csm_uiRight] = m_avPhysical[csm_uiDir] ^ m_avPhysical[csm_uiUp];
 			m_avPhysical[csm_uiRight].normalize();
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 		
 		if (m_abPhysical[csm_uiDownX])
@@ -364,7 +369,7 @@ void raaOctaveToolInterface::timerUpdate()
 
 			m_avPhysical[csm_uiRight] = m_avPhysical[csm_uiDir] ^ m_avPhysical[csm_uiUp];
 			m_avPhysical[csm_uiRight].normalize();
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 		
 		if (m_abPhysical[csm_uiUpZ])
@@ -374,17 +379,120 @@ void raaOctaveToolInterface::timerUpdate()
 
 			m_avPhysical[csm_uiDir] = m_avPhysical[csm_uiUp] ^ m_avPhysical[csm_uiRight];
 			m_avPhysical[csm_uiDir].normalize();
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 		
 		if (m_abPhysical[csm_uiDownZ])
 		{
 			m_avPhysical[csm_uiPos] -= m_avPhysical[csm_uiUp] * 0.03f;
-			bChanged = true;
+			bPhysicalChanged = true;
 		}
 	}
 
-	if (bChanged) updateView();
+	if (bPhysicalChanged) updateView();
+
+
+	bool bVirtualChanged = false;
+
+	if (m_abVirtual[csm_uiTranslate])
+	{
+		if (m_abVirtual[csm_uiUpY])
+		{
+			m_avVirtual[csm_uiPos] += m_avVirtual[csm_uiDir] * 0.03f;
+			bVirtualChanged = true;
+		}
+		if (m_abVirtual[csm_uiDownY])
+		{
+			m_avVirtual[csm_uiPos] -= m_avVirtual[csm_uiDir] * 0.03f;
+			bVirtualChanged = true;
+		}
+
+		if (m_abVirtual[csm_uiUpX])
+		{
+			m_avVirtual[csm_uiPos] += m_avVirtual[csm_uiRight] * 0.03f;
+			bVirtualChanged = true;
+		}
+
+		if (m_abVirtual[csm_uiDownX])
+		{
+			m_avVirtual[csm_uiPos] -= m_avVirtual[csm_uiRight] * 0.03f;
+			bVirtualChanged = true;
+		}
+
+		if (m_abVirtual[csm_uiUpZ])
+		{
+			m_avVirtual[csm_uiPos] += m_avVirtual[csm_uiUp] * 0.03f;
+			bVirtualChanged = true;
+		}
+
+		if (m_abVirtual[csm_uiDownZ])
+		{
+			m_avVirtual[csm_uiPos] -= m_avVirtual[csm_uiUp] * 0.03f;
+			bVirtualChanged = true;
+		}
+
+	}
+
+	if (m_abVirtual[csm_uiRotate])
+	{
+		if (m_abVirtual[csm_uiUpY])
+		{
+			m_avVirtual[csm_uiUp] = m_avVirtual[csm_uiUp] - (m_avVirtual[csm_uiDir] * 0.1f);
+			m_avVirtual[csm_uiUp].normalize();
+
+			m_avVirtual[csm_uiDir] = m_avVirtual[csm_uiUp] ^ m_avVirtual[csm_uiRight];
+			m_avVirtual[csm_uiDir].normalize();
+			bVirtualChanged = true;
+		}
+
+		if (m_abVirtual[csm_uiDownY])
+		{
+			m_avVirtual[csm_uiUp] = m_avVirtual[csm_uiUp] + (m_avVirtual[csm_uiDir] * 0.1f);
+			m_avVirtual[csm_uiUp].normalize();
+
+			m_avVirtual[csm_uiDir] = m_avVirtual[csm_uiUp] ^ m_avVirtual[csm_uiRight];
+			m_avVirtual[csm_uiDir].normalize();
+			bVirtualChanged = true;
+		}
+
+		if (m_abVirtual[csm_uiUpX])
+		{
+			m_avVirtual[csm_uiDir] = m_avVirtual[csm_uiDir] + (m_avVirtual[csm_uiRight] * 0.1f);
+			m_avVirtual[csm_uiDir].normalize();
+
+			m_avVirtual[csm_uiRight] = m_avVirtual[csm_uiDir] ^ m_avVirtual[csm_uiUp];
+			m_avVirtual[csm_uiRight].normalize();
+			bVirtualChanged = true;
+		}
+
+		if (m_abVirtual[csm_uiDownX])
+		{
+			m_avVirtual[csm_uiDir] = m_avVirtual[csm_uiDir] - (m_avVirtual[csm_uiRight] * 0.1f);
+			m_avVirtual[csm_uiDir].normalize();
+
+			m_avVirtual[csm_uiRight] = m_avVirtual[csm_uiDir] ^ m_avVirtual[csm_uiUp];
+			m_avVirtual[csm_uiRight].normalize();
+			bVirtualChanged = true;
+		}
+
+		if (m_abVirtual[csm_uiUpZ])
+		{
+			m_avVirtual[csm_uiUp] = m_avVirtual[csm_uiUp] + (m_avVirtual[csm_uiDir] * 0.1f);
+			m_avVirtual[csm_uiUp].normalize();
+
+			m_avVirtual[csm_uiDir] = m_avVirtual[csm_uiUp] ^ m_avVirtual[csm_uiRight];
+			m_avVirtual[csm_uiDir].normalize();
+			bVirtualChanged = true;
+		}
+
+		if (m_abVirtual[csm_uiDownZ])
+		{
+			m_avVirtual[csm_uiPos] -= m_avVirtual[csm_uiUp] * 0.03f;
+			bVirtualChanged = true;
+		}
+	}
+
+	if (bVirtualChanged) updateView();
 }
 
 void raaOctaveToolInterface::lockCamera(int iVal)
@@ -452,11 +560,15 @@ void raaOctaveToolInterface::updateView()
 
 	mRot.set(m_avPhysical[csm_uiRight][0], m_avPhysical[csm_uiDir][0], m_avPhysical[csm_uiUp][0], 0.0f,m_avPhysical[csm_uiRight][1], m_avPhysical[csm_uiDir][1], m_avPhysical[csm_uiUp][1], 0.0f,m_avPhysical[csm_uiRight][2], m_avPhysical[csm_uiDir][2], m_avPhysical[csm_uiUp][2], 0.0f,0.0f, 0.0f, 0.0f, 1.0f);
 	mTrans.makeTranslate(m_avPhysical[csm_uiPos]);
-
 	m_pController->viewpoint()->setPhysicalMatrix(mTrans);
 
 	if (m_pPhysicalViewpoint)m_pPhysicalViewpoint->setMatrix(mRot*mTrans);
 	if (m_bLockCamera) gl_widget->getView(0)->getCamera()->setViewMatrix(mRot*mTrans);
+
+
+	mRot.set(m_avVirtual[csm_uiRight][0], m_avVirtual[csm_uiDir][0], m_avVirtual[csm_uiUp][0], 0.0f, m_avVirtual[csm_uiRight][1], m_avVirtual[csm_uiDir][1], m_avVirtual[csm_uiUp][1], 0.0f, m_avVirtual[csm_uiRight][2], m_avVirtual[csm_uiDir][2], m_avVirtual[csm_uiUp][2], 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	mTrans.makeTranslate(m_avVirtual[csm_uiPos]);
+	m_pController->viewpoint()->setVirtualMatrix(mRot*mTrans);
 }
 
 void raaOctaveToolInterface::originChanged(raaOctaveController* pController)
@@ -478,8 +590,12 @@ void raaOctaveToolInterface::screenUpdated(raaOctaveController* pController, raa
 {
 }
 
-void raaOctaveToolInterface::viewpointChanged(raaOctaveViewPoint* pViewpoint)
+void raaOctaveToolInterface::physicalViewpointChanged(raaOctaveViewPoint* pViewpoint)
 {
 //	if(m_pPhysicalViewpoint)
 //		m_pPhysicalViewpoint->setMatrix(pViewpoint->physicalMatrix());
+}
+
+void raaOctaveToolInterface::virtualViewpointChanged(raaOctaveViewPoint* pViewpoint)
+{
 }

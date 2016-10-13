@@ -77,7 +77,8 @@ protected:
 	virtual void screenAdded(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void screenRemoved(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
-	virtual void viewpointChanged(raaOctaveViewPoint* pViewpoint);
+	virtual void physicalViewpointChanged(raaOctaveViewPoint* pViewpoint);
+	virtual void virtualViewpointChanged(raaOctaveViewPoint* pViewpoint);
 
 	raaDisplayScreens m_mDisplays;
 
@@ -89,6 +90,7 @@ protected:
 
 	osg::Vec3f m_vTrans;
 	osg::Vec3f m_avPhysical[4];
+	osg::Vec3f m_avVirtual[4];
 	osg::Matrix m_CameraManipulatorMatrix;
 	bool m_bLockCamera;
 
