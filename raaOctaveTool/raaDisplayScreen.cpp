@@ -64,8 +64,6 @@ raaDisplayScreen::raaDisplayScreen(raaScreen *pScreen, osg::Group *pScene, raaOc
 	m_pTexture->setInternalFormat(GL_RGBA);
 	m_pTexture->setFilter(osg::Texture2D::MIN_FILTER, osg::Texture2D::LINEAR);
 	m_pTexture->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
-//	m_pTexture->set
-
 
 	m_pRoot->addChild(m_pGeode);
 	m_pGeode->addDrawable(m_pGeom);
@@ -99,10 +97,8 @@ raaDisplayScreen::raaDisplayScreen(raaScreen *pScreen, osg::Group *pScene, raaOc
 
 	m_pCamera->setViewport(0, 0, 512, 512);
 	m_pCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-	m_pCamera->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
 	m_pCamera->setProjectionMatrix(pScreen->screenProjection());
-	//	m_pCamera->setViewMatrix(pViewpoint->overallMatrix());
-//	m_pCamera->setViewMatrix(pViewpoint->virtualMatrix());
+	m_pCamera->setViewMatrix(pViewpoint->virtualMatrix());
 	m_pCamera->setRenderOrder(osg::Camera::PRE_RENDER);
 	m_pCamera->setClearColor(osg::Vec4f(0.0f, 0.0f, 0.0f, 0.7f));
 	m_pCamera->setRenderTargetImplementation(osg::Camera::RenderTargetImplementation::FRAME_BUFFER_OBJECT);
@@ -110,48 +106,6 @@ raaDisplayScreen::raaDisplayScreen(raaScreen *pScreen, osg::Group *pScene, raaOc
 	m_pCamera->addChild(m_pCameraView);
 	m_pCameraView->addChild(pScene);
 	m_pRoot->addChild(m_pCamera);
-
-
-	osg::Geode *pGeodeR = new osg::Geode();
-	m_pGeomR = new osg::Geometry();
-	m_pvScreenRot = new osg::Vec3Array();
-	osg::Vec4Array *pColsR = new osg::Vec4Array();
-
-	m_pvScreenRot->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
-	m_pvScreenRot->push_back(m_vScreenRotation);
-	m_pvScreenRot->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
-	m_pvScreenRot->push_back(m_vScreenRotation);
-	m_pvScreenRot->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
-	m_pvScreenRot->push_back(m_vScreenRotation);
-	m_pvScreenRot->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
-	m_pvScreenRot->push_back(m_vScreenRotation);
-	m_pvScreenRot->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
-	m_pvScreenRot->push_back(m_vScreenRotation);
-
-	pColsR->push_back(osg::Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
-	pColsR->push_back(osg::Vec4f(1.0f, 1.0f, 0.0f, 1.0f));
-	pColsR->push_back(osg::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
-	pColsR->push_back(osg::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
-	pColsR->push_back(osg::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-	pColsR->push_back(osg::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
-	pColsR->push_back(osg::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-	pColsR->push_back(osg::Vec4f(0.0f, 0.0f, 1.0f, 1.0f));
-	pColsR->push_back(osg::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
-	pColsR->push_back(osg::Vec4f(0.0f, 1.0f, 0.0f, 1.0f));
-
-	m_pGeomR->setVertexArray(m_pvScreenRot);
-	m_pGeomR->setColorArray(pColsR, osg::Array::BIND_PER_VERTEX);
-
-	m_pGeomR->setUseDisplayList(false);
-
-	pGeodeR->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
-	m_pGeomR->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, m_pvScreenRot->size()));
-
-	pGeodeR->addDrawable(m_pGeomR);
-//	m_pRoot->addChild(pGeodeR);
-
-
-
 
 	pViewpoint->addListener(this);
 	pScreen->setListener(this);
@@ -170,63 +124,11 @@ void raaDisplayScreen::nameChanged(raaScreen* pScreen)
 void raaDisplayScreen::screenChanged(raaScreen* pScreen)
 {
 	m_pCamera->setProjectionMatrix(pScreen->screenProjection());
-	m_pCameraView->setMatrix(pScreen->screenTransform());
-
-
-	osg::Vec3f v(0.0f, 1.0f, 0.0f);
-
-	v = pScreen->screenProjectionRotation()*v;
-
-	m_pvScreenRot->clear();
-	m_pvScreenRot->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
-	m_pvScreenRot->push_back(v);
 }
 
 void raaDisplayScreen::screenMatrixChanged(raaScreen* pScreen)
 {
 	m_pCamera->setProjectionMatrix(pScreen->screenProjection());
-	m_pCamera->setViewMatrix(pScreen->screenTransform());
-
-	osg::Vec3f v(0.0f, 1.0f, 0.0f), vo(0.0f, 0.0f, 1.0f);
-
-	osg::Vec3f vbl(-1.0f, 0.000003f, -1.0f), vbr(1.0f, 0.000003f, -1.0f), vtr(1.0f, 0.000003f, 1.0f), vtl(-1.0f, 0.000003f, 1.0f);
-	osg::Vec3f vp(m_vPhysicalPos[0], m_vPhysicalPos[1], m_vPhysicalPos[2]);
-
-
-	v = pScreen->screenProjectionRotation()*v;
-
-	osg::Matrix mp = pScreen->screenProjection();
-	mp.invert(mp);
-
-	vbl = vbl*mp;
-	vbr = vbr*mp;
-	vtr =vtr*mp;
-	vtl =vtl* mp;
-
-	vtl.normalize();
-	vtr.normalize();
-	vbl.normalize();
-	vbr.normalize();
-
-
-	m_pvScreenRot->clear();
-	m_pvScreenRot->push_back(vo);
-	m_pvScreenRot->push_back(v+vo);
-	m_pvScreenRot->push_back(vp);
-	m_pvScreenRot->push_back(vp + vbl);
-	m_pvScreenRot->push_back(vp);
-	m_pvScreenRot->push_back(vp + vbr);
-	m_pvScreenRot->push_back(vp);
-	m_pvScreenRot->push_back(vp + vtl);
-	m_pvScreenRot->push_back(vp);
-	m_pvScreenRot->push_back(vp + vtr);
-	m_pGeomR->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, m_pvScreenRot->size()));
-
-
-	m_pGeomR->dirtyDisplayList();
-
-
-	m_pCameraView->setMatrix(pScreen->screenTransform());
 }
 
 osg::Group* raaDisplayScreen::root()
@@ -236,8 +138,4 @@ osg::Group* raaDisplayScreen::root()
 
 void raaDisplayScreen::viewpointChanged(raaOctaveViewPoint* pViewpoint)
 {
-	m_vPhysicalPos.set(0.0f, 0.0f, 0.0f, 1.0f);
-	m_vPhysicalPos = m_vPhysicalPos*pViewpoint->physicalMatrix();
-//	m_pCamera->setViewMatrix(pViewpoint->physicalMatrix());
-//	m_pCameraView->setMatrix(pViewpoint->physicalMatrix());
 }

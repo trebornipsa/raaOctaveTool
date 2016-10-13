@@ -115,7 +115,7 @@ public:
 protected:
 	virtual void viewpointChanged(raaOctaveViewPoint* pViewpoint);
 
-	osg::Vec4f m_vPhysicalPos;
+//	osg::Vec4f m_vPhysicalPos;
 
 	osg::Group *m_pRoot;
 	osg::Geode *m_pGeode;
@@ -129,7 +129,7 @@ protected:
 	osg::MatrixTransform *m_pCameraView;
 	osg::Vec3f m_vScreenRotation;
 
-	osg::Vec3Array *m_pvScreenRot;
+//	osg::Vec3Array *m_pvScreenRot;
 	raaScreen *m_pScreen;
 };
 
