@@ -62,19 +62,7 @@ raaOctaveToolInterface::raaOctaveToolInterface()
 
 	m_pController = new raaOctaveController(this);
 	m_pController->readConfig("C:\\robbie\\data\\octave_config.raa");
-/*
-	const osg::BoundingSphere& bs = m_pVirtualScene->getBound();
-	float fZNear = 1.0f*bs.radius();
-	float fZFar = 3.0f*bs.radius();
-
-	float fProjTop = 0.5f*fZNear;
-	float fProjRight = 0.5f*fZNear;
-
-	fZNear *= 0.9f;
-	fZFar *= 1.1f;
-*/
 	m_pController->viewpoint()->addListener(this);
-
 
 	updateView();
 	m_bLockCamera = false;

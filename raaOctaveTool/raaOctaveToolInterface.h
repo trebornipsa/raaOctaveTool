@@ -70,7 +70,7 @@ public slots:
 protected:
 	raaOctaveController *m_pController;
 
-	osg::Geode* makeGrid(float fWidth, float fDepth, unsigned int uiWidthSegs, unsigned int uiDepthSegs);
+	static osg::Geode* makeGrid(float fWidth, float fDepth, unsigned int uiWidthSegs, unsigned int uiDepthSegs);
 	void updateView();
 
 	virtual void originChanged(raaOctaveController* pController);
