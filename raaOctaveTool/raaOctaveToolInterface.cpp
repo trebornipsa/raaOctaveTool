@@ -556,12 +556,12 @@ osg::Geode* raaOctaveToolInterface::makeGrid(float fWidth, float fDepth, unsigne
 
 void raaOctaveToolInterface::updateView()
 {
-	osg::Matrix mRot, mTrans;
+	osg::Matrix mRot, mTrans; 
 
 	mRot.set(m_avPhysical[csm_uiRight][0], m_avPhysical[csm_uiDir][0], m_avPhysical[csm_uiUp][0], 0.0f,m_avPhysical[csm_uiRight][1], m_avPhysical[csm_uiDir][1], m_avPhysical[csm_uiUp][1], 0.0f,m_avPhysical[csm_uiRight][2], m_avPhysical[csm_uiDir][2], m_avPhysical[csm_uiUp][2], 0.0f,0.0f, 0.0f, 0.0f, 1.0f);
 	mTrans.makeTranslate(m_avPhysical[csm_uiPos]);
 	m_pController->viewpoint()->setPhysicalMatrix(mRot*mTrans);
-
+//todo - fix physical view with respect to panning
 	if (m_pPhysicalViewpoint)m_pPhysicalViewpoint->setMatrix(mRot*mTrans);
 	if (m_bLockCamera) gl_widget->getView(0)->getCamera()->setViewMatrix(mRot*mTrans);
 
