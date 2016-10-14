@@ -3,6 +3,7 @@
 #include <osg/Vec3f>
 #include <osg/Matrix>
 #include <string>
+#include <list>
 
 
 #include "raaOctaveViewPoint.h"
@@ -25,13 +26,16 @@ public:
 	virtual void screenChanged(raaScreen *pScreen) = 0;
 };
 
+typedef std::list<raaScreenListener*>raaScreenListeners;
+
+
 class RAAOCTAVECONTROLLER_DLL_DEF raaScreen: public raaOctaveViewPointListener
 {
 public:
 	raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, raaOctaveViewPoint *pViewpoint);
 	virtual ~raaScreen();
 
-	void setListener(raaScreenListener *pListener);
+	void addListener(raaScreenListener *pListener);
 	void removeListener(raaScreenListener *pListener);
 
 	std::string name();
@@ -59,7 +63,7 @@ protected:
 
 	osg::Vec3f m_vNormal;
 	std::string m_sName;
-	raaScreenListener *m_pListener;
+	raaScreenListeners m_lListeners;
 
 	osg::Matrixf m_mScreenProjection;
 	osg::Matrixf m_mScreenProjectionRotation;

@@ -117,6 +117,20 @@ float raaNet::raaMsg::asFloat(unsigned uiIndex)
 	return *((float*)m_DataList[uiIndex].data());
 }
 
+osg::Vec3f raaNet::raaMsg::asVector(unsigned uiIndex)
+{
+	float *pf = (float*)m_DataList[uiIndex].data();
+	osg::Vec3f v(pf[0], pf[1], pf[2]);
+	return v;
+}
+
+osg::Matrixf raaNet::raaMsg::asMatrix(unsigned uiIndex)
+{
+	float *pm = (float*)m_DataList[uiIndex].data();
+	osg::Matrixf m(pm);
+	return m;
+}
+
 unsigned raaNet::raaMsg::length()
 {
 	return m_DataList.length();
@@ -138,6 +152,16 @@ void raaNet::raaMsg::add(bool bVal)
 void raaNet::raaMsg::add(float f)
 {
 	m_DataList.push_back(QByteArray((const char*)&f, sizeof(float)));
+}
+
+void raaNet::raaMsg::add(osg::Vec3f& v)
+{
+	m_DataList.push_back(QByteArray((const char*)v.ptr(), 3*sizeof(float)));
+}
+
+void raaNet::raaMsg::add(osg::Matrixf& m)
+{
+	m_DataList.push_back(QByteArray((const char*)m.ptr(), 16 * sizeof(float)));
 }
 
 QByteArray raaNet::raaMsg::data()

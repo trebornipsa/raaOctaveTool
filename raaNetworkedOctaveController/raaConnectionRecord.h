@@ -4,10 +4,12 @@
 #include <raaNetwork/raaUdpThread.h>
 
 #include <raaOctaveController/raaOctaveController.h>
+#include <raaOctaveController/raaOctaveViewPoint.h>
+#include <raaOctaveController/raaScreen.h>
 
 using namespace raaNet;
 
-class raaConnectionRecord: public raaOctaveControllerListener
+class raaConnectionRecord: public raaOctaveControllerListener, public raaOctaveViewPointListener, public raaScreenListener
 {
 public:
 	raaConnectionRecord(std::string sName, raaOctaveController *pController);
@@ -39,6 +41,12 @@ protected:
 	virtual void screenAdded(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void screenRemoved(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
+	virtual void physicalViewpointChanged(raaOctaveViewPoint* pViewpoint);
+	virtual void virtualViewpointChanged(raaOctaveViewPoint* pViewpoint);
+	virtual void nameChanged(raaScreen* pScreen);
+	virtual void screenMatrixChanged(raaScreen* pScreen);
+	virtual void screenChanged(raaScreen* pScreen);
+
 
 };
 

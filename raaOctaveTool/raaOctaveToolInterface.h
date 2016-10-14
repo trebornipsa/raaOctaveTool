@@ -116,7 +116,6 @@ protected:
 
 	osgGA::CameraManipulator *m_pManpulator;
 	std::string m_sCurrentScreen;
-//	raaScreen *m_pCurrentScreen;
 	bool m_bScreenUpdate;
 
 	raaNet::raaNetwork *m_pNetwork;

@@ -5,7 +5,7 @@
 #include <osg/Group>
 #include <osg/Texture2D>
 
-#include <raaOctaveController/raaScreen.h>
+//#include <raaOctaveController/raaScreen.h>
 
 #include <raaOctaveController/raaOctaveViewPoint.h>
 
@@ -100,21 +100,27 @@ struct MyCameraPostDrawCallback : public osg::Camera::DrawCallback
 };
 
 
-class raaDisplayScreen: public raaScreenListener, public raaOctaveViewPointListener
+class raaDisplayScreen
 {
 public:
-	raaDisplayScreen(raaScreen *pScreen, osg::Group *pScene, raaOctaveViewPoint *pViewpoint);
+//	raaDisplayScreen(raaScreen *pScreen, osg::Group *pScene, raaOctaveViewPoint *pViewpoint);
+
+	raaDisplayScreen(osg::Group *pVirtualScene, std::string sName, osg::Vec3f vbl, osg::Vec3f vbr, osg::Vec3f vtl, osg::Vec3f vtr, osg::Vec3f vNormal, osg::Matrixf mPersp);
+
 	virtual ~raaDisplayScreen();
 
-	virtual void nameChanged(raaScreen* pScreen);
-	virtual void screenChanged(raaScreen* pScreen);
-	virtual void screenMatrixChanged(raaScreen* pScreen);
+//	virtual void nameChanged(raaScreen* pScreen);
+//	virtual void screenChanged(raaScreen* pScreen);
+//	virtual void screenMatrixChanged(raaScreen* pScreen);
+
+	void screenChanged(osg::Vec3f vbl, osg::Vec3f vbr, osg::Vec3f vtl, osg::Vec3f vtr, osg::Vec3f vn);
+	void screenMatrixChanged(osg::Matrixf &m);
 
 	osg::Group* root();
 
+	void setViewMatrix(osg::Matrixf &m);
+
 protected:
-	virtual void physicalViewpointChanged(raaOctaveViewPoint* pViewpoint);
-	virtual void virtualViewpointChanged(raaOctaveViewPoint* pViewpoint);
 
 	osg::Group *m_pRoot;
 	osg::Geode *m_pGeode;

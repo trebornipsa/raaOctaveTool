@@ -4,6 +4,8 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QByteArrayList>
 #include <QtCore/QString>
+#include <osg/Vec3f>
+#include <osg/Matrixf>
 
 #include "raaNetworkDefs.h"
 
@@ -29,6 +31,8 @@ namespace raaNet
 		void add(const char* pccVal, unsigned int uiSize);
 		void add(bool bVal);
 		void add(float f);
+		void add(osg::Vec3f& v);
+		void add(osg::Matrixf& m);
 
 		unsigned short asUShort(unsigned int uiIndex);
 		unsigned int asUInt(unsigned int uiIndex);
@@ -38,6 +42,8 @@ namespace raaNet
 		const char* asConstChar(unsigned int uiIndex);
 		bool asBool(unsigned int uiIndex);
 		float asFloat(unsigned int uiIndex);
+		osg::Vec3f asVector(unsigned int uiIndex);
+		osg::Matrixf asMatrix(unsigned int uiIndex);
 
 		unsigned int length();
 

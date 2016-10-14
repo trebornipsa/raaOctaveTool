@@ -28,18 +28,15 @@ public:
 	const static unsigned int csm_uiOCScreenMatrixChanged = 20;
 	const static unsigned int csm_uiOCScreenChanged = 21;
 	const static unsigned int csm_uiOCScreenInfo = 22;
-	const static unsigned int csm_uiOCControllerRequestScreenNames = 23;
-	const static unsigned int csm_uiOCControllerRequestScreen = 24;
-	const static unsigned int csm_uiOCControllerRequestScreenAll = 25;
-
-
-
-
-
-
-
-
-
-
+	const static unsigned int csm_uiOCScreenVertex = 23;
+	const static unsigned int csm_uiOCScreenVertexAll = 24;
+	const static unsigned int csm_uiOCControllerRequestScreenNames = 25;
+	const static unsigned int csm_uiOCControllerRequestScreen = 26;
+	const static unsigned int csm_uiOCControllerRequestScreenAll = 27;
+	
+	const static unsigned int csm_uiOCBL = 0;
+	const static unsigned int csm_uiOCBR = 1;
+	const static unsigned int csm_uiOCTL = 2;
+	const static unsigned int csm_uiOCTR = 3;
 };
 

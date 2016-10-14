@@ -103,7 +103,7 @@ void raaOctaveController::addListener(raaOctaveControllerListener* pListener)
 
 void raaOctaveController::removeListener(raaOctaveControllerListener* pListener)
 {
-	if (pListener && std::find(m_lListener.begin(), m_lListener.end(), pListener) == m_lListener.end()) m_lListener.remove(pListener);
+	if (pListener && std::find(m_lListener.begin(), m_lListener.end(), pListener) != m_lListener.end()) m_lListener.remove(pListener);
 }
 
 raaOctaveViewPoint* raaOctaveController::viewpoint()
@@ -129,7 +129,7 @@ raaScreen* raaOctaveController::getScreen(std::string sName)
 	return 0;
 }
 
-const raaStringScreenMap& raaOctaveController::getScreens() const
+const raaStringScreenMap& raaOctaveController::getScreens()
 {
 	return m_mScreens;
 }

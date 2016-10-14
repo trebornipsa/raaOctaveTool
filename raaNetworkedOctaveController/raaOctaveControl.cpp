@@ -41,37 +41,136 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 		{
 			switch(pMsg->asUInt(2))
 			{
-			case raaOctaveKernel::csm_uiOCHasConfig:
-			{
-				raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgReply);
-				pM->add(m_pController->hasConfig() ? raaOctaveKernel::csm_uiOCHasConfigTrue : raaOctaveKernel::csm_uiOCHasConfigFalse);
-				pMsg->tcpThread()->write(pM);
-			}
-			break;
-			case raaOctaveKernel::csm_uiOCLoadConfig:
-			{
-//				std::cout << "Load Config -> " << pMsg->asString(3).c_str() << std::endl;
-				m_pController->readConfig(pMsg->asString(3).c_str());
-			}
-			break;
-			case raaOctaveKernel::csm_uiOCAttachControllerListener:
-			{
-				m_mConnections[pMsg->tcpThread()]->setControllerListener(true);
-			}
-			break;
-			case raaOctaveKernel::csm_uiOCDetachControllerListener:
-			{
-				m_mConnections[pMsg->tcpThread()]->setControllerListener(false);
-			}
-			break;
+				case raaOctaveKernel::csm_uiOCHasConfig:
+				{
+					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgReply);
+					pM->add(m_pController->hasConfig() ? raaOctaveKernel::csm_uiOCHasConfigTrue : raaOctaveKernel::csm_uiOCHasConfigFalse);
+					pMsg->tcpThread()->write(pM);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCLoadConfig:
+				{
+	//				std::cout << "Load Config -> " << pMsg->asString(3).c_str() << std::endl;
+					m_pController->readConfig(pMsg->asString(3).c_str());
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCAttachControllerListener:
+				{
+					m_mConnections[pMsg->tcpThread()]->setControllerListener(true);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCDetachControllerListener:
+				{
+					m_mConnections[pMsg->tcpThread()]->setControllerListener(false);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCAttachViewpointListener:
+				{
+					m_mConnections[pMsg->tcpThread()]->setViewpointListener(true);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCDetachViewpointListener:
+				{
+					m_mConnections[pMsg->tcpThread()]->setViewpointListener(false);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCAttachScreenListener:
+				{
+					m_mConnections[pMsg->tcpThread()]->setScreenListener(true);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCDetachScreenListener:
+				{
+					m_mConnections[pMsg->tcpThread()]->setScreenListener(false);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCScreenInfo:
+				{
+					std::string sName = pMsg->asString(3);
 
+					raaNet::raaTcpMsg *pM = new raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+					pM->add(raaOctaveKernel::csm_uiOCScreenInfo);
+					pM->add(sName);
+					pM->add(m_pController->getScreen(sName)->screenVert(raaOctaveControllerTypes::csm_uiBL));
+					pM->add(m_pController->getScreen(sName)->screenVert(raaOctaveControllerTypes::csm_uiBR));
+					pM->add(m_pController->getScreen(sName)->screenVert(raaOctaveControllerTypes::csm_uiTL));
+					pM->add(m_pController->getScreen(sName)->screenVert(raaOctaveControllerTypes::csm_uiTR));
+					pM->add(m_pController->getScreen(sName)->normal());
+					pMsg->tcpThread()->write(pM);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCControllerRequestScreenNames:
+				{
+					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+					pM->add(raaOctaveKernel::csm_uiOCControllerRequestScreenNames);
+					pM->add((unsigned int)m_pController->getScreens().size());
+					for (raaStringScreenMap::const_iterator it = m_pController->getScreens().begin(); it != m_pController->getScreens().end(); it++) pM->add(it->first);
+					pMsg->tcpThread()->write(pM);
+				}
+				break;
 			}
 		}
 		break;
+		case raaNet::csm_usTcpMsgInfo:
+		{
+			switch(pMsg->asUInt(2))
+			{
+				case raaOctaveKernel::csm_uiOCViewpointUpdatePhysical:
+				{
+					osg::Matrixf m=pMsg->asMatrix(3);
+					m_pController->viewpoint()->setPhysicalMatrix(m);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCViewpointUpdateVirtual:
+				{
+					osg::Matrixf m = pMsg->asMatrix(3);
+					m_pController->viewpoint()->setVirtualMatrix(m);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCScreenVertex:
+				{
+					std::string sName = pMsg->asString(4);
+					if (sName.length() && m_pController->getScreen(sName))
+					{
+						osg::Vec3f v = pMsg->asVector(5);
+
+						switch (pMsg->asUInt(3))
+						{
+							case raaOctaveKernel::csm_uiOCBL:
+								m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiBL, v);
+								break;
+							case raaOctaveKernel::csm_uiOCBR:
+								m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiBR, v);
+								break;
+							case raaOctaveKernel::csm_uiOCTL:
+								m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiTL, v);
+								break;
+							case raaOctaveKernel::csm_uiOCTR:
+								m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiTR, v);
+								break;
+						}
+					}
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCScreenVertexAll:
+				{
+					std::string sName = pMsg->asString(3);
+					if (sName.length() && m_pController->getScreen(sName))
+					{
+						m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiBL, pMsg->asVector(4));
+						m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiBR, pMsg->asVector(5));
+						m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiTL, pMsg->asVector(6));
+						m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiTR, pMsg->asVector(7));
+					}
+				}
+				break;
+
+			}
+		}
 	}
-
-
 }
+
+
 
 void raaOctaveControl::tcpState(raaTcpThread* pThread, unsigned uiState)
 {

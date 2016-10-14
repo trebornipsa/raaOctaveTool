@@ -24,7 +24,7 @@ protected:
 	virtual void originChanged(raaOctaveController *pController)=0;
 	virtual void screenAdded(raaOctaveController *pController, raaScreen *pScreen)=0;
 	virtual void screenRemoved(raaOctaveController *pController, raaScreen *pScreen)=0;
-	virtual void screenUpdated(raaOctaveController *pController, raaScreen *pScreen) = 0;
+//	virtual void screenUpdated(raaOctaveController *pController, raaScreen *pScreen) = 0;
 };
 
 typedef std::list<raaOctaveControllerListener*> raaOctaveControllerListeners;
@@ -48,7 +48,7 @@ public:
 	raaStringScreenList getScreenNames();
 	raaScreen* getScreen(std::string sName);
 
-	const raaStringScreenMap& getScreens() const;
+	const raaStringScreenMap& getScreens();
 
 protected:
 	std::string m_sName;

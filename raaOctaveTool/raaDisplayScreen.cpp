@@ -11,9 +11,8 @@
 #include <iostream>
 #include <osg/FrameBufferObject>
 
-raaDisplayScreen::raaDisplayScreen(raaScreen *pScreen, osg::Group *pScene, raaOctaveViewPoint *pViewpoint)
+raaDisplayScreen::raaDisplayScreen(osg::Group *pVirtualScene, std::string sName, osg::Vec3f vbl, osg::Vec3f vbr, osg::Vec3f vtl, osg::Vec3f vtr, osg::Vec3f vNormal, osg::Matrixf mPersp)
 {
-	m_pScreen = pScreen;
 	m_pRoot = new osg::Group();
 	m_pRoot->ref();
 
@@ -24,40 +23,20 @@ raaDisplayScreen::raaDisplayScreen(raaScreen *pScreen, osg::Group *pScene, raaOc
 	m_pGeom = new osg::Geometry();
 	m_vScreenRotation.set(0.0f, 0.0f, 1.0f);
 
-	if(pScreen)
-	{
-		m_pVerts->push_back(pScreen->screenVert(raaOctaveControllerTypes::csm_uiBL));
-		m_pTexCoords->push_back(osg::Vec2(0.0f, 0.0f));
-		m_pVerts->push_back(pScreen->screenVert(raaOctaveControllerTypes::csm_uiBR));
-		m_pTexCoords->push_back(osg::Vec2(1.0f, 0.0f));
-		m_pVerts->push_back(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTR));
-		m_pTexCoords->push_back(osg::Vec2(1.0f, 1.0f));
-		m_pVerts->push_back(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL));
-		m_pTexCoords->push_back(osg::Vec2(0.0f, 1.0f));
+	m_pVerts->push_back(vbl);
+	m_pTexCoords->push_back(osg::Vec2(0.0f, 0.0f));
+	m_pVerts->push_back(vbr);
+	m_pTexCoords->push_back(osg::Vec2(1.0f, 0.0f));
+	m_pVerts->push_back(vtr);
+	m_pTexCoords->push_back(osg::Vec2(1.0f, 1.0f));
+	m_pVerts->push_back(vtl);
+	m_pTexCoords->push_back(osg::Vec2(0.0f, 1.0f));
 
-		m_pNorms->push_back(pScreen->normal());
-		m_pNorms->push_back(pScreen->normal());
-		m_pNorms->push_back(pScreen->normal());
-		m_pNorms->push_back(pScreen->normal());
-		m_pRoot->setName(pScreen->name());
-	}
-	else
-	{
-		m_pVerts->push_back(osg::Vec3f(-1.0f, 0.0f, 0.0f));
-		m_pTexCoords->push_back(osg::Vec2(0.0f, 0.0f));
-		m_pVerts->push_back(osg::Vec3f(1.0f, 0.0f, 0.0f));
-		m_pTexCoords->push_back(osg::Vec2(1.0f, 0.0f));
-		m_pVerts->push_back(osg::Vec3f(1.0f, 0.0f, 1.0f));
-		m_pTexCoords->push_back(osg::Vec2(1.0f, 1.0f));
-		m_pVerts->push_back(osg::Vec3f(-1.0f, 0.0f, 1.0f));
-		m_pTexCoords->push_back(osg::Vec2(0.0f, 1.0f));
-
-		m_pNorms->push_back(osg::Vec3f(0.0f, 1.0f, 0.0f));
-		m_pNorms->push_back(osg::Vec3f(0.0f, 1.0f, 0.0f));
-		m_pNorms->push_back(osg::Vec3f(0.0f, 1.0f, 0.0f));
-		m_pNorms->push_back(osg::Vec3f(0.0f, 1.0f, 0.0f));
-		m_pRoot->setName("default");
-	}
+	m_pNorms->push_back(vNormal);
+	m_pNorms->push_back(vNormal);
+	m_pNorms->push_back(vNormal);
+	m_pNorms->push_back(vNormal);
+	m_pRoot->setName(sName);
 
 	m_pTexture = new osg::Texture2D();
 	m_pTexture->setTextureSize(512, 512);
@@ -85,7 +64,7 @@ raaDisplayScreen::raaDisplayScreen(raaScreen *pScreen, osg::Group *pScene, raaOc
 	m_pCameraView->setDataVariance(osg::Object::DYNAMIC);
 
 
-	const osg::BoundingSphere& bs = pScene->getBound();
+	const osg::BoundingSphere& bs = pVirtualScene->getBound();
 	float fZNear = 1.0f*bs.radius();
 	float fZFar = 3.0f*bs.radius();
 
@@ -97,18 +76,15 @@ raaDisplayScreen::raaDisplayScreen(raaScreen *pScreen, osg::Group *pScene, raaOc
 
 	m_pCamera->setViewport(0, 0, 512, 512);
 	m_pCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
-	m_pCamera->setProjectionMatrix(pScreen->screenProjection());
-	m_pCamera->setViewMatrix(pViewpoint->virtualMatrix());
+	m_pCamera->setProjectionMatrix(mPersp);
+//	m_pCamera->setViewMatrix(pViewpoint->virtualMatrix());
 	m_pCamera->setRenderOrder(osg::Camera::PRE_RENDER);
 	m_pCamera->setClearColor(osg::Vec4f(0.0f, 0.0f, 0.0f, 0.7f));
 	m_pCamera->setRenderTargetImplementation(osg::Camera::RenderTargetImplementation::FRAME_BUFFER_OBJECT);
 	m_pCamera->attach(osg::Camera::COLOR_BUFFER, m_pTexture);
 	m_pCamera->addChild(m_pCameraView);
-	m_pCameraView->addChild(pScene);
+	m_pCameraView->addChild(pVirtualScene);
 	m_pRoot->addChild(m_pCamera);
-
-	pViewpoint->addListener(this);
-	pScreen->setListener(this);
 }
 
 raaDisplayScreen::~raaDisplayScreen()
@@ -116,6 +92,38 @@ raaDisplayScreen::~raaDisplayScreen()
 	if (m_pRoot) m_pRoot->unref();
 }
 
+void raaDisplayScreen::screenChanged(osg::Vec3f vbl, osg::Vec3f vbr, osg::Vec3f vtl, osg::Vec3f vtr, osg::Vec3f vn)
+{
+	if (m_pVerts && m_pTexCoords && m_pNorms && m_pGeom)
+	{
+		m_pVerts->clear();
+		m_pTexCoords->clear();
+		m_pNorms->clear();
+
+		m_pVerts->push_back(vbl);
+		m_pTexCoords->push_back(osg::Vec2(0.0f, 0.0f));
+		m_pVerts->push_back(vbr);
+		m_pTexCoords->push_back(osg::Vec2(1.0f, 0.0f));
+		m_pVerts->push_back(vtr);
+		m_pTexCoords->push_back(osg::Vec2(1.0f, 1.0f));
+		m_pVerts->push_back(vtl);
+		m_pTexCoords->push_back(osg::Vec2(0.0f, 1.0f));
+
+		m_pNorms->push_back(vn);
+		m_pNorms->push_back(vn);
+		m_pNorms->push_back(vn);
+		m_pNorms->push_back(vn);
+//		m_pRoot->setName(pScreen->name());
+
+		m_pGeom->dirtyDisplayList();
+	}
+}
+
+void raaDisplayScreen::screenMatrixChanged(osg::Matrixf& m)
+{
+	m_pCamera->setProjectionMatrix(m);
+}
+/*
 void raaDisplayScreen::nameChanged(raaScreen* pScreen)
 {
 	if (m_pRoot) m_pRoot->setName(pScreen->name());
@@ -153,17 +161,14 @@ void raaDisplayScreen::screenMatrixChanged(raaScreen* pScreen)
 {
 	m_pCamera->setProjectionMatrix(pScreen->screenProjection());
 }
+*/
 
 osg::Group* raaDisplayScreen::root()
 {
 	return m_pRoot;
 }
 
-void raaDisplayScreen::physicalViewpointChanged(raaOctaveViewPoint* pViewpoint)
+void raaDisplayScreen::setViewMatrix(osg::Matrixf& m)
 {
-}
-
-void raaDisplayScreen::virtualViewpointChanged(raaOctaveViewPoint* pViewpoint)
-{
-	m_pCamera->setViewMatrix(pViewpoint->virtualMatrix());
+	if (m_pCamera) m_pCamera->setViewMatrix(m);
 }
