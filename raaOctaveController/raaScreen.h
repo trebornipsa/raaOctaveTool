@@ -48,6 +48,7 @@ protected:
 	void setName(std::string sName);
 	void calcProjectionMatrix(raaOctaveViewPoint *pViewpoint);
 	static void initialise();
+	void updateScreen(raaOctaveViewPoint *pViewpoint);
 
 	osg::Vec3f m_vScreen[4];
 	osg::Vec3f m_vEdgeNorm[4];
@@ -69,5 +70,7 @@ protected:
 	unsigned int m_uiScreenUpdateCount;
 	unsigned int m_uiCurrentScreenUpdate;
 	unsigned int m_uiCurrentViewpointUpdate;
+
+	raaOctaveViewPoint *m_pLastViewpoint;
 };
 

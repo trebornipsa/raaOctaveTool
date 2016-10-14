@@ -15,6 +15,8 @@
 
 raaOctaveToolInterface::raaOctaveToolInterface()
 {
+	m_bScreenUpdate = true;
+	m_pCurrentScreen = 0;
 	m_pPhysicalViewpoint = 0;
 	for(int i=0;i<8;i++) m_abPhysical[i] = m_abVirtual[i] = false;
 	m_abPhysical[csm_uiTranslate] = m_abVirtual[csm_uiTranslate] = true;
@@ -102,6 +104,29 @@ raaOctaveToolInterface::raaOctaveToolInterface()
 	connect(virtual_zdown_button, SIGNAL(pressed()), SLOT(virZDownPressed()));
 	connect(virtual_zdown_button, SIGNAL(released()), SLOT(virZDownReleased()));
 	connect(phy_lock_camera_check, SIGNAL(stateChanged(int)), SLOT(lockCamera(int)));
+	connect(toolBox, SIGNAL(currentChanged(int)), SLOT(currentToolboxChanged(int)));
+	connect(screen_combo, SIGNAL(currentIndexChanged(const QString&)), SLOT(currentScreenChanged(const QString&)));
+
+	connect(screen_continual_update_check, SIGNAL(stateChanged(int)), SLOT(screenContUpdate(int)));
+	connect(screen_updtae_button, SIGNAL(pressed()), SLOT(screenAllChanged()));
+
+
+	connect(screen_bl_x_spin, SIGNAL(valueChanged(double)), SLOT(screenBLChanged(double)));
+	connect(screen_bl_y_spin, SIGNAL(valueChanged(double)), SLOT(screenBLChanged(double)));
+	connect(screen_bl_z_spin, SIGNAL(valueChanged(double)), SLOT(screenBLChanged(double)));
+
+	connect(screen_br_x_spin, SIGNAL(valueChanged(double)), SLOT(screenBRChanged(double)));
+	connect(screen_br_y_spin, SIGNAL(valueChanged(double)), SLOT(screenBRChanged(double)));
+	connect(screen_br_z_spin, SIGNAL(valueChanged(double)), SLOT(screenBRChanged(double)));
+
+	connect(screen_tl_x_spin, SIGNAL(valueChanged(double)), SLOT(screenTLChanged(double)));
+	connect(screen_tl_y_spin, SIGNAL(valueChanged(double)), SLOT(screenTLChanged(double)));
+	connect(screen_tl_z_spin, SIGNAL(valueChanged(double)), SLOT(screenTLChanged(double)));
+
+	connect(screen_tr_x_spin, SIGNAL(valueChanged(double)), SLOT(screenTRChanged(double)));
+	connect(screen_tr_y_spin, SIGNAL(valueChanged(double)), SLOT(screenTRChanged(double)));
+	connect(screen_tr_z_spin, SIGNAL(valueChanged(double)), SLOT(screenTRChanged(double)));
+
 
 	m_pPhysicalViewpoint = new osg::MatrixTransform();
 	osg::Geode *pVPGeode = new osg::Geode();
@@ -510,6 +535,93 @@ void raaOctaveToolInterface::lockCamera(int iVal)
 	}
 }
 
+void raaOctaveToolInterface::currentToolboxChanged(int iVal)
+{
+	if(iVal==1)
+	{
+		raaStringScreenList l=m_pController->getScreenNames();
+
+		for (raaStringScreenList::iterator it = l.begin(); it != l.end(); it++)
+			screen_combo->addItem(QString((*it).c_str()));
+	}
+}
+
+void raaOctaveToolInterface::currentScreenChanged(const QString& s)
+{
+	m_sCurrentScreen = s.toStdString();
+
+	if(m_sCurrentScreen.length())
+	{
+		m_pCurrentScreen = m_pController->getScreen(m_sCurrentScreen);
+		updateScreenInfo(m_pCurrentScreen);
+	}
+	else
+		updateScreenInfo(0);
+}
+
+void raaOctaveToolInterface::screenBLChanged(double)
+{
+	if (m_bScreenUpdate && m_pCurrentScreen)
+	{
+		osg::Vec3f v;
+		v.set(screen_bl_x_spin->value(), screen_bl_y_spin->value(), screen_bl_z_spin->value());
+		m_pCurrentScreen->setScreenVert(raaOctaveControllerTypes::csm_uiBL, v);
+	}
+}
+
+void raaOctaveToolInterface::screenBRChanged(double)
+{
+	if (m_bScreenUpdate && m_pCurrentScreen)
+	{
+		osg::Vec3f v;
+		v.set(screen_br_x_spin->value(), screen_br_y_spin->value(), screen_br_z_spin->value());
+		m_pCurrentScreen->setScreenVert(raaOctaveControllerTypes::csm_uiBR, v);
+	}
+}
+
+void raaOctaveToolInterface::screenTLChanged(double)
+{
+	if (m_bScreenUpdate && m_pCurrentScreen)
+	{
+		osg::Vec3f v;
+		v.set(screen_tl_x_spin->value(), screen_tl_y_spin->value(), screen_tl_z_spin->value());
+		m_pCurrentScreen->setScreenVert(raaOctaveControllerTypes::csm_uiTL, v);
+	}
+}
+
+void raaOctaveToolInterface::screenTRChanged(double)
+{
+	if(m_bScreenUpdate && m_pCurrentScreen)
+	{
+		osg::Vec3f v;
+		v.set(screen_tr_x_spin->value(), screen_tr_y_spin->value(), screen_tr_z_spin->value());
+		m_pCurrentScreen->setScreenVert(raaOctaveControllerTypes::csm_uiTR, v);
+	}
+}
+
+void raaOctaveToolInterface::screenAllChanged()
+{
+	if (m_pCurrentScreen)
+	{
+		osg::Vec3f vbl, vbr, vtl, vtr;
+
+		vbl.set(screen_bl_x_spin->value(), screen_bl_y_spin->value(), screen_bl_z_spin->value());
+		vbr.set(screen_br_x_spin->value(), screen_br_y_spin->value(), screen_br_z_spin->value());
+		vtl.set(screen_tl_x_spin->value(), screen_tl_y_spin->value(), screen_tl_z_spin->value());
+		vtr.set(screen_tr_x_spin->value(), screen_tr_y_spin->value(), screen_tr_z_spin->value());
+
+		m_pCurrentScreen->setScreenVerts(vbl, vbr, vtl, vtr);
+	}
+}
+
+void raaOctaveToolInterface::screenContUpdate(int iVal)
+{
+	if (iVal == Qt::Checked)
+		m_bScreenUpdate = true;
+	else
+		m_bScreenUpdate = false;
+}
+
 raaOctaveToolInterface::~raaOctaveToolInterface()
 {
 }
@@ -597,4 +709,52 @@ void raaOctaveToolInterface::physicalViewpointChanged(raaOctaveViewPoint* pViewp
 
 void raaOctaveToolInterface::virtualViewpointChanged(raaOctaveViewPoint* pViewpoint)
 {
+}
+
+void raaOctaveToolInterface::updateScreenInfo(raaScreen* pScreen)
+{
+	bool bSU = m_bScreenUpdate;
+	m_bScreenUpdate = false;
+	if(pScreen)
+	{
+		osg::Vec3f vbl = pScreen->screenVert(raaOctaveControllerTypes::csm_uiBL);
+		osg::Vec3f vbr = pScreen->screenVert(raaOctaveControllerTypes::csm_uiBR);
+		osg::Vec3f vtl = pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL);
+		osg::Vec3f vtr = pScreen->screenVert(raaOctaveControllerTypes::csm_uiTR);
+
+		screen_bl_x_spin->setValue(vbl[0]);
+		screen_bl_y_spin->setValue(vbl[1]);
+		screen_bl_z_spin->setValue(vbl[2]);
+
+		screen_br_x_spin->setValue(vbr[0]);
+		screen_br_y_spin->setValue(vbr[1]);
+		screen_br_z_spin->setValue(vbr[2]);
+
+		screen_tl_x_spin->setValue(vtl[0]);
+		screen_tl_y_spin->setValue(vtl[1]);
+		screen_tl_z_spin->setValue(vtl[2]);
+
+		screen_tr_x_spin->setValue(vtr[0]);
+		screen_tr_y_spin->setValue(vtr[1]);
+		screen_tr_z_spin->setValue(vtr[2]);
+	}
+	else
+	{
+		screen_bl_x_spin->setValue(0.0f);
+		screen_bl_y_spin->setValue(0.0f);
+		screen_bl_z_spin->setValue(0.0f);
+
+		screen_br_x_spin->setValue(0.0f);
+		screen_br_y_spin->setValue(0.0f);
+		screen_br_z_spin->setValue(0.0f);
+
+		screen_tl_x_spin->setValue(0.0f);
+		screen_tl_y_spin->setValue(0.0f);
+		screen_tl_z_spin->setValue(0.0f);
+
+		screen_tr_x_spin->setValue(0.0f);
+		screen_tr_y_spin->setValue(0.0f);
+		screen_tr_z_spin->setValue(0.0f);
+	}
+	m_bScreenUpdate = bSU;
 }

@@ -67,6 +67,15 @@ public slots:
 	void virZDownReleased();
 	void timerUpdate();
 	void lockCamera(int);
+	void currentToolboxChanged(int);
+	void currentScreenChanged(const QString&);
+	void screenBLChanged(double);
+	void screenBRChanged(double);
+	void screenTLChanged(double);
+	void screenTRChanged(double);
+	void screenAllChanged();
+	void screenContUpdate(int);
+
 protected:
 	raaOctaveController *m_pController;
 
@@ -79,6 +88,7 @@ protected:
 	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void physicalViewpointChanged(raaOctaveViewPoint* pViewpoint);
 	virtual void virtualViewpointChanged(raaOctaveViewPoint* pViewpoint);
+	void updateScreenInfo(raaScreen *pScreen);
 
 	raaDisplayScreens m_mDisplays;
 
@@ -95,5 +105,8 @@ protected:
 	bool m_bLockCamera;
 
 	osgGA::CameraManipulator *m_pManpulator;
+	std::string m_sCurrentScreen;
+	raaScreen *m_pCurrentScreen;
+	bool m_bScreenUpdate;
 };
 

@@ -107,3 +107,16 @@ void raaOctaveController::update()
 {
 
 }
+
+raaStringScreenList raaOctaveController::getScreenNames()
+{
+	raaStringScreenList l;
+	for (raaStringScreenMap::iterator it = m_mScreens.begin(); it != m_mScreens.end(); it++) l.push_back(it->first);
+	return l;
+}
+
+raaScreen* raaOctaveController::getScreen(std::string sName)
+{
+	if (sName.length() && m_mScreens.find(sName) != m_mScreens.end()) return m_mScreens[sName];
+	return 0;
+}

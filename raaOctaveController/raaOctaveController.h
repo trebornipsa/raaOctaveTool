@@ -41,6 +41,9 @@ public:
 
 	void update();
 
+	raaStringScreenList getScreenNames();
+	raaScreen* getScreen(std::string sName);
+
 protected:
 	std::string m_sName;
 	osg::Vec3f m_vOrigin;

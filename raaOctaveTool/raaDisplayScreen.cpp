@@ -123,7 +123,30 @@ void raaDisplayScreen::nameChanged(raaScreen* pScreen)
 
 void raaDisplayScreen::screenChanged(raaScreen* pScreen)
 {
-	m_pCamera->setProjectionMatrix(pScreen->screenProjection());
+	if (m_pVerts && m_pTexCoords && m_pNorms && m_pGeom)
+	{
+		m_pVerts->clear();
+		m_pTexCoords->clear();
+		m_pNorms->clear();
+
+		m_pVerts->push_back(pScreen->screenVert(raaOctaveControllerTypes::csm_uiBL));
+		m_pTexCoords->push_back(osg::Vec2(0.0f, 0.0f));
+		m_pVerts->push_back(pScreen->screenVert(raaOctaveControllerTypes::csm_uiBR));
+		m_pTexCoords->push_back(osg::Vec2(1.0f, 0.0f));
+		m_pVerts->push_back(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTR));
+		m_pTexCoords->push_back(osg::Vec2(1.0f, 1.0f));
+		m_pVerts->push_back(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL));
+		m_pTexCoords->push_back(osg::Vec2(0.0f, 1.0f));
+
+		m_pNorms->push_back(pScreen->normal());
+		m_pNorms->push_back(pScreen->normal());
+		m_pNorms->push_back(pScreen->normal());
+		m_pNorms->push_back(pScreen->normal());
+		m_pRoot->setName(pScreen->name());
+
+		m_pGeom->dirtyDisplayList();
+	}
+//	m_pCamera->setProjectionMatrix(pScreen->screenProjection());
 }
 
 void raaDisplayScreen::screenMatrixChanged(raaScreen* pScreen)

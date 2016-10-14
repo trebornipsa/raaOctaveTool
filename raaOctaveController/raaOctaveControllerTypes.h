@@ -2,12 +2,14 @@
 
 #include <string>
 #include <map>
+#include <list>
 
 #include "raaOctaveControllerDefs.h"
 
 class raaScreen;
 
 typedef std::map<std::string, raaScreen*>raaStringScreenMap;
+typedef std::list<std::string>raaStringScreenList;
 
 class RAAOCTAVECONTROLLER_DLL_DEF raaOctaveControllerTypes
 {
