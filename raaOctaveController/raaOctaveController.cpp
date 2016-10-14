@@ -25,7 +25,9 @@ raaOctaveControllerListener::~raaOctaveControllerListener()
 
 raaOctaveController::raaOctaveController(raaOctaveControllerListener *pListener)
 {
+	m_bConfig = false;
 	m_pListener = pListener;
+
 }
 
 raaOctaveController::~raaOctaveController()
@@ -85,7 +87,13 @@ void raaOctaveController::readConfig(QString sConfig)
 				}
 			}
 		}
+		m_bConfig = true;
 	}
+}
+
+bool raaOctaveController::hasConfig()
+{
+	return m_bConfig;
 }
 
 void raaOctaveController::setListener(raaOctaveControllerListener* pListener)
@@ -119,4 +127,9 @@ raaScreen* raaOctaveController::getScreen(std::string sName)
 {
 	if (sName.length() && m_mScreens.find(sName) != m_mScreens.end()) return m_mScreens[sName];
 	return 0;
+}
+
+raaStringScreenMap& raaOctaveController::getScreens() const
+{
+	return m_mScreens;
 }

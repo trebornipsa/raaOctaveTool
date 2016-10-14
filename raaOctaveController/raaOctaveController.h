@@ -33,6 +33,7 @@ public:
 	virtual ~raaOctaveController();
 
 	void readConfig(QString sConfig);
+	bool hasConfig();
 
 	void setListener(raaOctaveControllerListener *pListener);
 	void removeListener(raaOctaveControllerListener *pListener);
@@ -44,6 +45,8 @@ public:
 	raaStringScreenList getScreenNames();
 	raaScreen* getScreen(std::string sName);
 
+	raaStringScreenMap& getScreens() const;
+
 protected:
 	std::string m_sName;
 	osg::Vec3f m_vOrigin;
@@ -51,5 +54,6 @@ protected:
 	raaStringScreenMap m_mScreens;
 	raaOctaveControllerListener *m_pListener;
 	raaOctaveViewPoint m_ViewPoint;
+	bool m_bConfig;
 };
 
