@@ -9,6 +9,10 @@
 #include <raaNetwork/raaUdpThread.h>
 #include <raaNetwork/raaNetworkTypes.h>
 
+class raaConnectionRecord;
+
+typedef std::map<raaNet::raaTcpThread*, raaConnectionRecord*> raaConnectionRecordMap;
+
 class raaOctaveControl: public QObject
 {
 	Q_OBJECT
@@ -34,5 +38,6 @@ protected:
 
 	unsigned int m_uiTcpCounter;
 
+	raaConnectionRecordMap m_mConnections;
 };
 

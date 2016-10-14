@@ -148,6 +148,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="raaConnectionRecord.h" />
     <CustomBuild Include="raaOctaveControl.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">raaMOC %(FileName)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</Outputs>
@@ -156,6 +157,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="raaConnectionRecord.cpp" />
     <ClCompile Include="raaNetworkedOctaveController.cpp" />
     <ClCompile Include="raaOctaveControl.cpp" />
     <ClCompile Include="stdafx.cpp">

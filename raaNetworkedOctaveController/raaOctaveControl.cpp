@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "raaConnectionRecord.h"
 #include "raaOctaveControl.h"
 #include "raaOctaveControl.moc"
 
@@ -37,6 +38,11 @@ void raaOctaveControl::tcpState(raaNet::raaTcpThread* pThread, unsigned uiState)
 	{
 	case raaNet::csm_uiUnconnectedState:
 		msg += " -> StateChanged::UnconnectedState";
+		if (m_mConnections.find(pThread) != m_mConnections.end())
+		{
+			delete m_mConnections[pThread];
+			m_mConnections.erase(pThread);
+		}
 		break;
 	case raaNet::csm_uiHostLookupState:
 		msg += " -> StateChanged::HostLookupState";
@@ -49,6 +55,9 @@ void raaOctaveControl::tcpState(raaNet::raaTcpThread* pThread, unsigned uiState)
 		break;
 	case raaNet::csm_uiNameConnectedState:
 		msg += " -> StateChanged::NameConnectedState";
+		m_mConnections[pThread] = new raaConnectionRecord(pThread->name().toStdString());
+		m_mConnections[pThread]->setTcpThread(pThread);
+
 		break;
 	case raaNet::csm_uiBoundState:
 		msg += " -> StateChanged::BoundState";
