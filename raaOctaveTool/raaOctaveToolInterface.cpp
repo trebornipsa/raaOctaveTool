@@ -558,15 +558,14 @@ void raaOctaveToolInterface::updateView()
 {
 	osg::Matrix mRot, mTrans; 
 
-	mRot.set(m_avPhysical[csm_uiRight][0], m_avPhysical[csm_uiDir][0], m_avPhysical[csm_uiUp][0], 0.0f,m_avPhysical[csm_uiRight][1], m_avPhysical[csm_uiDir][1], m_avPhysical[csm_uiUp][1], 0.0f,m_avPhysical[csm_uiRight][2], m_avPhysical[csm_uiDir][2], m_avPhysical[csm_uiUp][2], 0.0f,0.0f, 0.0f, 0.0f, 1.0f);
+	mRot.set(m_avPhysical[csm_uiRight][0], m_avPhysical[csm_uiRight][1], m_avPhysical[csm_uiRight][2], 0.0f,m_avPhysical[csm_uiDir][0], m_avPhysical[csm_uiDir][1], m_avPhysical[csm_uiDir][2], 0.0f,m_avPhysical[csm_uiUp][0], m_avPhysical[csm_uiUp][1], m_avPhysical[csm_uiUp][2], 0.0f,0.0f, 0.0f, 0.0f, 1.0f);
 	mTrans.makeTranslate(m_avPhysical[csm_uiPos]);
 	m_pController->viewpoint()->setPhysicalMatrix(mRot*mTrans);
-//todo - fix physical view with respect to panning
 	if (m_pPhysicalViewpoint)m_pPhysicalViewpoint->setMatrix(mRot*mTrans);
+
 	if (m_bLockCamera) gl_widget->getView(0)->getCamera()->setViewMatrix(mRot*mTrans);
 
-
-	mRot.set(m_avVirtual[csm_uiRight][0], m_avVirtual[csm_uiDir][0], m_avVirtual[csm_uiUp][0], 0.0f, m_avVirtual[csm_uiRight][1], m_avVirtual[csm_uiDir][1], m_avVirtual[csm_uiUp][1], 0.0f, m_avVirtual[csm_uiRight][2], m_avVirtual[csm_uiDir][2], m_avVirtual[csm_uiUp][2], 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	mRot.set(m_avVirtual[csm_uiRight][0], m_avVirtual[csm_uiRight][1], m_avVirtual[csm_uiRight][2], 0.0f, m_avVirtual[csm_uiDir][0], m_avVirtual[csm_uiDir][1], m_avVirtual[csm_uiDir][2], 0.0f, m_avVirtual[csm_uiUp][0], m_avVirtual[csm_uiUp][1], m_avVirtual[csm_uiUp][2], 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 	mTrans.makeTranslate(m_avVirtual[csm_uiPos]);
 	m_pController->viewpoint()->setVirtualMatrix(mRot*mTrans);
 }
