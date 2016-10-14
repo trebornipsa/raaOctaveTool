@@ -36,6 +36,8 @@ public:
 
 	std::string name();
 	osg::Vec3f screenVert(unsigned int uiVert);
+	void setScreenVert(unsigned int uiVert, osg::Vec3f v);
+	void setScreenVerts(osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTL, osg::Vec3f vTR);
 	osg::Vec3f normal();
 	osg::Matrixf screenProjection();
 
@@ -49,6 +51,8 @@ protected:
 
 	osg::Vec3f m_vScreen[4];
 	osg::Vec3f m_vEdgeNorm[4];
+	osg::Vec3f m_vScreenUp;
+	osg::Vec3f m_vScreenRight;
 	float m_fNear;
 	float m_fFar;
 
