@@ -106,12 +106,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;RAANETWORK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Qt\Qt5.6.0\5.6\msvc2015_64\include; $(raaInst)\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QTDIR)\include; $(raaInst)\include; $(QTDIR)\include\QtOpenGL; $(QTDIR)\include\QtCore</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib; $(raaInst)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib; $(raaInst)\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies); Qt5Cored.lib; Qt5Networkd.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>

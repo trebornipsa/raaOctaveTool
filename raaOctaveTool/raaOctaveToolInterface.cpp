@@ -6,6 +6,9 @@
 #include <osg/ShapeDrawable>
 
 #include <raaOctaveController/raaOctaveController.h>
+#include <raaNetwork/raaTcpMsg.h>
+#include <raaNetwork/raaTcpThread.h>
+
 
 #include "raaDisplayScreen.h"
 #include "raaOctaveToolInterface.h"
@@ -32,6 +35,9 @@ raaOctaveToolInterface::raaOctaveToolInterface()
 	m_avVirtual[csm_uiDir] = osg::Vec3f(0.0f, 1.0f, 0.0f);
 
 	setupUi(this);
+
+	m_pNetwork = new raaNet::raaNetwork(0, this);
+	m_pNetwork->createTcpClient("raaOctaveTool", "localhost", 65204);
 
 	gl_widget->addToScene(0, makeGrid(10.0f, 10.0f, 10, 10));
 	m_pVirtualScene = new osg::Group();
@@ -73,6 +79,9 @@ raaOctaveToolInterface::raaOctaveToolInterface()
 
 	updateView();
 	m_bLockCamera = false;
+
+	connect(m_pNetwork, SIGNAL(tcpRead(raaTcpMsg*)), SLOT(tcpRead(raaTcpMsg*)));
+	connect(m_pNetwork, SIGNAL(tcpState(raaTcpThread*, unsigned int)), SLOT(tcpState(raaTcpThread*, unsigned int)));
 
 	connect(physical_translation_radio, SIGNAL(clicked(bool)), SLOT(phyTrans(bool)));
 	connect(physical_rotation_radio, SIGNAL(clicked(bool)), SLOT(phyRot(bool)));
@@ -622,8 +631,70 @@ void raaOctaveToolInterface::screenContUpdate(int iVal)
 		m_bScreenUpdate = false;
 }
 
+void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg*)
+{
+}
+
+void raaOctaveToolInterface::tcpState(raaNet::raaTcpThread* pThread, unsigned uiState)
+{
+	QString msg;
+	msg += pThread->name();
+	switch (uiState)
+	{
+	case raaNet::csm_uiUnconnectedState:
+		msg += " -> StateChanged::UnconnectedState";
+		break;
+	case raaNet::csm_uiHostLookupState:
+		msg += " -> StateChanged::HostLookupState";
+		break;
+	case raaNet::csm_uiConnectingState:
+		msg += " -> StateChanged::ConnectingState";
+		break;
+	case raaNet::csm_uiConnectedState:
+		msg += " -> StateChanged::ConnectedState";
+		break;
+	case raaNet::csm_uiNameConnectedState:
+		msg += " -> StateChanged::NameConnectedState";
+		if (pThread->name() == "raaOctaveTool")
+		{
+			m_pTcpClient = pThread;
+		}
+		break;
+	case raaNet::csm_uiBoundState:
+		msg += " -> StateChanged::BoundState";
+		break;
+	case raaNet::csm_uiClosingState:
+		msg += " -> StateChanged::ClosingState";
+		if (pThread->name() == "clientInterface")
+		{
+			m_pTcpClient = 0;
+		}
+		break;
+	case raaNet::csm_uiListeningState:
+		msg += " -> StateChanged::ListeningState";
+		break;
+	default:
+		msg += " -> StateChanged::UnknownState";
+		break;
+	}
+	std::cout << msg.toStdString() << std::endl;
+}
+
+void raaOctaveToolInterface::udpRead(raaNet::raaTcpMsg*)
+{
+}
+
+void raaOctaveToolInterface::udpState(raaNet::raaTcpThread*, unsigned)
+{
+}
+
 raaOctaveToolInterface::~raaOctaveToolInterface()
 {
+	if(m_pNetwork)
+	{
+		m_pNetwork->closeTcpConnection("raaOctaveTool");
+//		delete m_pNetwork;
+	}
 }
 
 osg::Geode* raaOctaveToolInterface::makeGrid(float fWidth, float fDepth, unsigned uiWidthSegs, unsigned uiDepthSegs)

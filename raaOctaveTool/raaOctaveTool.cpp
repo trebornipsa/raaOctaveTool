@@ -10,6 +10,8 @@ int main(int argc, char* argv[])
 {
 	QApplication a(argc, argv);
 
+//	Sleep(20000);
+
 	raaOctaveToolInterface *pInterface = new raaOctaveToolInterface();
 
 	pInterface->show();

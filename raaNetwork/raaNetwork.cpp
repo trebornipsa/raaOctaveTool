@@ -292,6 +292,7 @@ void raaNet::raaNetwork::raaNetwork::customEvent(QEvent* pEvent)
 
 void raaNet::raaNetwork::raaNetwork::incomingConnection(qintptr piSocketDescriptor)
 {
+	std::cout << " incoming connection" << std::endl;
 	raaTcpThread *pThread = new raaTcpThread(this, piSocketDescriptor, this); 
 	connect(pThread, SIGNAL(finished()), pThread, SLOT(deleteLater()));
 	connect(pThread, SIGNAL(stateChanged(raaTcpThread*, unsigned int)), SLOT(tcpStateChanged(raaTcpThread*, unsigned int)));

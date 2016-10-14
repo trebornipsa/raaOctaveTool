@@ -8,11 +8,15 @@
 #include "raaOctaveController/raaOctaveController.h"
 #include "raaOctaveController/raaOctaveViewPoint.h"
 
+#include <raaNetwork/raaNetwork.h>
+
 #include "raaOctaveToolInterfaceQt.h"
 
 class raaDisplayScreen;
 
 typedef std::map<std::string, raaDisplayScreen*>raaDisplayScreens;
+
+using namespace raaNet;
 
 class raaOctaveToolInterface: public QMainWindow, public Ui::raaOctaveToolInterfaceQt, public raaOctaveControllerListener, public raaOctaveViewPointListener
 {
@@ -76,6 +80,11 @@ public slots:
 	void screenAllChanged();
 	void screenContUpdate(int);
 
+	void tcpRead(raaTcpMsg*);
+	void tcpState(raaTcpThread*, unsigned int);
+	void udpRead(raaTcpMsg*);
+	void udpState(raaTcpThread*, unsigned int);
+
 protected:
 	raaOctaveController *m_pController;
 
@@ -108,5 +117,9 @@ protected:
 	std::string m_sCurrentScreen;
 	raaScreen *m_pCurrentScreen;
 	bool m_bScreenUpdate;
+
+	raaNet::raaNetwork *m_pNetwork;
+	raaNet::raaTcpThread *m_pTcpClient;
+	raaNet::raaUdpThread *m_pUdpThread;
 };
 

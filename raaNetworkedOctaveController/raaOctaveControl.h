@@ -2,10 +2,12 @@
 
 #include <QtCore/QObject>
 
-#include <raaNetwork/raaTcpMsg.h>
 #include <raaNetwork/raaNetwork.h>
-
-using namespace raaNet;
+#include <raaNetwork/raaTcpMsg.h>
+#include <raaNetwork/raaTcpThread.h>
+#include <raaNetwork/raaUdpMsg.h>
+#include <raaNetwork/raaUdpThread.h>
+#include <raaNetwork/raaNetworkTypes.h>
 
 class raaOctaveControl: public QObject
 {
@@ -14,11 +16,23 @@ public:
 	raaOctaveControl();
 	virtual ~raaOctaveControl();
 
-	public slots:
-	void readServer(raaTcpMsg* pMsg);
+public slots:
+	void tcpRead(raaNet::raaTcpMsg*);
+	void tcpState(raaNet::raaTcpThread*, unsigned int);
+	void udpState(raaNet::raaUdpThread*, unsigned int);
+	void send();
+
+	void udpConnect();
+	void udpStream(int);
+	void udpRead(raaNet::raaUdpMsg*);
 
 protected:
-	raaNetwork *m_pServer;
+	raaNet::raaNetwork *m_pNetwork;
+
+	void timerEvent(QTimerEvent *pEvent);
+	int m_iTimer;
+
+	unsigned int m_uiTcpCounter;
 
 };
 
