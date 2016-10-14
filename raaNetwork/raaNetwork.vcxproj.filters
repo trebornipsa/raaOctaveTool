@@ -15,59 +15,62 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="raaNetworkDefs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="raaTcpMsg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="raaNetwork.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="raaTcpServer.cpp">
+    <ClCompile Include="raaNetwork.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="raaTcpThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="raaNetworkServer.cpp">
+    <ClCompile Include="raaTcpMsg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="raaTcpClient.cpp">
+    <ClCompile Include="raaTcpSocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="raaUdpSocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="raaUdpMsg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="raaUdpThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="raaTcpMsg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="raaNetworkClient.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="raaNetwork.cpp">
+    <ClCompile Include="raaMsg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="raaTcpServer.h">
+    <ClInclude Include="raaNetworkDefs.h">
       <Filter>Header Files</Filter>
-    </CustomBuild>
+    </ClInclude>
+    <ClInclude Include="raaNetworkTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="raaTcpMsg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="raaUdpMsg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="raaMsg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <CustomBuild Include="raaTcpThread.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="raaNetworkServer.h">
+    <CustomBuild Include="raaNetwork.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="raaTcpSocket.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="raaUdpSocket.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="raaUdpThread.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="raaNetworkClient.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="raaTcpClient.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
