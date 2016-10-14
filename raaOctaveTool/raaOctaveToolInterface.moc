@@ -275,10 +275,6 @@ void *raaOctaveToolInterface::qt_metacast(const char *_clname)
         return static_cast<void*>(const_cast< raaOctaveToolInterface*>(this));
     if (!strcmp(_clname, "Ui::raaOctaveToolInterfaceQt"))
         return static_cast< Ui::raaOctaveToolInterfaceQt*>(const_cast< raaOctaveToolInterface*>(this));
-    if (!strcmp(_clname, "raaOctaveControllerListener"))
-        return static_cast< raaOctaveControllerListener*>(const_cast< raaOctaveToolInterface*>(this));
-    if (!strcmp(_clname, "raaOctaveViewPointListener"))
-        return static_cast< raaOctaveViewPointListener*>(const_cast< raaOctaveToolInterface*>(this));
     return QMainWindow::qt_metacast(_clname);
 }
 

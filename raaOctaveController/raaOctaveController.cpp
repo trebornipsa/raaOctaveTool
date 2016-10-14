@@ -26,8 +26,8 @@ raaOctaveControllerListener::~raaOctaveControllerListener()
 raaOctaveController::raaOctaveController(raaOctaveControllerListener *pListener)
 {
 	m_bConfig = false;
-	m_pListener = pListener;
 
+	addListener(pListener);
 }
 
 raaOctaveController::~raaOctaveController()
@@ -59,7 +59,7 @@ void raaOctaveController::readConfig(QString sConfig)
 					if (dE.nodeName() == "ORIGIN")
 					{
 						readVec(dE, m_vOrigin);
-						if (m_pListener) m_pListener->originChanged(this);
+						for(raaOctaveControllerListeners::iterator it=m_lListener.begin();it!=m_lListener.end();it++)(*it)->originChanged(this);
 					}
 					else if (dE.nodeName() == "SCREEN")
 					{
@@ -81,7 +81,7 @@ void raaOctaveController::readConfig(QString sConfig)
 						if (sName.length())
 						{
 							m_mScreens[sName] = new raaScreen(sName, vBL, vBR, vTR, vTL, &m_ViewPoint);
-							if (m_pListener) m_pListener->screenAdded(this, m_mScreens[sName]);
+							for (raaOctaveControllerListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++)(*it)->screenAdded(this, m_mScreens[sName]);
 						}
 					}
 				}
@@ -96,14 +96,14 @@ bool raaOctaveController::hasConfig()
 	return m_bConfig;
 }
 
-void raaOctaveController::setListener(raaOctaveControllerListener* pListener)
+void raaOctaveController::addListener(raaOctaveControllerListener* pListener)
 {
-	m_pListener = pListener;
+	if (pListener && std::find(m_lListener.begin(), m_lListener.end(), pListener) == m_lListener.end()) m_lListener.push_back(pListener);
 }
 
 void raaOctaveController::removeListener(raaOctaveControllerListener* pListener)
 {
-	if (m_pListener == pListener) m_pListener = 0;
+	if (pListener && std::find(m_lListener.begin(), m_lListener.end(), pListener) == m_lListener.end()) m_lListener.remove(pListener);
 }
 
 raaOctaveViewPoint* raaOctaveController::viewpoint()
@@ -129,7 +129,7 @@ raaScreen* raaOctaveController::getScreen(std::string sName)
 	return 0;
 }
 
-raaStringScreenMap& raaOctaveController::getScreens() const
+const raaStringScreenMap& raaOctaveController::getScreens() const
 {
 	return m_mScreens;
 }

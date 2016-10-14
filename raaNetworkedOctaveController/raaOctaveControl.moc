@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_raaOctaveControl_t {
     QByteArrayData data[13];
-    char stringdata0[160];
+    char stringdata0[128];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -32,22 +32,22 @@ static const qt_meta_stringdata_raaOctaveControl_t qt_meta_stringdata_raaOctaveC
 QT_MOC_LITERAL(0, 0, 16), // "raaOctaveControl"
 QT_MOC_LITERAL(1, 17, 7), // "tcpRead"
 QT_MOC_LITERAL(2, 25, 0), // ""
-QT_MOC_LITERAL(3, 26, 18), // "raaNet::raaTcpMsg*"
-QT_MOC_LITERAL(4, 45, 8), // "tcpState"
-QT_MOC_LITERAL(5, 54, 21), // "raaNet::raaTcpThread*"
-QT_MOC_LITERAL(6, 76, 8), // "udpState"
-QT_MOC_LITERAL(7, 85, 21), // "raaNet::raaUdpThread*"
-QT_MOC_LITERAL(8, 107, 4), // "send"
-QT_MOC_LITERAL(9, 112, 10), // "udpConnect"
-QT_MOC_LITERAL(10, 123, 9), // "udpStream"
-QT_MOC_LITERAL(11, 133, 7), // "udpRead"
-QT_MOC_LITERAL(12, 141, 18) // "raaNet::raaUdpMsg*"
+QT_MOC_LITERAL(3, 26, 10), // "raaTcpMsg*"
+QT_MOC_LITERAL(4, 37, 8), // "tcpState"
+QT_MOC_LITERAL(5, 46, 13), // "raaTcpThread*"
+QT_MOC_LITERAL(6, 60, 8), // "udpState"
+QT_MOC_LITERAL(7, 69, 13), // "raaUdpThread*"
+QT_MOC_LITERAL(8, 83, 4), // "send"
+QT_MOC_LITERAL(9, 88, 10), // "udpConnect"
+QT_MOC_LITERAL(10, 99, 9), // "udpStream"
+QT_MOC_LITERAL(11, 109, 7), // "udpRead"
+QT_MOC_LITERAL(12, 117, 10) // "raaUdpMsg*"
 
     },
-    "raaOctaveControl\0tcpRead\0\0raaNet::raaTcpMsg*\0"
-    "tcpState\0raaNet::raaTcpThread*\0udpState\0"
-    "raaNet::raaUdpThread*\0send\0udpConnect\0"
-    "udpStream\0udpRead\0raaNet::raaUdpMsg*"
+    "raaOctaveControl\0tcpRead\0\0raaTcpMsg*\0"
+    "tcpState\0raaTcpThread*\0udpState\0"
+    "raaUdpThread*\0send\0udpConnect\0udpStream\0"
+    "udpRead\0raaUdpMsg*"
 };
 #undef QT_MOC_LITERAL
 
@@ -91,13 +91,13 @@ void raaOctaveControl::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int
         raaOctaveControl *_t = static_cast<raaOctaveControl *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->tcpRead((*reinterpret_cast< raaNet::raaTcpMsg*(*)>(_a[1]))); break;
-        case 1: _t->tcpState((*reinterpret_cast< raaNet::raaTcpThread*(*)>(_a[1])),(*reinterpret_cast< uint(*)>(_a[2]))); break;
-        case 2: _t->udpState((*reinterpret_cast< raaNet::raaUdpThread*(*)>(_a[1])),(*reinterpret_cast< uint(*)>(_a[2]))); break;
+        case 0: _t->tcpRead((*reinterpret_cast< raaTcpMsg*(*)>(_a[1]))); break;
+        case 1: _t->tcpState((*reinterpret_cast< raaTcpThread*(*)>(_a[1])),(*reinterpret_cast< uint(*)>(_a[2]))); break;
+        case 2: _t->udpState((*reinterpret_cast< raaUdpThread*(*)>(_a[1])),(*reinterpret_cast< uint(*)>(_a[2]))); break;
         case 3: _t->send(); break;
         case 4: _t->udpConnect(); break;
         case 5: _t->udpStream((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 6: _t->udpRead((*reinterpret_cast< raaNet::raaUdpMsg*(*)>(_a[1]))); break;
+        case 6: _t->udpRead((*reinterpret_cast< raaUdpMsg*(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -119,6 +119,8 @@ void *raaOctaveControl::qt_metacast(const char *_clname)
     if (!_clname) return Q_NULLPTR;
     if (!strcmp(_clname, qt_meta_stringdata_raaOctaveControl.stringdata0))
         return static_cast<void*>(const_cast< raaOctaveControl*>(this));
+    if (!strcmp(_clname, "raaOctaveControllerListener"))
+        return static_cast< raaOctaveControllerListener*>(const_cast< raaOctaveControl*>(this));
     return QObject::qt_metacast(_clname);
 }
 

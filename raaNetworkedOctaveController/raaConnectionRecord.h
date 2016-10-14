@@ -3,22 +3,42 @@
 #include <raaNetwork/raaTcpThread.h>
 #include <raaNetwork/raaUdpThread.h>
 
-class raaConnectionRecord
+#include <raaOctaveController/raaOctaveController.h>
+
+using namespace raaNet;
+
+class raaConnectionRecord: public raaOctaveControllerListener
 {
 public:
-	raaConnectionRecord(std::string sName);
+	raaConnectionRecord(std::string sName, raaOctaveController *pController);
 	virtual ~raaConnectionRecord();
 
 	std::string name();
-	raaNet::raaTcpThread *tcpThread();
-	raaNet::raaUdpThread *udpThread();
+	raaTcpThread *tcpThread();
+	raaUdpThread *udpThread();
 
-	void setTcpThread(raaNet::raaTcpThread *pThread);
-	void setUdpThread(raaNet::raaUdpThread *pThread);
+	void setTcpThread(raaTcpThread *pThread);
+	void setUdpThread(raaUdpThread *pThread);
+
+	void setControllerListener(bool bListen);
+	void setViewpointListener(bool bListen);
+	void setScreenListener(bool bListen);
 
 protected:
 	std::string m_sName;
-	raaNet::raaTcpThread *m_pTcpThread;
-	raaNet::raaUdpThread *m_pUdpThread;
+	raaTcpThread *m_pTcpThread;
+	raaUdpThread *m_pUdpThread;
+
+	raaOctaveController *m_pController;
+
+	bool m_bControllerListener;
+	bool m_bViewpointListener;
+	bool m_bScreenListener;
+
+	virtual void originChanged(raaOctaveController* pController);
+	virtual void screenAdded(raaOctaveController* pController, raaScreen* pScreen);
+	virtual void screenRemoved(raaOctaveController* pController, raaScreen* pScreen);
+	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
+
 };
 

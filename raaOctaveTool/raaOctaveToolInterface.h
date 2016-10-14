@@ -5,20 +5,21 @@
 
 #include <QtWidgets\QMainWindow>
 
-#include "raaOctaveController/raaOctaveController.h"
-#include "raaOctaveController/raaOctaveViewPoint.h"
+//#include "raaOctaveController/raaOctaveController.h"
+//#include "raaOctaveController/raaOctaveViewPoint.h"
 
 #include <raaNetwork/raaNetwork.h>
 
 #include "raaOctaveToolInterfaceQt.h"
 
+class raaOctaveController;
 class raaDisplayScreen;
 
 typedef std::map<std::string, raaDisplayScreen*>raaDisplayScreens;
 
 using namespace raaNet;
 
-class raaOctaveToolInterface: public QMainWindow, public Ui::raaOctaveToolInterfaceQt, public raaOctaveControllerListener, public raaOctaveViewPointListener
+class raaOctaveToolInterface: public QMainWindow, public Ui::raaOctaveToolInterfaceQt/*, public raaOctaveControllerListener, public raaOctaveViewPointListener*/
 {
 	Q_OBJECT
 public:
@@ -86,18 +87,18 @@ public slots:
 	void udpState(raaTcpThread*, unsigned int);
 
 protected:
-	raaOctaveController *m_pController;
+//	raaOctaveController *m_pController;
 
 	static osg::Geode* makeGrid(float fWidth, float fDepth, unsigned int uiWidthSegs, unsigned int uiDepthSegs);
 	void updateView();
 
-	virtual void originChanged(raaOctaveController* pController);
-	virtual void screenAdded(raaOctaveController* pController, raaScreen* pScreen);
-	virtual void screenRemoved(raaOctaveController* pController, raaScreen* pScreen);
-	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
-	virtual void physicalViewpointChanged(raaOctaveViewPoint* pViewpoint);
-	virtual void virtualViewpointChanged(raaOctaveViewPoint* pViewpoint);
-	void updateScreenInfo(raaScreen *pScreen);
+//	virtual void originChanged(raaOctaveController* pController);
+//	virtual void screenAdded(raaOctaveController* pController, raaScreen* pScreen);
+//	virtual void screenRemoved(raaOctaveController* pController, raaScreen* pScreen);
+//	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
+//	virtual void physicalViewpointChanged(raaOctaveViewPoint* pViewpoint);
+//	virtual void virtualViewpointChanged(raaOctaveViewPoint* pViewpoint);
+//	void updateScreenInfo(raaScreen *pScreen);
 
 	raaDisplayScreens m_mDisplays;
 
@@ -115,11 +116,11 @@ protected:
 
 	osgGA::CameraManipulator *m_pManpulator;
 	std::string m_sCurrentScreen;
-	raaScreen *m_pCurrentScreen;
+//	raaScreen *m_pCurrentScreen;
 	bool m_bScreenUpdate;
 
 	raaNet::raaNetwork *m_pNetwork;
 	raaNet::raaTcpThread *m_pTcpClient;
-	raaNet::raaUdpThread *m_pUdpThread;
+	raaNet::raaUdpThread *m_pUdpClient;
 };
 

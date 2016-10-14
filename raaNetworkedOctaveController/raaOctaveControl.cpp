@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+#include <raaOctaveKernel/raaOctaveKernel.h>
+
+#include <raaOctaveController/raaScreen.h>
+
 #include "raaConnectionRecord.h"
 #include "raaOctaveControl.h"
 #include "raaOctaveControl.moc"
@@ -12,6 +16,7 @@ raaOctaveControl::raaOctaveControl()
 	m_iTimer = 0;
 	m_pNetwork = 0;
 	m_uiTcpCounter = 0;
+	m_pController = new raaOctaveController(this);
 
 	m_pNetwork = new raaNet::raaNetwork(65204, this);
 
@@ -23,14 +28,52 @@ raaOctaveControl::raaOctaveControl()
 
 raaOctaveControl::~raaOctaveControl()
 {
+	if (m_pNetwork) delete m_pNetwork;
 }
 
-void raaOctaveControl::tcpRead(raaNet::raaTcpMsg* pMsg)
+void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 {
 	std::cout << pMsg->tcpThread()->name().toStdString() << raaNet::tcpMsgTypeToString(pMsg->msgType()).toStdString() << pMsg->msgID() << QString(pMsg->data()).toStdString() << std::endl;
+
+	switch(pMsg->msgType())
+	{
+		case raaNet::csm_usTcpMsgRequest:
+		{
+			switch(pMsg->asUInt(2))
+			{
+			case raaOctaveKernel::csm_uiOCHasConfig:
+			{
+				raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgReply);
+				pM->add(m_pController->hasConfig() ? raaOctaveKernel::csm_uiOCHasConfigTrue : raaOctaveKernel::csm_uiOCHasConfigFalse);
+				pMsg->tcpThread()->write(pM);
+			}
+			break;
+			case raaOctaveKernel::csm_uiOCLoadConfig:
+			{
+//				std::cout << "Load Config -> " << pMsg->asString(3).c_str() << std::endl;
+				m_pController->readConfig(pMsg->asString(3).c_str());
+			}
+			break;
+			case raaOctaveKernel::csm_uiOCAttachControllerListener:
+			{
+				m_mConnections[pMsg->tcpThread()]->setControllerListener(true);
+			}
+			break;
+			case raaOctaveKernel::csm_uiOCDetachControllerListener:
+			{
+				m_mConnections[pMsg->tcpThread()]->setControllerListener(false);
+			}
+			break;
+
+			}
+		}
+		break;
+	}
+
+
 }
 
-void raaOctaveControl::tcpState(raaNet::raaTcpThread* pThread, unsigned uiState)
+void raaOctaveControl::tcpState(raaTcpThread* pThread, unsigned uiState)
 {
 	QString msg;
 	msg += pThread->name();
@@ -55,7 +98,7 @@ void raaOctaveControl::tcpState(raaNet::raaTcpThread* pThread, unsigned uiState)
 		break;
 	case raaNet::csm_uiNameConnectedState:
 		msg += " -> StateChanged::NameConnectedState";
-		m_mConnections[pThread] = new raaConnectionRecord(pThread->name().toStdString());
+		m_mConnections[pThread] = new raaConnectionRecord(pThread->name().toStdString(), m_pController);
 		m_mConnections[pThread]->setTcpThread(pThread);
 
 		break;
@@ -76,7 +119,7 @@ void raaOctaveControl::tcpState(raaNet::raaTcpThread* pThread, unsigned uiState)
 	std::cout << msg.toStdString() << std::endl;
 }
 
-void raaOctaveControl::udpState(raaNet::raaUdpThread* pThread, unsigned uiState)
+void raaOctaveControl::udpState(raaUdpThread* pThread, unsigned uiState)
 {
 	QString msg;
 	msg += pThread->name();
@@ -142,9 +185,26 @@ void raaOctaveControl::udpStream(int iState)
 
 }
 
-void raaOctaveControl::udpRead(raaNet::raaUdpMsg* pMsg)
+void raaOctaveControl::udpRead(raaUdpMsg* pMsg)
 {
 	std::cout << pMsg->udpThread()->name().toStdString() << QString(pMsg->data()).toStdString() << std::endl;
+}
+
+void raaOctaveControl::originChanged(raaOctaveController* pController)
+{
+}
+
+void raaOctaveControl::screenAdded(raaOctaveController* pController, raaScreen* pScreen)
+{
+
+}
+
+void raaOctaveControl::screenRemoved(raaOctaveController* pController, raaScreen* pScreen)
+{
+}
+
+void raaOctaveControl::screenUpdated(raaOctaveController* pController, raaScreen* pScreen)
+{
 }
 
 void raaOctaveControl::timerEvent(QTimerEvent* pEvent)

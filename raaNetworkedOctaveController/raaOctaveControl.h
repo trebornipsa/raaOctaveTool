@@ -9,11 +9,15 @@
 #include <raaNetwork/raaUdpThread.h>
 #include <raaNetwork/raaNetworkTypes.h>
 
+#include <raaOctaveController/raaOctaveController.h>
+
+using namespace raaNet;
+
 class raaConnectionRecord;
 
-typedef std::map<raaNet::raaTcpThread*, raaConnectionRecord*> raaConnectionRecordMap;
+typedef std::map<raaTcpThread*, raaConnectionRecord*> raaConnectionRecordMap;
 
-class raaOctaveControl: public QObject
+class raaOctaveControl: public QObject, public raaOctaveControllerListener
 {
 	Q_OBJECT
 public:
@@ -21,23 +25,32 @@ public:
 	virtual ~raaOctaveControl();
 
 public slots:
-	void tcpRead(raaNet::raaTcpMsg*);
-	void tcpState(raaNet::raaTcpThread*, unsigned int);
-	void udpState(raaNet::raaUdpThread*, unsigned int);
+	void tcpRead(raaTcpMsg*);
+	void tcpState(raaTcpThread*, unsigned int);
+	void udpState(raaUdpThread*, unsigned int);
 	void send();
 
 	void udpConnect();
 	void udpStream(int);
-	void udpRead(raaNet::raaUdpMsg*);
+	void udpRead(raaUdpMsg*);
 
 protected:
 	raaNet::raaNetwork *m_pNetwork;
 
+	virtual void originChanged(raaOctaveController* pController);
+	virtual void screenAdded(raaOctaveController* pController, raaScreen* pScreen);
+	virtual void screenRemoved(raaOctaveController* pController, raaScreen* pScreen);
+	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
+
+
 	void timerEvent(QTimerEvent *pEvent);
 	int m_iTimer;
+
 
 	unsigned int m_uiTcpCounter;
 
 	raaConnectionRecordMap m_mConnections;
+
+	raaOctaveController *m_pController;
 };
 

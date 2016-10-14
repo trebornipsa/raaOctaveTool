@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <list>
 
 #include <QtCore/QString>
 #include <osg/Vec3>
@@ -26,6 +27,8 @@ protected:
 	virtual void screenUpdated(raaOctaveController *pController, raaScreen *pScreen) = 0;
 };
 
+typedef std::list<raaOctaveControllerListener*> raaOctaveControllerListeners;
+
 class RAAOCTAVECONTROLLER_DLL_DEF raaOctaveController
 {
 public:
@@ -35,7 +38,7 @@ public:
 	void readConfig(QString sConfig);
 	bool hasConfig();
 
-	void setListener(raaOctaveControllerListener *pListener);
+	void addListener(raaOctaveControllerListener *pListener);
 	void removeListener(raaOctaveControllerListener *pListener);
 
 	raaOctaveViewPoint *viewpoint();
@@ -45,14 +48,14 @@ public:
 	raaStringScreenList getScreenNames();
 	raaScreen* getScreen(std::string sName);
 
-	raaStringScreenMap& getScreens() const;
+	const raaStringScreenMap& getScreens() const;
 
 protected:
 	std::string m_sName;
 	osg::Vec3f m_vOrigin;
 
 	raaStringScreenMap m_mScreens;
-	raaOctaveControllerListener *m_pListener;
+	raaOctaveControllerListeners m_lListener;
 	raaOctaveViewPoint m_ViewPoint;
 	bool m_bConfig;
 };
