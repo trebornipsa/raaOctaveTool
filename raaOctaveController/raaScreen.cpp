@@ -14,14 +14,18 @@ raaScreenListener::~raaScreenListener()
 {
 }
 
-raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, raaOctaveViewPoint *pViewpoint)
+raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, raaOctaveViewPoint *pViewpoint)
 {
 	initialise();
-	m_fNear = 0.5f;
-	m_fFar = 1000.0f;
+	m_fNear = fNear;
+	m_fFar = fFar;
 	m_uiCurrentScreenUpdate = 0;
 	m_uiCurrentViewpointUpdate = 0;
 	m_uiScreenUpdateCount = 0;
+	m_abFlip[0] = false;
+	m_abFlip[1] = false;
+	m_abFlip[2] = false;
+	m_fRotation = 0.0f;
 	setName(sName);
 	setScreen(vBL, vBR, vTR, vTL, pViewpoint);
 	pViewpoint->addListener(this);
@@ -94,6 +98,48 @@ osg::Matrixf raaScreen::screenProjection()
 	return m_mScreenProjection;
 }
 
+float raaScreen::near()
+{
+	return m_fNear;
+}
+
+float raaScreen::far()
+{
+	return m_fFar;
+}
+
+void raaScreen::setNearFar(float fNear, float fFar)
+{
+	m_fNear = fNear;
+	m_fFar = fFar;
+
+	calcProjectionMatrix(m_pLastViewpoint);
+}
+
+bool raaScreen::flipped(unsigned uiAxis)
+{
+	return m_abFlip[uiAxis];
+}
+
+float raaScreen::rotation()
+{
+	return m_fRotation;
+}
+
+void raaScreen::setFlipped(bool bX, bool bY, bool bZ)
+{
+	m_abFlip[0] = bX;
+	m_abFlip[1] = bY;
+	m_abFlip[2] = bZ;
+	calcProjectionMatrix(m_pLastViewpoint);
+}
+
+void raaScreen::setRotation(float fRot)
+{
+	m_fRotation = fRot;
+	calcProjectionMatrix(m_pLastViewpoint);
+}
+
 void raaScreen::physicalViewpointChanged(raaOctaveViewPoint* pViewpoint)
 {
 	m_pLastViewpoint = pViewpoint;
@@ -146,7 +192,13 @@ void raaScreen::calcProjectionMatrix(raaOctaveViewPoint* pViewpoint)
 	m[0] = m_vScreenRight[0]; m[1] = m_vScreenRight[1]; m[2] = m_vScreenRight[2]; m[3] = 0.0f; m[4] = -m_vNormal[0]; m[5] = -m_vNormal[1]; m[6] = -m_vNormal[2]; m[7] = 0.0f; m[8] = m_vScreenUp[0]; m[9] = m_vScreenUp[1]; m[10] = m_vScreenUp[2]; m[11] = 0.0f; m[12] = 0.0f; m[13] = 0.0f; m[14] = 0.0f; m[15] = 1.0f;
 	m_mScreenProjectionRotation.set(m);
 
-	m_mScreenProjection = m_mScreenProjectionTranslation*m_mScreenProjectionRotation*sm_RotationScale*m_mScreenProjection;
+	m_mScreenProjectionImageRotation.makeRotate(osg::DegreesToRadians(m_fRotation), osg::Vec3f(0.0f, 1.0f, 0.0f));
+	m_mScreenProjectionImageFlipScale.makeScale(osg::Vec3f(m_abFlip[0]?-1.0f:1.0f, m_abFlip[1] ? -1.0f : 1.0f, m_abFlip[2] ? -1.0f : 1.0f));
+
+
+	//	m_mScreenProjection = m_mScreenProjectionTranslation*m_mScreenProjectionRotation*sm_RotationScale*m_mScreenProjection;
+//	m_mScreenProjection = m_mScreenProjectionTranslation*m_mScreenProjectionRotation*m_mScreenProjectionImageRotation*sm_RotationScale*m_mScreenProjection;
+	m_mScreenProjection = m_mScreenProjectionTranslation*m_mScreenProjectionRotation*m_mScreenProjectionImageRotation*m_mScreenProjectionImageFlipScale*sm_RotationScale*m_mScreenProjection;
 
 	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->screenMatrixChanged(this);
 }

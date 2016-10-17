@@ -29,10 +29,17 @@ public:
 	const static unsigned int csm_uiOCScreenChanged = 21;
 	const static unsigned int csm_uiOCScreenInfo = 22;
 	const static unsigned int csm_uiOCScreenVertex = 23;
-	const static unsigned int csm_uiOCScreenVertexAll = 24;
-	const static unsigned int csm_uiOCControllerRequestScreenNames = 25;
-	const static unsigned int csm_uiOCControllerRequestScreen = 26;
-	const static unsigned int csm_uiOCControllerRequestScreenAll = 27;
+	const static unsigned int csm_uiOCScreenNearFar = 24;
+	const static unsigned int csm_uiOCScreenVertexAll = 25;
+	const static unsigned int csm_uiOCControllerRequestScreenNames = 26;
+	const static unsigned int csm_uiOCControllerRequestScreen = 27;
+	const static unsigned int csm_uiOCControllerRequestScreenAll = 28;
+	const static unsigned int csm_uiOCScreenRequestImageRotation = 29;
+	const static unsigned int csm_uiOCScreenImageRotationInfo = 30;
+	const static unsigned int csm_uiOCScreenRequestImageFlip = 31;
+	const static unsigned int csm_uiOCScreenImageFlipInfo = 32;
+
+
 	
 	const static unsigned int csm_uiOCBL = 0;
 	const static unsigned int csm_uiOCBR = 1;

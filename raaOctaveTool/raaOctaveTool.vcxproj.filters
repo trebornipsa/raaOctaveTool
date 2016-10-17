@@ -46,6 +46,8 @@
     <CustomBuild Include="raaOctaveToolInterface.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="raaOctaveToolInterfaceQt.ui" />
+    <CustomBuild Include="raaOctaveToolInterfaceQt.ui">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

@@ -64,6 +64,7 @@ void raaOctaveController::readConfig(QString sConfig)
 					else if (dE.nodeName() == "SCREEN")
 					{
 						osg::Vec3f vBL, vBR, vTR, vTL;
+						float fNear = 0.01f, fFar=100.0f;;
 
 						for (QDomNode n = dN.firstChild(); !n.isNull(); n = n.nextSibling())
 						{
@@ -72,6 +73,11 @@ void raaOctaveController::readConfig(QString sConfig)
 							else if (e.nodeName() == "BR") readVec(e, vBR);
 							else if (e.nodeName() == "TL") readVec(e, vTL);
 							else if (e.nodeName() == "TR") readVec(e, vTR);
+							else if (e.nodeName() == "CLIP")
+							{
+								if (e.hasAttribute("near")) fNear = e.attribute("near").toFloat();
+								if (e.hasAttribute("far")) fFar = e.attribute("far").toFloat();
+							}
 						}
 
 						std::string sName;
@@ -80,7 +86,7 @@ void raaOctaveController::readConfig(QString sConfig)
 
 						if (sName.length())
 						{
-							m_mScreens[sName] = new raaScreen(sName, vBL, vBR, vTR, vTL, &m_ViewPoint);
+							m_mScreens[sName] = new raaScreen(sName, vBL, vBR, vTR, vTL, fNear, fFar, &m_ViewPoint);
 							for (raaOctaveControllerListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++)(*it)->screenAdded(this, m_mScreens[sName]);
 						}
 					}

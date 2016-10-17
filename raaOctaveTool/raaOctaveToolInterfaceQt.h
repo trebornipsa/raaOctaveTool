@@ -72,7 +72,7 @@ public:
     QWidget *page_2;
     QFormLayout *formLayout;
     QPushButton *screen_updtae_button;
-    QComboBox *screen_combo;
+    QCheckBox *screen_continual_update_check;
     QGroupBox *groupBox_5;
     QVBoxLayout *verticalLayout_6;
     QDoubleSpinBox *screen_tl_x_spin;
@@ -93,8 +93,22 @@ public:
     QDoubleSpinBox *screen_br_x_spin;
     QDoubleSpinBox *screen_br_y_spin;
     QDoubleSpinBox *screen_br_z_spin;
+    QGroupBox *groupBox_7;
+    QVBoxLayout *verticalLayout_8;
+    QDoubleSpinBox *screen_near_spin;
     QSpacerItem *verticalSpacer_2;
-    QCheckBox *screen_continual_update_check;
+    QComboBox *screen_combo;
+    QGroupBox *groupBox_8;
+    QVBoxLayout *verticalLayout_9;
+    QDoubleSpinBox *screen_far_spin;
+    QGroupBox *groupBox_9;
+    QVBoxLayout *verticalLayout_11;
+    QDoubleSpinBox *screen_image_rot_spin;
+    QGroupBox *groupBox_10;
+    QVBoxLayout *verticalLayout_10;
+    QCheckBox *screen_x_flip_check;
+    QCheckBox *screen_y_flip_check;
+    QCheckBox *screen_z_flip_check;
     raaQTOSGWidget *gl_widget;
 
     void setupUi(QMainWindow *raaOctaveToolInterfaceQt)
@@ -287,18 +301,19 @@ public:
         toolBox->addItem(page, QStringLiteral("ViewPoint"));
         page_2 = new QWidget();
         page_2->setObjectName(QStringLiteral("page_2"));
-        page_2->setGeometry(QRect(0, 0, 302, 1009));
+        page_2->setGeometry(QRect(0, 0, 307, 979));
         formLayout = new QFormLayout(page_2);
         formLayout->setObjectName(QStringLiteral("formLayout"));
         screen_updtae_button = new QPushButton(page_2);
         screen_updtae_button->setObjectName(QStringLiteral("screen_updtae_button"));
 
-        formLayout->setWidget(0, QFormLayout::SpanningRole, screen_updtae_button);
+        formLayout->setWidget(0, QFormLayout::LabelRole, screen_updtae_button);
 
-        screen_combo = new QComboBox(page_2);
-        screen_combo->setObjectName(QStringLiteral("screen_combo"));
+        screen_continual_update_check = new QCheckBox(page_2);
+        screen_continual_update_check->setObjectName(QStringLiteral("screen_continual_update_check"));
+        screen_continual_update_check->setChecked(true);
 
-        formLayout->setWidget(2, QFormLayout::SpanningRole, screen_combo);
+        formLayout->setWidget(0, QFormLayout::FieldRole, screen_continual_update_check);
 
         groupBox_5 = new QGroupBox(page_2);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
@@ -332,7 +347,7 @@ public:
         verticalLayout_6->addWidget(screen_tl_z_spin);
 
 
-        formLayout->setWidget(4, QFormLayout::LabelRole, groupBox_5);
+        formLayout->setWidget(2, QFormLayout::LabelRole, groupBox_5);
 
         groupBox_6 = new QGroupBox(page_2);
         groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
@@ -366,7 +381,7 @@ public:
         verticalLayout_7->addWidget(screen_tr_z_spin);
 
 
-        formLayout->setWidget(4, QFormLayout::FieldRole, groupBox_6);
+        formLayout->setWidget(2, QFormLayout::FieldRole, groupBox_6);
 
         groupBox_3 = new QGroupBox(page_2);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
@@ -400,7 +415,7 @@ public:
         verticalLayout_4->addWidget(screen_bl_z_spin);
 
 
-        formLayout->setWidget(6, QFormLayout::LabelRole, groupBox_3);
+        formLayout->setWidget(3, QFormLayout::LabelRole, groupBox_3);
 
         groupBox_4 = new QGroupBox(page_2);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
@@ -434,17 +449,81 @@ public:
         verticalLayout_5->addWidget(screen_br_z_spin);
 
 
-        formLayout->setWidget(6, QFormLayout::FieldRole, groupBox_4);
+        formLayout->setWidget(3, QFormLayout::FieldRole, groupBox_4);
+
+        groupBox_7 = new QGroupBox(page_2);
+        groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
+        verticalLayout_8 = new QVBoxLayout(groupBox_7);
+        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
+        screen_near_spin = new QDoubleSpinBox(groupBox_7);
+        screen_near_spin->setObjectName(QStringLiteral("screen_near_spin"));
+        screen_near_spin->setMaximum(1000);
+        screen_near_spin->setSingleStep(0.1);
+
+        verticalLayout_8->addWidget(screen_near_spin);
+
+
+        formLayout->setWidget(4, QFormLayout::LabelRole, groupBox_7);
 
         verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         formLayout->setItem(8, QFormLayout::LabelRole, verticalSpacer_2);
 
-        screen_continual_update_check = new QCheckBox(page_2);
-        screen_continual_update_check->setObjectName(QStringLiteral("screen_continual_update_check"));
-        screen_continual_update_check->setChecked(true);
+        screen_combo = new QComboBox(page_2);
+        screen_combo->setObjectName(QStringLiteral("screen_combo"));
 
-        formLayout->setWidget(1, QFormLayout::LabelRole, screen_continual_update_check);
+        formLayout->setWidget(1, QFormLayout::SpanningRole, screen_combo);
+
+        groupBox_8 = new QGroupBox(page_2);
+        groupBox_8->setObjectName(QStringLiteral("groupBox_8"));
+        verticalLayout_9 = new QVBoxLayout(groupBox_8);
+        verticalLayout_9->setObjectName(QStringLiteral("verticalLayout_9"));
+        screen_far_spin = new QDoubleSpinBox(groupBox_8);
+        screen_far_spin->setObjectName(QStringLiteral("screen_far_spin"));
+        screen_far_spin->setAccelerated(true);
+        screen_far_spin->setMaximum(10000);
+
+        verticalLayout_9->addWidget(screen_far_spin);
+
+
+        formLayout->setWidget(4, QFormLayout::FieldRole, groupBox_8);
+
+        groupBox_9 = new QGroupBox(page_2);
+        groupBox_9->setObjectName(QStringLiteral("groupBox_9"));
+        verticalLayout_11 = new QVBoxLayout(groupBox_9);
+        verticalLayout_11->setObjectName(QStringLiteral("verticalLayout_11"));
+        screen_image_rot_spin = new QDoubleSpinBox(groupBox_9);
+        screen_image_rot_spin->setObjectName(QStringLiteral("screen_image_rot_spin"));
+        screen_image_rot_spin->setMinimum(-180);
+        screen_image_rot_spin->setMaximum(180);
+        screen_image_rot_spin->setSingleStep(0.1);
+
+        verticalLayout_11->addWidget(screen_image_rot_spin);
+
+
+        formLayout->setWidget(6, QFormLayout::SpanningRole, groupBox_9);
+
+        groupBox_10 = new QGroupBox(page_2);
+        groupBox_10->setObjectName(QStringLiteral("groupBox_10"));
+        verticalLayout_10 = new QVBoxLayout(groupBox_10);
+        verticalLayout_10->setObjectName(QStringLiteral("verticalLayout_10"));
+        screen_x_flip_check = new QCheckBox(groupBox_10);
+        screen_x_flip_check->setObjectName(QStringLiteral("screen_x_flip_check"));
+
+        verticalLayout_10->addWidget(screen_x_flip_check);
+
+        screen_y_flip_check = new QCheckBox(groupBox_10);
+        screen_y_flip_check->setObjectName(QStringLiteral("screen_y_flip_check"));
+
+        verticalLayout_10->addWidget(screen_y_flip_check);
+
+        screen_z_flip_check = new QCheckBox(groupBox_10);
+        screen_z_flip_check->setObjectName(QStringLiteral("screen_z_flip_check"));
+
+        verticalLayout_10->addWidget(screen_z_flip_check);
+
+
+        formLayout->setWidget(7, QFormLayout::SpanningRole, groupBox_10);
 
         toolBox->addItem(page_2, QStringLiteral("Screen"));
         splitter->addWidget(toolBox);
@@ -493,11 +572,18 @@ public:
         virtual_ydown_button->setText(QString());
         toolBox->setItemText(toolBox->indexOf(page), QApplication::translate("raaOctaveToolInterfaceQt", "ViewPoint", 0));
         screen_updtae_button->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Update", 0));
+        screen_continual_update_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Continual", 0));
         groupBox_5->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Top Left", 0));
         groupBox_6->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Top Right", 0));
         groupBox_3->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Bottom Left", 0));
         groupBox_4->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Bottom Right", 0));
-        screen_continual_update_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Continual", 0));
+        groupBox_7->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Near", 0));
+        groupBox_8->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Far", 0));
+        groupBox_9->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Image Rotation", 0));
+        groupBox_10->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Image Flip", 0));
+        screen_x_flip_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "X", 0));
+        screen_y_flip_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Y", 0));
+        screen_z_flip_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Z", 0));
         toolBox->setItemText(toolBox->indexOf(page_2), QApplication::translate("raaOctaveToolInterfaceQt", "Screen", 0));
     } // retranslateUi
 

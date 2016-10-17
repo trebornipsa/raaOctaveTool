@@ -134,7 +134,13 @@ raaOctaveToolInterface::raaOctaveToolInterface()
 	connect(screen_tr_x_spin, SIGNAL(valueChanged(double)), SLOT(screenTRChanged(double)));
 	connect(screen_tr_y_spin, SIGNAL(valueChanged(double)), SLOT(screenTRChanged(double)));
 	connect(screen_tr_z_spin, SIGNAL(valueChanged(double)), SLOT(screenTRChanged(double)));
+	connect(screen_near_spin, SIGNAL(valueChanged(double)), SLOT(screenNFChanged(double)));
+	connect(screen_far_spin, SIGNAL(valueChanged(double)), SLOT(screenNFChanged(double)));
 
+	connect(screen_image_rot_spin, SIGNAL(valueChanged(double)), SLOT(screenRotChanged(double)));
+	connect(screen_x_flip_check, SIGNAL(stateChanged(int)), SLOT(screenFlipChanged(int)));
+	connect(screen_y_flip_check, SIGNAL(stateChanged(int)), SLOT(screenFlipChanged(int)));
+	connect(screen_z_flip_check, SIGNAL(stateChanged(int)), SLOT(screenFlipChanged(int)));
 
 	m_pPhysicalViewpoint = new osg::MatrixTransform();
 	osg::Geode *pVPGeode = new osg::Geode();
@@ -619,6 +625,45 @@ void raaOctaveToolInterface::screenTRChanged(double)
 	}
 }
 
+void raaOctaveToolInterface::screenNFChanged(double)
+{
+	if (m_bScreenUpdate && m_sCurrentScreen.length())
+	{
+		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCScreenNearFar);
+		pMsg->add(m_sCurrentScreen);
+		pMsg->add((float)screen_near_spin->value());
+		pMsg->add((float)screen_far_spin->value());
+		if (m_pTcpClient) m_pTcpClient->write(pMsg);
+	}
+}
+
+void raaOctaveToolInterface::screenRotChanged(double)
+{
+	if (m_bScreenUpdate && m_sCurrentScreen.length())
+	{
+		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCScreenImageRotationInfo);
+		pMsg->add(m_sCurrentScreen);
+		pMsg->add((float)screen_image_rot_spin->value());
+		if (m_pTcpClient) m_pTcpClient->write(pMsg);
+	}
+}
+
+void raaOctaveToolInterface::screenFlipChanged(int)
+{
+	if (m_bScreenUpdate && m_sCurrentScreen.length())
+	{
+		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCScreenImageFlipInfo);
+		pMsg->add(m_sCurrentScreen);
+		pMsg->add(screen_x_flip_check->isChecked());
+		pMsg->add(screen_y_flip_check->isChecked());
+		pMsg->add(screen_z_flip_check->isChecked());
+		if (m_pTcpClient) m_pTcpClient->write(pMsg);
+	}
+}
+
 void raaOctaveToolInterface::screenAllChanged()
 {
 	if (m_sCurrentScreen.length())
@@ -630,6 +675,27 @@ void raaOctaveToolInterface::screenAllChanged()
 		pMsg->add(osg::Vec3f(screen_br_x_spin->value(), screen_br_y_spin->value(), screen_br_z_spin->value()));
 		pMsg->add(osg::Vec3f(screen_tl_x_spin->value(), screen_tl_y_spin->value(), screen_tl_z_spin->value()));
 		pMsg->add(osg::Vec3f(screen_tr_x_spin->value(), screen_tr_y_spin->value(), screen_tr_z_spin->value()));
+		if (m_pTcpClient) m_pTcpClient->write(pMsg);
+
+		pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCScreenNearFar);
+		pMsg->add(m_sCurrentScreen);
+		pMsg->add((float)screen_near_spin->value());
+		pMsg->add((float)screen_far_spin->value());
+		if (m_pTcpClient) m_pTcpClient->write(pMsg);
+
+		pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCScreenImageRotationInfo);
+		pMsg->add(m_sCurrentScreen);
+		pMsg->add((float)screen_image_rot_spin->value());
+		if (m_pTcpClient) m_pTcpClient->write(pMsg);
+
+		pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCScreenImageFlipInfo);
+		pMsg->add(m_sCurrentScreen);
+		pMsg->add(screen_x_flip_check->isChecked());
+		pMsg->add(screen_y_flip_check->isChecked());
+		pMsg->add(screen_z_flip_check->isChecked());
 		if (m_pTcpClient) m_pTcpClient->write(pMsg);
 	}
 }
@@ -681,7 +747,14 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 						osg::Vec3f vtl = pMsg->asVector(6);
 						osg::Vec3f vtr = pMsg->asVector(7);
 						osg::Vec3f vn = pMsg->asVector(8); 
-						osg::Matrixf mPersp =pMsg->asMatrix(9);
+						float fN = pMsg->asFloat(9);
+						float fF = pMsg->asFloat(10);
+						float fR = pMsg->asFloat(11);
+						bool bX = pMsg->asBool(12);
+						bool bY = pMsg->asBool(13);
+						bool bZ = pMsg->asBool(14);
+						osg::Matrixf mPersp =pMsg->asMatrix(15);
+
 						m_mDisplays[sName] = new raaDisplayScreen(m_pVirtualScene, sName, vbl, vbr, vtl, vtr, vn, mPersp);
 						gl_widget->addToTranspScene(0, m_mDisplays[sName]->root());
 					}
@@ -722,6 +795,12 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 						osg::Vec3f vtl = pMsg->asVector(6);
 						osg::Vec3f vtr = pMsg->asVector(7);
 						osg::Vec3f vn = pMsg->asVector(8);
+						float fN = pMsg->asFloat(9);
+						float fF = pMsg->asFloat(10);
+						float fR = pMsg->asFloat(11);
+						bool bX = pMsg->asBool(12);
+						bool bY = pMsg->asBool(13);
+						bool bZ = pMsg->asBool(14);
 
 						if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end()) m_mDisplays[sName]->screenChanged(vbl ,vbr, vtl, vtr, vn);
 
@@ -741,6 +820,13 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 							screen_tr_x_spin->setValue(vtr[0]);
 							screen_tr_y_spin->setValue(vtr[1]);
 							screen_tr_z_spin->setValue(vtr[2]);
+							screen_near_spin->setValue(fN);
+							screen_far_spin->setValue(fF);
+							screen_image_rot_spin->setValue(fR);
+							screen_x_flip_check->setCheckState(bX ? Qt::Checked : Qt::Unchecked);
+							screen_y_flip_check->setCheckState(bY ? Qt::Checked : Qt::Unchecked);
+							screen_z_flip_check->setCheckState(bZ ? Qt::Checked : Qt::Unchecked);
+
 							m_bScreenUpdate = b;
 						}
 					}
@@ -753,6 +839,13 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 						osg::Vec3f vtl = pMsg->asVector(6);
 						osg::Vec3f vtr = pMsg->asVector(7);
 						osg::Vec3f vn = pMsg->asVector(8);
+						float fN = pMsg->asFloat(9);
+						float fF = pMsg->asFloat(10);
+						float fR = pMsg->asFloat(11);
+						bool bX = pMsg->asBool(12);
+						bool bY = pMsg->asBool(13);
+						bool bZ = pMsg->asBool(14);
+
 
 						if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end()) m_mDisplays[sName]->screenChanged(vbl, vbr, vtl, vtr, vn);
 
@@ -772,6 +865,12 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 							screen_tr_x_spin->setValue(vtr[0]);
 							screen_tr_y_spin->setValue(vtr[1]);
 							screen_tr_z_spin->setValue(vtr[2]);
+							screen_near_spin->setValue(fN);
+							screen_far_spin->setValue(fF);
+							screen_image_rot_spin->setValue(fR);
+							screen_x_flip_check->setCheckState(bX ? Qt::Checked : Qt::Unchecked);
+							screen_y_flip_check->setCheckState(bY ? Qt::Checked : Qt::Unchecked);
+							screen_z_flip_check->setCheckState(bZ ? Qt::Checked : Qt::Unchecked);
 							m_bScreenUpdate = b;
 						}
 					}
@@ -931,53 +1030,3 @@ void raaOctaveToolInterface::updateView()
 	if (m_pTcpClient) m_pTcpClient->write(pM1);
 }
 
-/*
-void raaOctaveToolInterface::updateScreenInfo(raaScreen* pScreen)
-{
-	bool bSU = m_bScreenUpdate;
-	m_bScreenUpdate = false;
-	if(pScreen)
-	{
-		osg::Vec3f vbl = pScreen->screenVert(raaOctaveControllerTypes::csm_uiBL);
-		osg::Vec3f vbr = pScreen->screenVert(raaOctaveControllerTypes::csm_uiBR);
-		osg::Vec3f vtl = pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL);
-		osg::Vec3f vtr = pScreen->screenVert(raaOctaveControllerTypes::csm_uiTR);
-
-		screen_bl_x_spin->setValue(vbl[0]);
-		screen_bl_y_spin->setValue(vbl[1]);
-		screen_bl_z_spin->setValue(vbl[2]);
-
-		screen_br_x_spin->setValue(vbr[0]);
-		screen_br_y_spin->setValue(vbr[1]);
-		screen_br_z_spin->setValue(vbr[2]);
-
-		screen_tl_x_spin->setValue(vtl[0]);
-		screen_tl_y_spin->setValue(vtl[1]);
-		screen_tl_z_spin->setValue(vtl[2]);
-
-		screen_tr_x_spin->setValue(vtr[0]);
-		screen_tr_y_spin->setValue(vtr[1]);
-		screen_tr_z_spin->setValue(vtr[2]);
-	}
-	else
-	{
-		screen_bl_x_spin->setValue(0.0f);
-		screen_bl_y_spin->setValue(0.0f);
-		screen_bl_z_spin->setValue(0.0f);
-
-		screen_br_x_spin->setValue(0.0f);
-		screen_br_y_spin->setValue(0.0f);
-		screen_br_z_spin->setValue(0.0f);
-
-		screen_tl_x_spin->setValue(0.0f);
-		screen_tl_y_spin->setValue(0.0f);
-		screen_tl_z_spin->setValue(0.0f);
-
-		screen_tr_x_spin->setValue(0.0f);
-		screen_tr_y_spin->setValue(0.0f);
-		screen_tr_z_spin->setValue(0.0f);
-	}
-	m_bScreenUpdate = bSU;
-
-}
-*/

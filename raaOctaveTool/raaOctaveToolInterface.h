@@ -78,6 +78,9 @@ public slots:
 	void screenBRChanged(double);
 	void screenTLChanged(double);
 	void screenTRChanged(double);
+	void screenNFChanged(double);
+	void screenRotChanged(double);
+	void screenFlipChanged(int);
 	void screenAllChanged();
 	void screenContUpdate(int);
 

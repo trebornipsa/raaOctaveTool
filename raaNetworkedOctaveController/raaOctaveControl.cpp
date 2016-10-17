@@ -96,6 +96,12 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 					pM->add(m_pController->getScreen(sName)->screenVert(raaOctaveControllerTypes::csm_uiTL));
 					pM->add(m_pController->getScreen(sName)->screenVert(raaOctaveControllerTypes::csm_uiTR));
 					pM->add(m_pController->getScreen(sName)->normal());
+					pM->add(m_pController->getScreen(sName)->near());
+					pM->add(m_pController->getScreen(sName)->far());
+					pM->add(m_pController->getScreen(sName)->rotation());
+					pM->add(m_pController->getScreen(sName)->flipped(0));
+					pM->add(m_pController->getScreen(sName)->flipped(1));
+					pM->add(m_pController->getScreen(sName)->flipped(2));
 					pMsg->tcpThread()->write(pM);
 				}
 				break;
@@ -161,6 +167,33 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 						m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiBR, pMsg->asVector(5));
 						m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiTL, pMsg->asVector(6));
 						m_pController->getScreen(sName)->setScreenVert(raaOctaveControllerTypes::csm_uiTR, pMsg->asVector(7));
+					}
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCScreenNearFar:
+				{
+					std::string sName = pMsg->asString(3);
+					if (sName.length() && m_pController->getScreen(sName))
+					{
+						m_pController->getScreen(sName)->setNearFar(pMsg->asFloat(4), pMsg->asFloat(5));
+					}
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCScreenImageRotationInfo:
+				{
+					std::string sName = pMsg->asString(3);
+					if (sName.length() && m_pController->getScreen(sName))
+					{
+						m_pController->getScreen(sName)->setRotation(pMsg->asFloat(4));
+					}
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCScreenImageFlipInfo:
+				{
+					std::string sName = pMsg->asString(3);
+					if (sName.length() && m_pController->getScreen(sName))
+					{
+						m_pController->getScreen(sName)->setFlipped(pMsg->asBool(4), pMsg->asBool(5), pMsg->asBool(6));
 					}
 				}
 				break;

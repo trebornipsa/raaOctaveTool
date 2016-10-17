@@ -107,7 +107,15 @@ void raaConnectionRecord::screenAdded(raaOctaveController* pController, raaScree
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL));
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTR));
 		pMsg->add(pScreen->normal());
+		pMsg->add(pScreen->near());
+		pMsg->add(pScreen->far());
+		pMsg->add(pScreen->rotation());
+		pMsg->add(pScreen->flipped(0));
+		pMsg->add(pScreen->flipped(1));
+		pMsg->add(pScreen->flipped(2));
+
 		pMsg->add(pScreen->screenProjection());
+
 		m_pTcpThread->write(pMsg);
 	}
 
@@ -180,6 +188,13 @@ void raaConnectionRecord::screenChanged(raaScreen* pScreen)
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL));
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTR));
 		pMsg->add(pScreen->normal());
+		pMsg->add(pScreen->near());
+		pMsg->add(pScreen->far());
+		pMsg->add(pScreen->rotation());
+		pMsg->add(pScreen->flipped(0));
+		pMsg->add(pScreen->flipped(1));
+		pMsg->add(pScreen->flipped(2));
 		m_pTcpThread->write(pMsg);
 	}
 }
+

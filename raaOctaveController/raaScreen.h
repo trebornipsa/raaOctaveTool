@@ -28,11 +28,10 @@ public:
 
 typedef std::list<raaScreenListener*>raaScreenListeners;
 
-
 class RAAOCTAVECONTROLLER_DLL_DEF raaScreen: public raaOctaveViewPointListener
 {
 public:
-	raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, raaOctaveViewPoint *pViewpoint);
+	raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, raaOctaveViewPoint *pViewpoint);
 	virtual ~raaScreen();
 
 	void addListener(raaScreenListener *pListener);
@@ -44,6 +43,14 @@ public:
 	void setScreenVerts(osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTL, osg::Vec3f vTR);
 	osg::Vec3f normal();
 	osg::Matrixf screenProjection();
+	float near();
+	float far();
+	void setNearFar(float fNear, float fFar);
+	bool flipped(unsigned int uiAxis);
+	float rotation();
+	void setFlipped(bool bX, bool bY, bool bZ);
+	void setRotation(float fRot);
+
 
 protected:
 	virtual void physicalViewpointChanged(raaOctaveViewPoint *pViewpoint);
@@ -60,6 +67,8 @@ protected:
 	osg::Vec3f m_vScreenRight;
 	float m_fNear;
 	float m_fFar;
+	bool m_abFlip[3];
+	float m_fRotation;
 
 	osg::Vec3f m_vNormal;
 	std::string m_sName;
@@ -68,6 +77,8 @@ protected:
 	osg::Matrixf m_mScreenProjection;
 	osg::Matrixf m_mScreenProjectionRotation;
 	osg::Matrixf m_mScreenProjectionTranslation;
+	osg::Matrixf m_mScreenProjectionImageRotation;
+	osg::Matrixf m_mScreenProjectionImageFlipScale;
 	static osg::Matrixf sm_RotationScale;
 	static bool sm_bIntialised;
 
