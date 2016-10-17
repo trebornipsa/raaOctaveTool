@@ -31,7 +31,7 @@ typedef std::list<raaScreenListener*>raaScreenListeners;
 class RAAOCTAVECONTROLLER_DLL_DEF raaScreen: public raaOctaveViewPointListener
 {
 public:
-	raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, raaOctaveViewPoint *pViewpoint);
+	raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, raaOctaveViewPoint *pViewpoint);
 	virtual ~raaScreen();
 
 	void addListener(raaScreenListener *pListener);

@@ -59,12 +59,24 @@ void raaOctaveController::readConfig(QString sConfig)
 					if (dE.nodeName() == "ORIGIN")
 					{
 						readVec(dE, m_vOrigin);
-						for(raaOctaveControllerListeners::iterator it=m_lListener.begin();it!=m_lListener.end();it++)(*it)->originChanged(this);
+						for (raaOctaveControllerListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++)(*it)->originChanged(this);
+					}
+					if (dE.nodeName() == "VIEWPOINT")
+					{
+						osg::Vec3f vPos, vUp, vDir;
+						for (QDomNode n = dN.firstChild(); !n.isNull(); n = n.nextSibling())
+						{
+							QDomElement e = n.toElement();
+							if (e.nodeName() == "POS") readVec(e, vPos);
+							else if (e.nodeName() == "DIR") readVec(e, vDir);
+							else if (e.nodeName() == "UP") readVec(e, vUp);
+						}
 					}
 					else if (dE.nodeName() == "SCREEN")
 					{
 						osg::Vec3f vBL, vBR, vTR, vTL;
-						float fNear = 0.01f, fFar=100.0f;;
+						float fNear = 0.01f, fFar = 100.0f, fRot=0.0f;
+						bool bX=false, bY=false, bZ=false;
 
 						for (QDomNode n = dN.firstChild(); !n.isNull(); n = n.nextSibling())
 						{
@@ -78,6 +90,13 @@ void raaOctaveController::readConfig(QString sConfig)
 								if (e.hasAttribute("near")) fNear = e.attribute("near").toFloat();
 								if (e.hasAttribute("far")) fFar = e.attribute("far").toFloat();
 							}
+							else if (e.nodeName() == "MOD")
+							{
+								if (e.hasAttribute("rot")) fRot = e.attribute("rot").toFloat();
+								if (e.hasAttribute("flipx")) fFar = (e.attribute("flipx")=="true")?true:false;
+								if (e.hasAttribute("flipy")) fFar = (e.attribute("flipy") == "true") ? true : false;
+								if (e.hasAttribute("fipz")) fFar = (e.attribute("flipz") == "true") ? true : false;
+							}
 						}
 
 						std::string sName;
@@ -86,7 +105,7 @@ void raaOctaveController::readConfig(QString sConfig)
 
 						if (sName.length())
 						{
-							m_mScreens[sName] = new raaScreen(sName, vBL, vBR, vTR, vTL, fNear, fFar, &m_ViewPoint);
+							m_mScreens[sName] = new raaScreen(sName, vBL, vBR, vTR, vTL, fNear, fFar, fRot, bX, bY, bZ, &m_ViewPoint);
 							for (raaOctaveControllerListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++)(*it)->screenAdded(this, m_mScreens[sName]);
 						}
 					}
@@ -95,6 +114,10 @@ void raaOctaveController::readConfig(QString sConfig)
 		}
 		m_bConfig = true;
 	}
+}
+
+void raaOctaveController::writeConfig(QString sConfig, QString sName)
+{
 }
 
 bool raaOctaveController::hasConfig()

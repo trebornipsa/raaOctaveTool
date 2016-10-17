@@ -14,7 +14,7 @@ raaScreenListener::~raaScreenListener()
 {
 }
 
-raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, raaOctaveViewPoint *pViewpoint)
+raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, raaOctaveViewPoint *pViewpoint)
 {
 	initialise();
 	m_fNear = fNear;
@@ -22,10 +22,10 @@ raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec
 	m_uiCurrentScreenUpdate = 0;
 	m_uiCurrentViewpointUpdate = 0;
 	m_uiScreenUpdateCount = 0;
-	m_abFlip[0] = false;
-	m_abFlip[1] = false;
-	m_abFlip[2] = false;
-	m_fRotation = 0.0f;
+	m_abFlip[0] = bFlipX;
+	m_abFlip[1] = bFlipY;
+	m_abFlip[2] = bFlipZ;
+	m_fRotation = fRot;
 	setName(sName);
 	setScreen(vBL, vBR, vTR, vTL, pViewpoint);
 	pViewpoint->addListener(this);

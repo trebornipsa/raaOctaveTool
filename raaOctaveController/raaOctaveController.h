@@ -36,6 +36,7 @@ public:
 	virtual ~raaOctaveController();
 
 	void readConfig(QString sConfig);
+	void writeConfig(QString sConfig, QString sName);
 	bool hasConfig();
 
 	void addListener(raaOctaveControllerListener *pListener);
