@@ -77,6 +77,7 @@ void raaOctaveController::readConfig(QString sConfig)
 						osg::Vec3f vBL, vBR, vTR, vTL;
 						float fNear = 0.01f, fFar = 100.0f, fRot=0.0f;
 						bool bX=false, bY=false, bZ=false;
+						int iX = 0, iY = 0, iW = 200, iH = 200;
 
 						for (QDomNode n = dN.firstChild(); !n.isNull(); n = n.nextSibling())
 						{
@@ -93,9 +94,16 @@ void raaOctaveController::readConfig(QString sConfig)
 							else if (e.nodeName() == "MOD")
 							{
 								if (e.hasAttribute("rot")) fRot = e.attribute("rot").toFloat();
-								if (e.hasAttribute("flipx")) fFar = (e.attribute("flipx")=="true")?true:false;
+								if (e.hasAttribute("flipx")) fFar = (e.attribute("flipx") == "true") ? true : false;
 								if (e.hasAttribute("flipy")) fFar = (e.attribute("flipy") == "true") ? true : false;
 								if (e.hasAttribute("fipz")) fFar = (e.attribute("flipz") == "true") ? true : false;
+							}
+							else if (e.nodeName() == "WINDOW")
+							{
+								if (e.hasAttribute("x")) iX = e.attribute("x").toInt();
+								if (e.hasAttribute("y")) iY = e.attribute("y").toInt();
+								if (e.hasAttribute("width")) iW = e.attribute("width").toInt();
+								if (e.hasAttribute("height")) iH = e.attribute("height").toInt();
 							}
 						}
 
@@ -105,7 +113,7 @@ void raaOctaveController::readConfig(QString sConfig)
 
 						if (sName.length())
 						{
-							m_mScreens[sName] = new raaScreen(sName, vBL, vBR, vTR, vTL, fNear, fFar, fRot, bX, bY, bZ, &m_ViewPoint);
+							m_mScreens[sName] = new raaScreen(sName, vBL, vBR, vTR, vTL, fNear, fFar, fRot, bX, bY, bZ, iX, iY, iW, iH, &m_ViewPoint);
 							for (raaOctaveControllerListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++)(*it)->screenAdded(this, m_mScreens[sName]);
 						}
 					}

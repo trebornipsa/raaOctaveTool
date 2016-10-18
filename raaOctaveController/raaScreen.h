@@ -24,6 +24,7 @@ public:
 	virtual void nameChanged(raaScreen *pScreen) = 0;
 	virtual void screenMatrixChanged(raaScreen *pScreen) = 0;
 	virtual void screenChanged(raaScreen *pScreen) = 0;
+	virtual void windowChanged(raaScreen *pScreen) = 0;
 };
 
 typedef std::list<raaScreenListener*>raaScreenListeners;
@@ -31,7 +32,7 @@ typedef std::list<raaScreenListener*>raaScreenListeners;
 class RAAOCTAVECONTROLLER_DLL_DEF raaScreen: public raaOctaveViewPointListener
 {
 public:
-	raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, raaOctaveViewPoint *pViewpoint);
+	raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, int iX, int iY, int iW, int iH, raaOctaveViewPoint *pViewpoint);
 	virtual ~raaScreen();
 
 	void addListener(raaScreenListener *pListener);
@@ -51,6 +52,8 @@ public:
 	void setFlipped(bool bX, bool bY, bool bZ);
 	void setRotation(float fRot);
 
+	void setWindow(int iX, int iY, int iW, int iH);
+	int window(unsigned int uiParam);
 
 protected:
 	virtual void physicalViewpointChanged(raaOctaveViewPoint *pViewpoint);
@@ -69,6 +72,7 @@ protected:
 	float m_fFar;
 	bool m_abFlip[3];
 	float m_fRotation;
+	int m_aiWindow[4];
 
 	osg::Vec3f m_vNormal;
 	std::string m_sName;

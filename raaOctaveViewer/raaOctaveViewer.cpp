@@ -6,52 +6,153 @@
 #include <windows.h>
 #include <gl/gl.h>
 
+#include <conio.h>
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
+#include <osgDB/ReadFile>
+#include <osgGA/TrackballManipulator>
+#include <osg/Drawable>
+#include <osg/ShapeDrawable>
+#include <osg/MatrixTransform>
 
+
+osg::Geode* makeGrid(float fWidth, float fDepth, unsigned uiWidthSegs, unsigned uiDepthSegs)
+{
+	osg::Geode *pGeode = new osg::Geode();
+	osg::Geometry *pGeom = new osg::Geometry();
+
+	float fWS = fWidth / (float)uiWidthSegs;
+	float fDS = fDepth / (float)uiDepthSegs;
+
+	float fW = -fWidth / 2.0f;
+	float fWW = fW;
+	float fD = -fDepth / 2.0f;
+
+	osg::Vec3Array *pVerts = new osg::Vec3Array();
+	osg::Vec3Array *pNorms = new osg::Vec3Array();
+	osg::Vec3 vNorm(0.0f, 0.0f, 1.0f);
+
+	for (unsigned int i = 0; i <= uiWidthSegs; i++, fW += fWS)
+	{
+		pVerts->push_back(osg::Vec3f(fW, fD, 0.0f));
+		pVerts->push_back(osg::Vec3f(fW, -fD, 0.0f));
+		pNorms->push_back(vNorm);
+		pNorms->push_back(vNorm);
+	}
+
+	for (unsigned int i = 0; i <= uiDepthSegs; i++, fD += fDS)
+	{
+		pVerts->push_back(osg::Vec3f(fWW, fD, 0.0f));
+		pVerts->push_back(osg::Vec3f(-fWW, fD, 0.0f));
+		pNorms->push_back(vNorm);
+		pNorms->push_back(vNorm);
+	}
+
+	pGeom->setVertexArray(pVerts);
+	pGeom->setNormalArray(pNorms, osg::Array::BIND_PER_VERTEX);
+	pGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, pVerts->size()));
+	pGeode->addChild(pGeom);
+
+	return pGeode;
+}
 
 
 int main(int argc, char* argv[])
 {
-	osg::ArgumentParser arguments(&argc, argv);
-	osgViewer::Viewer viewer(arguments);
-	viewer.addEventHandler(new osgViewer::StatsHandler);
-	viewer.addEventHandler(new osgViewer::ThreadingHandler);
+	// parse the command line
+	osg::ArgumentParser args(&argc, argv);
 
-	osg::GraphicsContext::WindowingSystemInterface* wsi = osg::GraphicsContext::getWindowingSystemInterface();
-
-	unsigned int width, height;
-	wsi->getScreenResolution(osg::GraphicsContext::ScreenIdentifier(0), width, height);
-
-	osg::ref_ptr<osg::GraphicsContext::Traits> traits = new osg::GraphicsContext::Traits;
-	traits->x = 0;
-	traits->y = 0;
-	traits->width = width;
-	traits->height = height;
-	traits->windowDecoration = true;
-	traits->doubleBuffer = true;
-	traits->sharedContext = 0;
-
-	osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext(traits.get());
-	gc->setClearColor(osg::Vec4f(0.2f, 0.2f, 0.6f, 1.0f));
-	gc->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	unsigned int numCameras = 2;
-	double aspectRatioScale = 1.0;///(double)numCameras;
-	for (unsigned int i = 0; i<numCameras; ++i)
+	// load modes from the command line arguments
+	osg::Node *pNode = osgDB::readNodeFiles(args);
+	if (!pNode)
 	{
-		osg::ref_ptr<osg::Camera> camera = new osg::Camera;
-		camera->setGraphicsContext(gc.get());
-		camera->setViewport(new osg::Viewport((i*width) / numCameras, (i*height) / numCameras, width / numCameras, height / numCameras));
-		GLenum buffer = traits->doubleBuffer ? GL_BACK : GL_FRONT;
-		camera->setDrawBuffer(buffer);
-		camera->setReadBuffer(buffer);
-
-		viewer.addSlave(camera.get(), osg::Matrixd(), osg::Matrixd::scale(aspectRatioScale, 1.0, 1.0));
+		std::cout << "Failed to load model, press any key to exit" << std::endl;
+		_getch();
+		return 1; // exit with error if no modesl loaded
 	}
 
+	osg::MatrixTransform *pVirtualScene = new osg::MatrixTransform();
+
+	pVirtualScene->addChild(makeGrid(10.0f, 10.0f, 10, 10));
+	osg::Light *pLight = new osg::Light();
+	pLight->setLightNum(0);
+	pLight->setAmbient(osg::Vec4f(0.3f, 0.3f, 0.3f, 1.0f));
+	pLight->setDiffuse(osg::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+	osg::LightSource *pLS = new osg::LightSource();
+	pLS->setLight(pLight);
+	pLS->setLocalStateSetModes(osg::StateAttribute::ON);
+	pVirtualScene->addChild(pLS);
+
+	pVirtualScene->addChild(makeGrid(10.0f, 10.0f, 10, 10));
+
+	osg::Geode *pG0 = new osg::Geode();
+	osg::ShapeDrawable *pSD0 = new osg::ShapeDrawable(new osg::Cone(osg::Vec3f(0.0f, 4.0f, 1.0f), 1.0f, 1.0f));
+	pG0->addDrawable(pSD0);
+	pVirtualScene->addChild(pG0);
+
+	osg::Geode *pG1 = new osg::Geode();
+	osg::ShapeDrawable *pSD1 = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3f(0.0f, 0.0f, -4.0f), 1.0f));
+	pG1->addDrawable(pSD1);
+	pVirtualScene->addChild(pG1);
+
+	osg::MatrixTransform *pMTC = new osg::MatrixTransform();
+	osg::Matrix mC;
+	mC.makeRotate(osg::DegreesToRadians(-90.0f), osg::Vec3f(1.0f, 0.0f, 0.0f));
+	pMTC->setMatrix(mC);
+	osg::Geode *pG2 = new osg::Geode();
+	osg::ShapeDrawable *pSD2 = new osg::ShapeDrawable(new osg::Box(osg::Vec3f(0.0f, 0.0f, 4.0f), 1.0f));
+	pG2->addDrawable(pSD2);
+	pMTC->addChild(pG2);
+
+	pVirtualScene->addChild(pG2);
+
+
+	// create a viewer
+	osgViewer::Viewer viewer;
+
+	// define the format of the viewer window
+	osg::GraphicsContext::Traits *pTraits = new osg::GraphicsContext::Traits();
+
+	pTraits->x = 0; // hori window position
+	pTraits->y = 0; // vert window position
+	pTraits->width = 200;
+	pTraits->height = 200;
+	pTraits->windowDecoration = true;
+	pTraits->doubleBuffer = true;
+	pTraits->sharedContext = 0; // allows sharing 
+
+								// create a graphics context for the viewer window
+	osg::GraphicsContext *pGC = osg::GraphicsContext::createGraphicsContext(pTraits);
+
+	viewer.getCamera()->setGraphicsContext(pGC);
+	viewer.getCamera()->setViewport(new osg::Viewport(pTraits->x, pTraits->y, pTraits->width, pTraits->height));
+
+//	viewer.addSlave
+
+	if (pTraits->doubleBuffer)
+	{
+		viewer.getCamera()->setDrawBuffer(GL_BACK);
+	}
+	else
+	{
+		viewer.getCamera()->setDrawBuffer(GL_FRONT);
+	}
+
+	osgGA::TrackballManipulator *pTBManip = new osgGA::TrackballManipulator();
+
+	pTBManip->setCenter(pNode->getBound().center());
+
+	viewer.setCameraManipulator(pTBManip);
+
+	viewer.setSceneData(pVirtualScene);
 
 	viewer.realize();
+	viewer.run();
+
+
+	viewer.setSceneData(pNode);
+	viewer.realize();
+	viewer.run();
 
     return 0;
 }

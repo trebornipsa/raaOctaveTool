@@ -14,7 +14,7 @@ raaScreenListener::~raaScreenListener()
 {
 }
 
-raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, raaOctaveViewPoint *pViewpoint)
+raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, int iX ,int iY, int iH, int iW, raaOctaveViewPoint *pViewpoint)
 {
 	initialise();
 	m_fNear = fNear;
@@ -30,6 +30,10 @@ raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec
 	setScreen(vBL, vBR, vTR, vTL, pViewpoint);
 	pViewpoint->addListener(this);
 	m_pLastViewpoint = pViewpoint;
+	m_aiWindow[0] = iX;
+	m_aiWindow[1] = iY;
+	m_aiWindow[2] = iW;
+	m_aiWindow[3] = iH;
 }
 
 raaScreen::~raaScreen()
@@ -138,6 +142,21 @@ void raaScreen::setRotation(float fRot)
 {
 	m_fRotation = fRot;
 	calcProjectionMatrix(m_pLastViewpoint);
+}
+
+void raaScreen::setWindow(int iX, int iY, int iW, int iH)
+{
+	m_aiWindow[0] = iX;
+	m_aiWindow[1] = iY;
+	m_aiWindow[2] = iW;
+	m_aiWindow[3] = iH;
+	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->windowChanged(this);
+}
+
+int raaScreen::window(unsigned uiParam)
+{
+	if (uiParam < 4) return m_aiWindow[uiParam];
+	return 0;
 }
 
 void raaScreen::physicalViewpointChanged(raaOctaveViewPoint* pViewpoint)

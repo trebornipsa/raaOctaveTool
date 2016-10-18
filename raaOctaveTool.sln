@@ -24,6 +24,16 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "raaOctaveKernel", "raaOctaveKernel\raaOctaveKernel.vcxproj", "{B8EF9BFA-F022-4B01-BD0C-EA480D5CCF93}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "raaOctaveViewer", "raaOctaveViewer\raaOctaveViewer.vcxproj", "{8899645D-F20E-4E58-8381-A6D28C0448BC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A72532CE-E3A1-47AB-8E65-C6B5D8C258C6} = {A72532CE-E3A1-47AB-8E65-C6B5D8C258C6}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "raaOctaveSystem", "raaOctaveSystem\raaOctaveSystem.vcxproj", "{A72532CE-E3A1-47AB-8E65-C6B5D8C258C6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DAAA0385-9AC4-446F-85D7-08A8FF26954A} = {DAAA0385-9AC4-446F-85D7-08A8FF26954A}
+		{B8EF9BFA-F022-4B01-BD0C-EA480D5CCF93} = {B8EF9BFA-F022-4B01-BD0C-EA480D5CCF93}
+		{62A4CBFC-2A41-4764-92C7-E63E976D4221} = {62A4CBFC-2A41-4764-92C7-E63E976D4221}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +91,14 @@ Global
 		{8899645D-F20E-4E58-8381-A6D28C0448BC}.Release|x64.Build.0 = Release|x64
 		{8899645D-F20E-4E58-8381-A6D28C0448BC}.Release|x86.ActiveCfg = Release|Win32
 		{8899645D-F20E-4E58-8381-A6D28C0448BC}.Release|x86.Build.0 = Release|Win32
+		{A72532CE-E3A1-47AB-8E65-C6B5D8C258C6}.Debug|x64.ActiveCfg = Debug|x64
+		{A72532CE-E3A1-47AB-8E65-C6B5D8C258C6}.Debug|x64.Build.0 = Debug|x64
+		{A72532CE-E3A1-47AB-8E65-C6B5D8C258C6}.Debug|x86.ActiveCfg = Debug|Win32
+		{A72532CE-E3A1-47AB-8E65-C6B5D8C258C6}.Debug|x86.Build.0 = Debug|Win32
+		{A72532CE-E3A1-47AB-8E65-C6B5D8C258C6}.Release|x64.ActiveCfg = Release|x64
+		{A72532CE-E3A1-47AB-8E65-C6B5D8C258C6}.Release|x64.Build.0 = Release|x64
+		{A72532CE-E3A1-47AB-8E65-C6B5D8C258C6}.Release|x86.ActiveCfg = Release|Win32
+		{A72532CE-E3A1-47AB-8E65-C6B5D8C258C6}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

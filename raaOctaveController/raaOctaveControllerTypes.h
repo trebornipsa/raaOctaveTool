@@ -23,5 +23,10 @@ public:
 	const static unsigned int csm_uiRight = 1;
 	const static unsigned int csm_uiBottom = 2;
 	const static unsigned int csm_uiTop = 3;
+
+	const static unsigned int csm_uiWindowPosX = 0;
+	const static unsigned int csm_uiWindowPosY = 1;
+	const static unsigned int csm_uiWindowWidth = 2;
+	const static unsigned int csm_uiWindowHeight = 3;
 };
 

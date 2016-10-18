@@ -39,6 +39,7 @@ public:
 	const static unsigned int csm_uiOCScreenRequestImageFlip = 31;
 	const static unsigned int csm_uiOCScreenImageFlipInfo = 32;
 
+	const static unsigned int csm_uiOCWindowInfo = 33;
 
 	
 	const static unsigned int csm_uiOCBL = 0;
