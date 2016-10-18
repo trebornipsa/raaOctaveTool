@@ -46,6 +46,7 @@ protected:
 	virtual void nameChanged(raaScreen* pScreen);
 	virtual void screenMatrixChanged(raaScreen* pScreen);
 	virtual void screenChanged(raaScreen* pScreen);
+	virtual void windowChanged(raaScreen* pScreen);
 
 
 };

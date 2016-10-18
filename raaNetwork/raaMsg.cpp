@@ -50,6 +50,11 @@ void raaNet::raaMsg::add(unsigned uiVal)
 	m_DataList.push_back(QByteArray((const char*)&uiVal, sizeof(unsigned int)));
 }
 
+void raaNet::raaMsg::add(int iVal)
+{
+	m_DataList.push_back(QByteArray((const char*)&iVal, sizeof(int)));
+}
+
 void raaNet::raaMsg::add(std::string sVal)
 {
 	m_DataList.push_back(sVal.c_str());
@@ -83,6 +88,11 @@ unsigned short raaNet::raaMsg::asUShort(unsigned uiIndex)
 unsigned int raaNet::raaMsg::asUInt(unsigned uiIndex)
 {
 	return *((unsigned int*)m_DataList[uiIndex].data());
+}
+
+int raaNet::raaMsg::asInt(unsigned uiIndex)
+{
+	return *((int*)m_DataList[uiIndex].data());
 }
 
 std::string raaNet::raaMsg::asString(unsigned uiIndex)

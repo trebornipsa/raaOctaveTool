@@ -114,6 +114,20 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 					pMsg->tcpThread()->write(pM);
 				}
 				break;
+				case raaOctaveKernel::csm_uiOCWindowInfo:
+				{
+					std::string sName = pMsg->asString(3);
+
+					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+					pM->add(raaOctaveKernel::csm_uiOCWindowInfo);
+					pM->add(sName);
+					pM->add(m_pController->getScreen(sName)->window(0));
+					pM->add(m_pController->getScreen(sName)->window(1));
+					pM->add(m_pController->getScreen(sName)->window(2));
+					pM->add(m_pController->getScreen(sName)->window(3));
+					pMsg->tcpThread()->write(pM);
+				}
+				break;
 			}
 		}
 		break;
@@ -194,6 +208,15 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 					if (sName.length() && m_pController->getScreen(sName))
 					{
 						m_pController->getScreen(sName)->setFlipped(pMsg->asBool(4), pMsg->asBool(5), pMsg->asBool(6));
+					}
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCWindowInfo:
+				{
+					std::string sName = pMsg->asString(3);
+					if (sName.length() && m_pController->getScreen(sName))
+					{
+						m_pController->getScreen(sName)->setWindow(pMsg->asInt(4), pMsg->asInt(5), pMsg->asInt(6), pMsg->asInt(7));
 					}
 				}
 				break;

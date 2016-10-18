@@ -25,6 +25,7 @@ namespace raaNet
 
 		void add(unsigned short usVal);
 		void add(unsigned int uiVal);
+		void add(int iVal);
 		void add(std::string sVal);
 		void add(unsigned int *puiVal, unsigned int uiCount);
 		void add(float *pfVal, unsigned int uiCount);
@@ -36,6 +37,7 @@ namespace raaNet
 
 		unsigned short asUShort(unsigned int uiIndex);
 		unsigned int asUInt(unsigned int uiIndex);
+		int asInt(unsigned int uiIndex);
 		std::string asString(unsigned int uiIndex);
 		float* asFloatArray(unsigned int uiIndex);
 		unsigned int* asUIntArray(unsigned int uiIndex);

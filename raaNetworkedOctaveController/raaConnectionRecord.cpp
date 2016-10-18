@@ -198,3 +198,17 @@ void raaConnectionRecord::screenChanged(raaScreen* pScreen)
 	}
 }
 
+void raaConnectionRecord::windowChanged(raaScreen* pScreen)
+{
+	if (m_pTcpThread)
+	{
+		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCWindowInfo);
+		pMsg->add(pScreen->name());
+		pMsg->add(pScreen->window(0));
+		pMsg->add(pScreen->window(1));
+		pMsg->add(pScreen->window(2));
+		pMsg->add(pScreen->window(3));
+		m_pTcpThread->write(pMsg);
+	}
+}
