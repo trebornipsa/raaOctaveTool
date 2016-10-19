@@ -19,6 +19,15 @@ typedef std::map<std::string, raaDisplayScreen*>raaDisplayScreens;
 
 using namespace raaNet;
 
+typedef struct _raaWindow
+{
+	std::string sName;
+	int m_aiParam[4];
+	QGraphicsRectItem *m_pItem;
+} raaWindow;
+
+typedef std::map<std::string, raaWindow>raaWindows;
+
 class raaOctaveToolInterface: public QMainWindow, public Ui::raaOctaveToolInterfaceQt/*, public raaOctaveControllerListener, public raaOctaveViewPointListener*/
 {
 	Q_OBJECT
@@ -36,6 +45,10 @@ public:
 	const static unsigned int csm_uiRight = 1;
 	const static unsigned int csm_uiUp = 2;
 	const static unsigned int csm_uiDir = 3;
+
+	const static unsigned int csm_uiTransform = 0;
+	const static unsigned int csm_uiScreen = 1;
+	const static unsigned int csm_uiWindow = 2;
 
 
 	raaOctaveToolInterface();
@@ -84,24 +97,20 @@ public slots:
 	void screenAllChanged();
 	void screenContUpdate(int);
 
+	void windowUpdate();
+	void windowUpdateMode(int);
+	void windowParam(int);
+	void currentWindowChanged(const QString&);
+
 	void tcpRead(raaTcpMsg*);
 	void tcpState(raaTcpThread*, unsigned int);
 	void udpRead(raaTcpMsg*);
 	void udpState(raaTcpThread*, unsigned int);
 
 protected:
-//	raaOctaveController *m_pController;
 
 	static osg::Geode* makeGrid(float fWidth, float fDepth, unsigned int uiWidthSegs, unsigned int uiDepthSegs);
 	void updateView();
-
-//	virtual void originChanged(raaOctaveController* pController);
-//	virtual void screenAdded(raaOctaveController* pController, raaScreen* pScreen);
-//	virtual void screenRemoved(raaOctaveController* pController, raaScreen* pScreen);
-//	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
-//	virtual void physicalViewpointChanged(raaOctaveViewPoint* pViewpoint);
-//	virtual void virtualViewpointChanged(raaOctaveViewPoint* pViewpoint);
-//	void updateScreenInfo(raaScreen *pScreen);
 
 	raaDisplayScreens m_mDisplays;
 
@@ -121,8 +130,15 @@ protected:
 	std::string m_sCurrentScreen;
 	bool m_bScreenUpdate;
 
+	std::string m_sCurrentWindow;
+	bool m_bWindowUpdate;
+
 	raaNet::raaNetwork *m_pNetwork;
 	raaNet::raaTcpThread *m_pTcpClient;
 	raaNet::raaUdpThread *m_pUdpClient;
+
+	unsigned int m_uiMode;
+	QGraphicsScene m_Scene;
+	raaWindows m_mWindows;
 };
 

@@ -42,7 +42,7 @@
           <x>0</x>
           <y>0</y>
           <width>282</width>
-          <height>1009</height>
+          <height>968</height>
          </rect>
         </property>
         <attribute name="label">
@@ -336,7 +336,7 @@
           <x>0</x>
           <y>0</y>
           <width>307</width>
-          <height>979</height>
+          <height>938</height>
          </rect>
         </property>
         <attribute name="label">
@@ -359,6 +359,9 @@
             <bool>true</bool>
            </property>
           </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QComboBox" name="screen_combo"/>
          </item>
          <item row="2" column="0">
           <widget class="QGroupBox" name="groupBox_5">
@@ -607,22 +610,6 @@
            </layout>
           </widget>
          </item>
-         <item row="8" column="0">
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="1" column="0" colspan="2">
-          <widget class="QComboBox" name="screen_combo"/>
-         </item>
          <item row="4" column="1">
           <widget class="QGroupBox" name="groupBox_8">
            <property name="title">
@@ -696,14 +683,123 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="page_5">
+        <attribute name="label">
+         <string>Window</string>
+        </attribute>
+        <layout class="QFormLayout" name="formLayout_2">
+         <item row="0" column="0" colspan="2">
+          <widget class="QComboBox" name="window_combo"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="window_update_button">
+           <property name="text">
+            <string>Update</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="window_continual_check">
+           <property name="text">
+            <string>Continual</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" colspan="2">
+          <widget class="QGroupBox" name="groupBox_11">
+           <property name="title">
+            <string>Position (x, y)</string>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QSpinBox" name="window_pos_x_spin">
+              <property name="minimum">
+               <number>-5000</number>
+              </property>
+              <property name="maximum">
+               <number>5000</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="window_pos_y_spin">
+              <property name="minimum">
+               <number>-5000</number>
+              </property>
+              <property name="maximum">
+               <number>5000</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QGroupBox" name="groupBox_12">
+           <property name="title">
+            <string>Dim (width, height)</string>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QSpinBox" name="window_width_spin">
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+              <property name="value">
+               <number>200</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="window_height_spin">
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+              <property name="value">
+               <number>200</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
-      <widget class="raaQTOSGWidget" name="gl_widget" native="true">
+      <widget class="QStackedWidget" name="stackedWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>2</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="page_3">
+        <layout class="QVBoxLayout" name="verticalLayout_12">
+         <item>
+          <widget class="raaQTOSGWidget" name="gl_widget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_4">
+        <layout class="QVBoxLayout" name="verticalLayout_13">
+         <item>
+          <widget class="QGraphicsView" name="graphicsView"/>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>

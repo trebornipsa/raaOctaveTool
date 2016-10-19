@@ -43,7 +43,7 @@ void raaNet::raaUdpSocket::customEvent(QEvent* pEvent)
 //			int iSize = pUdpMsg->data().length();
 //			write((const char*)&iSize, sizeof(int));
 //			writeDatagram((const char*)&iSize, sizeof(int), m_Address, m_uiPort);
-			//				std::cout << "Size -> " << iSize << std::endl;
+			//				//std::cout << "Size -> " << iSize << std::endl;
 			//			write(pUdpMsg->data().data(), pUdpMsg->data().length());
 			writeDatagram(pUdpMsg->data().data(), pUdpMsg->data().length(), m_Address, m_uiPort);
 

@@ -91,6 +91,37 @@ void raaConnectionRecord::setScreenListener(bool bListen)
 	m_bScreenListener = bListen;
 }
 
+void raaConnectionRecord::sendScreenAll(raaOctaveController* pController)
+{
+	if (m_pTcpThread)
+	{
+		for (raaStringScreenMap::const_iterator it = pController->getScreens().begin(); it != pController->getScreens().end(); it++)
+		{
+			raaScreen *pScreen = it->second;
+			raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+			pMsg->add(raaOctaveKernel::csm_uiOCControllerScreenAdded);
+			pMsg->add(pScreen->name());
+			pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiBL));
+			pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiBR));
+			pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL));
+			pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTR));
+			pMsg->add(pScreen->normal());
+			pMsg->add(pScreen->near());
+			pMsg->add(pScreen->far());
+			pMsg->add(pScreen->rotation());
+			pMsg->add(pScreen->flipped(0));
+			pMsg->add(pScreen->flipped(1));
+			pMsg->add(pScreen->flipped(2));
+
+			pMsg->add(pScreen->screenProjection());
+
+			m_pTcpThread->write(pMsg);
+			if (m_bScreenListener) pScreen->addListener(this);
+		}
+	}
+
+}
+
 void raaConnectionRecord::originChanged(raaOctaveController* pController)
 {
 }

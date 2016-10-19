@@ -18,6 +18,7 @@
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QFrame>
+#include <QtWidgets/QGraphicsView>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
@@ -26,7 +27,9 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QSplitter>
+#include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QToolBox>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
@@ -73,6 +76,7 @@ public:
     QFormLayout *formLayout;
     QPushButton *screen_updtae_button;
     QCheckBox *screen_continual_update_check;
+    QComboBox *screen_combo;
     QGroupBox *groupBox_5;
     QVBoxLayout *verticalLayout_6;
     QDoubleSpinBox *screen_tl_x_spin;
@@ -96,8 +100,6 @@ public:
     QGroupBox *groupBox_7;
     QVBoxLayout *verticalLayout_8;
     QDoubleSpinBox *screen_near_spin;
-    QSpacerItem *verticalSpacer_2;
-    QComboBox *screen_combo;
     QGroupBox *groupBox_8;
     QVBoxLayout *verticalLayout_9;
     QDoubleSpinBox *screen_far_spin;
@@ -109,7 +111,26 @@ public:
     QCheckBox *screen_x_flip_check;
     QCheckBox *screen_y_flip_check;
     QCheckBox *screen_z_flip_check;
+    QWidget *page_5;
+    QFormLayout *formLayout_2;
+    QComboBox *window_combo;
+    QPushButton *window_update_button;
+    QCheckBox *window_continual_check;
+    QGroupBox *groupBox_11;
+    QHBoxLayout *horizontalLayout_2;
+    QSpinBox *window_pos_x_spin;
+    QSpinBox *window_pos_y_spin;
+    QGroupBox *groupBox_12;
+    QHBoxLayout *horizontalLayout_3;
+    QSpinBox *window_width_spin;
+    QSpinBox *window_height_spin;
+    QStackedWidget *stackedWidget;
+    QWidget *page_3;
+    QVBoxLayout *verticalLayout_12;
     raaQTOSGWidget *gl_widget;
+    QWidget *page_4;
+    QVBoxLayout *verticalLayout_13;
+    QGraphicsView *graphicsView;
 
     void setupUi(QMainWindow *raaOctaveToolInterfaceQt)
     {
@@ -133,7 +154,7 @@ public:
         toolBox->setMinimumSize(QSize(0, 0));
         page = new QWidget();
         page->setObjectName(QStringLiteral("page"));
-        page->setGeometry(QRect(0, 0, 282, 1009));
+        page->setGeometry(QRect(0, 0, 282, 968));
         verticalLayout = new QVBoxLayout(page);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         groupBox = new QGroupBox(page);
@@ -301,7 +322,7 @@ public:
         toolBox->addItem(page, QStringLiteral("ViewPoint"));
         page_2 = new QWidget();
         page_2->setObjectName(QStringLiteral("page_2"));
-        page_2->setGeometry(QRect(0, 0, 307, 979));
+        page_2->setGeometry(QRect(0, 0, 307, 938));
         formLayout = new QFormLayout(page_2);
         formLayout->setObjectName(QStringLiteral("formLayout"));
         screen_updtae_button = new QPushButton(page_2);
@@ -314,6 +335,11 @@ public:
         screen_continual_update_check->setChecked(true);
 
         formLayout->setWidget(0, QFormLayout::FieldRole, screen_continual_update_check);
+
+        screen_combo = new QComboBox(page_2);
+        screen_combo->setObjectName(QStringLiteral("screen_combo"));
+
+        formLayout->setWidget(1, QFormLayout::SpanningRole, screen_combo);
 
         groupBox_5 = new QGroupBox(page_2);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
@@ -465,15 +491,6 @@ public:
 
         formLayout->setWidget(4, QFormLayout::LabelRole, groupBox_7);
 
-        verticalSpacer_2 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        formLayout->setItem(8, QFormLayout::LabelRole, verticalSpacer_2);
-
-        screen_combo = new QComboBox(page_2);
-        screen_combo->setObjectName(QStringLiteral("screen_combo"));
-
-        formLayout->setWidget(1, QFormLayout::SpanningRole, screen_combo);
-
         groupBox_8 = new QGroupBox(page_2);
         groupBox_8->setObjectName(QStringLiteral("groupBox_8"));
         verticalLayout_9 = new QVBoxLayout(groupBox_8);
@@ -526,15 +543,103 @@ public:
         formLayout->setWidget(7, QFormLayout::SpanningRole, groupBox_10);
 
         toolBox->addItem(page_2, QStringLiteral("Screen"));
+        page_5 = new QWidget();
+        page_5->setObjectName(QStringLiteral("page_5"));
+        formLayout_2 = new QFormLayout(page_5);
+        formLayout_2->setObjectName(QStringLiteral("formLayout_2"));
+        window_combo = new QComboBox(page_5);
+        window_combo->setObjectName(QStringLiteral("window_combo"));
+
+        formLayout_2->setWidget(0, QFormLayout::SpanningRole, window_combo);
+
+        window_update_button = new QPushButton(page_5);
+        window_update_button->setObjectName(QStringLiteral("window_update_button"));
+
+        formLayout_2->setWidget(1, QFormLayout::LabelRole, window_update_button);
+
+        window_continual_check = new QCheckBox(page_5);
+        window_continual_check->setObjectName(QStringLiteral("window_continual_check"));
+        window_continual_check->setChecked(true);
+
+        formLayout_2->setWidget(1, QFormLayout::FieldRole, window_continual_check);
+
+        groupBox_11 = new QGroupBox(page_5);
+        groupBox_11->setObjectName(QStringLiteral("groupBox_11"));
+        horizontalLayout_2 = new QHBoxLayout(groupBox_11);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        window_pos_x_spin = new QSpinBox(groupBox_11);
+        window_pos_x_spin->setObjectName(QStringLiteral("window_pos_x_spin"));
+        window_pos_x_spin->setMinimum(-5000);
+        window_pos_x_spin->setMaximum(5000);
+
+        horizontalLayout_2->addWidget(window_pos_x_spin);
+
+        window_pos_y_spin = new QSpinBox(groupBox_11);
+        window_pos_y_spin->setObjectName(QStringLiteral("window_pos_y_spin"));
+        window_pos_y_spin->setMinimum(-5000);
+        window_pos_y_spin->setMaximum(5000);
+
+        horizontalLayout_2->addWidget(window_pos_y_spin);
+
+
+        formLayout_2->setWidget(2, QFormLayout::SpanningRole, groupBox_11);
+
+        groupBox_12 = new QGroupBox(page_5);
+        groupBox_12->setObjectName(QStringLiteral("groupBox_12"));
+        horizontalLayout_3 = new QHBoxLayout(groupBox_12);
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
+        window_width_spin = new QSpinBox(groupBox_12);
+        window_width_spin->setObjectName(QStringLiteral("window_width_spin"));
+        window_width_spin->setMaximum(10000);
+        window_width_spin->setValue(200);
+
+        horizontalLayout_3->addWidget(window_width_spin);
+
+        window_height_spin = new QSpinBox(groupBox_12);
+        window_height_spin->setObjectName(QStringLiteral("window_height_spin"));
+        window_height_spin->setMaximum(10000);
+        window_height_spin->setValue(200);
+
+        horizontalLayout_3->addWidget(window_height_spin);
+
+
+        formLayout_2->setWidget(3, QFormLayout::SpanningRole, groupBox_12);
+
+        toolBox->addItem(page_5, QStringLiteral("Window"));
         splitter->addWidget(toolBox);
-        gl_widget = new raaQTOSGWidget(splitter);
-        gl_widget->setObjectName(QStringLiteral("gl_widget"));
+        stackedWidget = new QStackedWidget(splitter);
+        stackedWidget->setObjectName(QStringLiteral("stackedWidget"));
         QSizePolicy sizePolicy3(QSizePolicy::Expanding, QSizePolicy::Expanding);
         sizePolicy3.setHorizontalStretch(2);
         sizePolicy3.setVerticalStretch(0);
-        sizePolicy3.setHeightForWidth(gl_widget->sizePolicy().hasHeightForWidth());
-        gl_widget->setSizePolicy(sizePolicy3);
-        splitter->addWidget(gl_widget);
+        sizePolicy3.setHeightForWidth(stackedWidget->sizePolicy().hasHeightForWidth());
+        stackedWidget->setSizePolicy(sizePolicy3);
+        page_3 = new QWidget();
+        page_3->setObjectName(QStringLiteral("page_3"));
+        verticalLayout_12 = new QVBoxLayout(page_3);
+        verticalLayout_12->setObjectName(QStringLiteral("verticalLayout_12"));
+        gl_widget = new raaQTOSGWidget(page_3);
+        gl_widget->setObjectName(QStringLiteral("gl_widget"));
+        QSizePolicy sizePolicy4(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy4.setHorizontalStretch(0);
+        sizePolicy4.setVerticalStretch(0);
+        sizePolicy4.setHeightForWidth(gl_widget->sizePolicy().hasHeightForWidth());
+        gl_widget->setSizePolicy(sizePolicy4);
+
+        verticalLayout_12->addWidget(gl_widget);
+
+        stackedWidget->addWidget(page_3);
+        page_4 = new QWidget();
+        page_4->setObjectName(QStringLiteral("page_4"));
+        verticalLayout_13 = new QVBoxLayout(page_4);
+        verticalLayout_13->setObjectName(QStringLiteral("verticalLayout_13"));
+        graphicsView = new QGraphicsView(page_4);
+        graphicsView->setObjectName(QStringLiteral("graphicsView"));
+
+        verticalLayout_13->addWidget(graphicsView);
+
+        stackedWidget->addWidget(page_4);
+        splitter->addWidget(stackedWidget);
 
         horizontalLayout->addWidget(splitter);
 
@@ -543,6 +648,7 @@ public:
         retranslateUi(raaOctaveToolInterfaceQt);
 
         toolBox->setCurrentIndex(0);
+        stackedWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(raaOctaveToolInterfaceQt);
@@ -585,6 +691,11 @@ public:
         screen_y_flip_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Y", 0));
         screen_z_flip_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Z", 0));
         toolBox->setItemText(toolBox->indexOf(page_2), QApplication::translate("raaOctaveToolInterfaceQt", "Screen", 0));
+        window_update_button->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Update", 0));
+        window_continual_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Continual", 0));
+        groupBox_11->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Position (x, y)", 0));
+        groupBox_12->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Dim (width, height)", 0));
+        toolBox->setItemText(toolBox->indexOf(page_5), QApplication::translate("raaOctaveToolInterfaceQt", "Window", 0));
     } // retranslateUi
 
 };

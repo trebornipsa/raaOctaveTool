@@ -40,11 +40,9 @@ namespace raaNet
 		bool m_bServer;
 		raaNetwork *m_pNetwork;
 
+		static int m_i;
 
-
-//		virtual void customEvent(QEvent *pEvent);
 		virtual void run();
 		virtual ~raaTcpThread();
-
 	};
 }

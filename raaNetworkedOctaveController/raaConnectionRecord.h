@@ -26,6 +26,10 @@ public:
 	void setViewpointListener(bool bListen);
 	void setScreenListener(bool bListen);
 
+	void sendScreenAll(raaOctaveController *pController);
+
+
+
 protected:
 	std::string m_sName;
 	raaTcpThread *m_pTcpThread;

@@ -33,7 +33,7 @@ raaOctaveControl::~raaOctaveControl()
 
 void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 {
-	std::cout << pMsg->tcpThread()->name().toStdString() << raaNet::tcpMsgTypeToString(pMsg->msgType()).toStdString() << pMsg->msgID() << QString(pMsg->data()).toStdString() << std::endl;
+	//std::cout << pMsg->tcpThread()->name().toStdString() << raaNet::tcpMsgTypeToString(pMsg->msgType()).toStdString() << pMsg->msgID() << QString(pMsg->data()).toStdString() << std::endl;
 
 	switch(pMsg->msgType())
 	{
@@ -43,6 +43,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 			{
 				case raaOctaveKernel::csm_uiOCHasConfig:
 				{
+					//std::cout << "Request -> Has Config -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgReply);
 					pM->add(m_pController->hasConfig() ? raaOctaveKernel::csm_uiOCHasConfigTrue : raaOctaveKernel::csm_uiOCHasConfigFalse);
 					pMsg->tcpThread()->write(pM);
@@ -50,42 +51,57 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				break;
 				case raaOctaveKernel::csm_uiOCLoadConfig:
 				{
-	//				std::cout << "Load Config -> " << pMsg->asString(3).c_str() << std::endl;
+					//std::cout << "Request -> Load Config -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					m_pController->readConfig(pMsg->asString(3).c_str());
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCAttachControllerListener:
 				{
+					//std::cout << "Request -> Attache Controller Listener -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					m_mConnections[pMsg->tcpThread()]->setControllerListener(true);
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCDetachControllerListener:
 				{
+					//std::cout << "Request -> Detach Controller Listener -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					m_mConnections[pMsg->tcpThread()]->setControllerListener(false);
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCAttachViewpointListener:
 				{
+					//std::cout << "Request -> Attach Viewpoint Listener -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					m_mConnections[pMsg->tcpThread()]->setViewpointListener(true);
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCDetachViewpointListener:
 				{
+					//std::cout << "Request -> Detach Viewpoint Listener -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
+
 					m_mConnections[pMsg->tcpThread()]->setViewpointListener(false);
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCAttachScreenListener:
 				{
+					//std::cout << "Request -> Attach Screen Listener -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
+
 					m_mConnections[pMsg->tcpThread()]->setScreenListener(true);
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCDetachScreenListener:
 				{
+					//std::cout << "Request -> DEtach Screen Listener -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					m_mConnections[pMsg->tcpThread()]->setScreenListener(false);
 				}
 				break;
+				case raaOctaveKernel::csm_uiOCControllerRequestScreenAll:
+					std::cout << "Request -> Request Screen All-> " << pMsg->tcpThread()->name().toStdString() << std::endl;
+
+					m_mConnections[pMsg->tcpThread()]->sendScreenAll(m_pController);
+
+					break;
 				case raaOctaveKernel::csm_uiOCScreenInfo:
 				{
+					//std::cout << "Request -> Screen Info -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					std::string sName = pMsg->asString(3);
 
 					raaNet::raaTcpMsg *pM = new raaTcpMsg(raaNet::csm_usTcpMsgInfo);
@@ -107,6 +123,8 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				break;
 				case raaOctaveKernel::csm_uiOCControllerRequestScreenNames:
 				{
+					//std::cout << "Request -> Screen Names -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
+
 					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
 					pM->add(raaOctaveKernel::csm_uiOCControllerRequestScreenNames);
 					pM->add((unsigned int)m_pController->getScreens().size());
@@ -116,6 +134,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				break;
 				case raaOctaveKernel::csm_uiOCWindowInfo:
 				{
+					//std::cout << "Request -> Window Info -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					std::string sName = pMsg->asString(3);
 
 					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
@@ -137,18 +156,21 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 			{
 				case raaOctaveKernel::csm_uiOCViewpointUpdatePhysical:
 				{
+					//std::cout << "Info -> Update Physical -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					osg::Matrixf m=pMsg->asMatrix(3);
 					m_pController->viewpoint()->setPhysicalMatrix(m);
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCViewpointUpdateVirtual:
 				{
+					//std::cout << "Info -> Update Virtual -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					osg::Matrixf m = pMsg->asMatrix(3);
 					m_pController->viewpoint()->setVirtualMatrix(m);
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCScreenVertex:
 				{
+					//std::cout << "Info -> Screen Vertex -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					std::string sName = pMsg->asString(4);
 					if (sName.length() && m_pController->getScreen(sName))
 					{
@@ -174,6 +196,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				break;
 				case raaOctaveKernel::csm_uiOCScreenVertexAll:
 				{
+					//std::cout << "Info -> Screen Vertex All -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					std::string sName = pMsg->asString(3);
 					if (sName.length() && m_pController->getScreen(sName))
 					{
@@ -186,6 +209,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				break;
 				case raaOctaveKernel::csm_uiOCScreenNearFar:
 				{
+					//std::cout << "Info -> Screen Near Far -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					std::string sName = pMsg->asString(3);
 					if (sName.length() && m_pController->getScreen(sName))
 					{
@@ -195,6 +219,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				break;
 				case raaOctaveKernel::csm_uiOCScreenImageRotationInfo:
 				{
+					//std::cout << "Info -> Screen Rot -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					std::string sName = pMsg->asString(3);
 					if (sName.length() && m_pController->getScreen(sName))
 					{
@@ -204,6 +229,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				break;
 				case raaOctaveKernel::csm_uiOCScreenImageFlipInfo:
 				{
+					//std::cout << "Info -> Screen Flip -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					std::string sName = pMsg->asString(3);
 					if (sName.length() && m_pController->getScreen(sName))
 					{
@@ -213,6 +239,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				break;
 				case raaOctaveKernel::csm_uiOCWindowInfo:
 				{
+					//std::cout << "Info -> Window Info -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					std::string sName = pMsg->asString(3);
 					if (sName.length() && m_pController->getScreen(sName))
 					{
@@ -271,7 +298,7 @@ void raaOctaveControl::tcpState(raaTcpThread* pThread, unsigned uiState)
 		break;
 	}
 
-	std::cout << msg.toStdString() << std::endl;
+	//std::cout << msg.toStdString() << std::endl;
 }
 
 void raaOctaveControl::udpState(raaUdpThread* pThread, unsigned uiState)
@@ -309,7 +336,7 @@ void raaOctaveControl::udpState(raaUdpThread* pThread, unsigned uiState)
 		break;
 	}
 
-	std::cout << msg.toStdString() << std::endl;
+	//std::cout << msg.toStdString() << std::endl;
 
 }
 
@@ -342,7 +369,7 @@ void raaOctaveControl::udpStream(int iState)
 
 void raaOctaveControl::udpRead(raaUdpMsg* pMsg)
 {
-	std::cout << pMsg->udpThread()->name().toStdString() << QString(pMsg->data()).toStdString() << std::endl;
+	//std::cout << pMsg->udpThread()->name().toStdString() << QString(pMsg->data()).toStdString() << std::endl;
 }
 
 void raaOctaveControl::originChanged(raaOctaveController* pController)

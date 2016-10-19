@@ -57,6 +57,7 @@ bool raaNet::raaNetwork::raaNetwork::createTcpClient(QString sName, QString sIP,
 		connect(pThread, SIGNAL(finished()), pThread, SLOT(deleteLater()));
 		connect(pThread, SIGNAL(stateChanged(raaTcpThread*, unsigned int)), SLOT(tcpStateChanged(raaTcpThread*, unsigned int)));
 		pThread->start();
+//		pThread->localRun();
 		return true;
 	}
 	return false;
@@ -173,6 +174,8 @@ raaNet::raaTcpThread* raaNet::raaNetwork::tcpThread(std::string sName)
 
 void raaNet::raaNetwork::raaNetwork::tcpStateChanged(raaTcpThread* pThread, unsigned int uiState)
 {
+	//std::cout << "Tcp State Changed -> " << (int)pThread << std::endl;
+
 	switch (uiState)
 	{
 	case csm_uiUnconnectedState:
@@ -186,8 +189,14 @@ void raaNet::raaNetwork::raaNetwork::tcpStateChanged(raaTcpThread* pThread, unsi
 	case csm_uiNameConnectedState:
 		if (pThread &&pThread->name().length() && (std::find(m_lTcpThreads.begin(), m_lTcpThreads.end(), pThread) == m_lTcpThreads.end()) && (m_mTcpThreads.find(pThread->name()) == m_mTcpThreads.end()))
 		{
+			//std::cout << "Name connected state -> " << pThread->name().toStdString() << std::endl;
+			//std::cout << " thread list size -> " << m_lTcpThreads.size() << std::endl;
 			m_lTcpThreads.push_back(pThread);
 			m_mTcpThreads[pThread->name()] = pThread;
+			//std::cout << " thread list size -> " << m_lTcpThreads.size() << std::endl;
+
+//			for (raaTcpThreadList::iterator it = m_lTcpThreads.begin(); it != m_lTcpThreads.end(); it++)
+				//std::cout << "\t Thread" << (*it) << std::endl;
 		}
 		else
 		{
@@ -234,12 +243,12 @@ if (pThread)
 					{
 						m_lUdpThreads.push_back(pThread);
 						m_mUdpThreads[pThread->name()] = pThread;
-						std::cout << "added" << std::endl;
+						//std::cout << "added" << std::endl;
 					}
 					else
 					{
 						pThread->close();
-						std::cout << "deleted" << std::endl;
+						//std::cout << "deleted" << std::endl;
 
 					}
 */
@@ -282,7 +291,10 @@ void raaNet::raaNetwork::raaNetwork::customEvent(QEvent* pEvent)
 {
 	if (pEvent)
 	{
-		if (pEvent->type() == raaNetwork::tcpReadEvent()) emit tcpRead((raaNet::raaTcpMsg*)pEvent);
+		if (pEvent->type() == raaNetwork::tcpReadEvent())
+		{
+			emit tcpRead((raaNet::raaTcpMsg*)pEvent);
+		}
 		else if (pEvent->type() == raaNetwork::udpReadEvent())
 		{
 			emit udpRead((raaNet::raaUdpMsg*)pEvent);
@@ -292,9 +304,9 @@ void raaNet::raaNetwork::raaNetwork::customEvent(QEvent* pEvent)
 
 void raaNet::raaNetwork::raaNetwork::incomingConnection(qintptr piSocketDescriptor)
 {
-	std::cout << " incoming connection" << std::endl;
+
 	raaTcpThread *pThread = new raaTcpThread(this, piSocketDescriptor, this); 
 	connect(pThread, SIGNAL(finished()), pThread, SLOT(deleteLater()));
-	connect(pThread, SIGNAL(stateChanged(raaTcpThread*, unsigned int)), SLOT(tcpStateChanged(raaTcpThread*, unsigned int)));
+	connect(pThread, SIGNAL(stateChanged(raaTcpThread*, unsigned int)), SLOT(tcpStateChanged(raaTcpThread*, unsigned int)), Qt::DirectConnection);
 	pThread->start();
 }

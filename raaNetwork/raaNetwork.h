@@ -70,6 +70,7 @@ namespace raaNet
 		raaStrngUdpThreadMap m_mUdpThreads;
 		raaUdpThreadList m_lUdpThreads;
 
+
 		void customEvent(QEvent *pEvent);
 		void incomingConnection(qintptr piSocketDescriptor) Q_DECL_OVERRIDE;
 	};

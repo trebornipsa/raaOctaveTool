@@ -47,7 +47,7 @@ void raaNet::raaUdpThread::readyRead()
 		int iSize = 0;
 		m_pSocket->read((char*)&iSize, sizeof(unsigned int));
 
-		//		std::cout << "Size -> " << iSize << std::endl;
+		//		//std::cout << "Size -> " << iSize << std::endl;
 
 		if (iSize > 0)
 		{

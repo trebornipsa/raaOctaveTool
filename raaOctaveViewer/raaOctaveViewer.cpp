@@ -5,6 +5,7 @@
 
 #include <windows.h>
 #include <gl/gl.h>
+#include <QtCore/QCoreApplication>
 
 #include <conio.h>
 #include <osgViewer/Viewer>
@@ -14,6 +15,8 @@
 #include <osg/Drawable>
 #include <osg/ShapeDrawable>
 #include <osg/MatrixTransform>
+
+#include <raaOctaveSystem/raaOctaveSystem.h>
 
 
 osg::Geode* makeGrid(float fWidth, float fDepth, unsigned uiWidthSegs, unsigned uiDepthSegs)
@@ -56,21 +59,8 @@ osg::Geode* makeGrid(float fWidth, float fDepth, unsigned uiWidthSegs, unsigned 
 	return pGeode;
 }
 
-
-int main(int argc, char* argv[])
+osg::Node* makeScene()
 {
-	// parse the command line
-	osg::ArgumentParser args(&argc, argv);
-
-	// load modes from the command line arguments
-	osg::Node *pNode = osgDB::readNodeFiles(args);
-	if (!pNode)
-	{
-		std::cout << "Failed to load model, press any key to exit" << std::endl;
-		_getch();
-		return 1; // exit with error if no modesl loaded
-	}
-
 	osg::MatrixTransform *pVirtualScene = new osg::MatrixTransform();
 
 	pVirtualScene->addChild(makeGrid(10.0f, 10.0f, 10, 10));
@@ -106,54 +96,16 @@ int main(int argc, char* argv[])
 
 	pVirtualScene->addChild(pG2);
 
+	return pVirtualScene;
+}
 
-	// create a viewer
-	osgViewer::Viewer viewer;
+int main(int argc, char* argv[])
+{
+	QCoreApplication a(argc, argv);
 
-	// define the format of the viewer window
-	osg::GraphicsContext::Traits *pTraits = new osg::GraphicsContext::Traits();
-
-	pTraits->x = 0; // hori window position
-	pTraits->y = 0; // vert window position
-	pTraits->width = 200;
-	pTraits->height = 200;
-	pTraits->windowDecoration = true;
-	pTraits->doubleBuffer = true;
-	pTraits->sharedContext = 0; // allows sharing 
-
-								// create a graphics context for the viewer window
-	osg::GraphicsContext *pGC = osg::GraphicsContext::createGraphicsContext(pTraits);
-
-	viewer.getCamera()->setGraphicsContext(pGC);
-	viewer.getCamera()->setViewport(new osg::Viewport(pTraits->x, pTraits->y, pTraits->width, pTraits->height));
-
-//	viewer.addSlave
-
-	if (pTraits->doubleBuffer)
-	{
-		viewer.getCamera()->setDrawBuffer(GL_BACK);
-	}
-	else
-	{
-		viewer.getCamera()->setDrawBuffer(GL_FRONT);
-	}
-
-	osgGA::TrackballManipulator *pTBManip = new osgGA::TrackballManipulator();
-
-	pTBManip->setCenter(pNode->getBound().center());
-
-	viewer.setCameraManipulator(pTBManip);
-
-	viewer.setSceneData(pVirtualScene);
-
-	viewer.realize();
-	viewer.run();
-
-
-	viewer.setSceneData(pNode);
-	viewer.realize();
-	viewer.run();
+	raaOctaveSystem *pSystem = new raaOctaveSystem();
+	pSystem->addSceneData(makeScene());
+	a.exec();
 
     return 0;
 }
-
