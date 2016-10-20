@@ -54,8 +54,8 @@ void raaOctaveSystem::addDisplay(int iScreen, std::string sName, int iX, int iY,
 	pTraits->height = iH;
 	pTraits->windowDecoration = false;
 	pTraits->doubleBuffer = true;
-//	pTraits->sharedContext = getNumViews()? pTraits->sharedContext=getView(0)->getCamera()->getGraphicsContext():0;
-	pTraits->sharedContext = 0;
+	pTraits->sharedContext = getNumViews()? pTraits->sharedContext=getView(0)->getCamera()->getGraphicsContext():0;
+//	pTraits->sharedContext = 0;
 
 	osg::Matrixf mP;
 	mP.makePerspective(60.0f, 1.0f, 0.1f, 100.0f);
@@ -68,8 +68,8 @@ void raaOctaveSystem::addDisplay(int iScreen, std::string sName, int iX, int iY,
 
 
 	osg::Matrixf m;
-	pView->setCameraManipulator(new raaCameraManipulator());
 	pView->setSceneData(m_pScene);
+
 	osg::Camera *pCamera = pView->getCamera();
 	pCamera->setGraphicsContext(pGC);	
 	pCamera->setDataVariance(osg::Object::DYNAMIC);
@@ -77,32 +77,9 @@ void raaOctaveSystem::addDisplay(int iScreen, std::string sName, int iX, int iY,
 	pCamera->setProjectionResizePolicy(osg::Camera::FIXED);	
 	pCamera->setClearColor(osg::Vec4f(0.3f, 0.3f, 0.8f, 1.0f));
 	pCamera->setViewport(0, 0, iW, iH);
-	pCamera->setProjectionMatrix(mP);
-	pCamera->setCullingActive(false);
-	
-//	DepthPeeling *pPeeling = new DepthPeeling(0, 0);
-//	m_vPeelings.push_back(pPeeling);
-
-	// the heat map already uses two textures bound to unit 0 and 1, so we can use TexUnit 2 for the peeling
-//	pPeeling->setTexUnit(2);
-//	pPeeling->setSolidScene(m_pScene);
-//	pPeeling->setTransparentScene(pTranspScene);
-//	pView->setSceneData(pPeeling->getRoot());
-//	pView->addEventHandler(new DepthPeeling::EventHandler(pPeeling));
-
-	
-	
+	pCamera->setProjectionMatrix(mPersp);
+	pCamera->setCullingActive(false);	
 	addView(pView);
-
-//	pView->setName(sName);
-//	pView->setCameraManipulator(0);
-	//	pView->setC
-//	pCamera->setProjectionResizePolicy(osg::Camera::FIXED);	
-//	pCamera->setName(sName);
-//	pCamera->set
-//	pCamera->setViewMatrix(osg::Matrixf());
-//	pCamera->addChild(m_pScene);
-//	pView->setCamera(pCamera);
 }
 
 void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
@@ -115,14 +92,12 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 		{
 			if (pMsg->asUInt(2) == raaOctaveKernel::csm_uiOCHasConfigTrue)
 			{
-//				std::cout << "Read Reply -> raaOctaveKernel::csm_uiOCHasConfigTrue" << std::endl;
 				raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
 				pM->add(raaOctaveKernel::csm_uiOCControllerRequestScreenAll);
 				m_pTcpClient->write(pM);
 			}
 			else if (pMsg->asUInt(2) == raaOctaveKernel::csm_uiOCHasConfigFalse)
 			{
-//				std::cout << "Read Reply -> raaOctaveKernel::csm_uiOCHasConfigFalse" << std::endl;
 				raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
 				pM->add(raaOctaveKernel::csm_uiOCLoadConfig);
 				pM->add(std::string("C:\\robbie\\data\\octave_config.raa"));
@@ -136,8 +111,6 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 			{
 			case raaOctaveKernel::csm_uiOCControllerScreenAdded:
 			{
-//				std::cout << "Read Info -> raaOctaveKernel::csm_uiOCControllerScreenAdded" << std::endl;
-
 				std::string sName = pMsg->asString(3);
 				osg::Vec3f vbl = pMsg->asVector(4);
 				osg::Vec3f vbr = pMsg->asVector(5);
@@ -151,18 +124,9 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 				bool bY = pMsg->asBool(13);
 				bool bZ = pMsg->asBool(14);
 				osg::Matrixf mPersp = pMsg->asMatrix(15);
-//				float l = pMsg->asFloat(16);
-//				float r = pMsg->asFloat(17);
-//				float b = pMsg->asFloat(18);
-//				float t = pMsg->asFloat(19);
-//				float n = pMsg->asFloat(20);
-//				float f = pMsg->asFloat(21);
-
-//				osg::Matrixf m;
-//				m.makeFrustum(l,r,b,t,n,f);
-
+				osg::Matrixf mView = pMsg->asMatrix(16);
 				addDisplay(2, sName, 0, 0, 200, 200, mPersp);
-	//			realize();
+				m_mViews[sName]->getCamera()->setViewMatrix(mView);
 
 				raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
 				pM->add(raaOctaveKernel::csm_uiOCWindowInfo);
@@ -192,36 +156,13 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 			break;
 			case raaOctaveKernel::csm_uiOCScreenMatrixChanged:
 			{
-				std::cout << "raaOctaveKernel::csm_uiOCScreenMatrixChanged" << std::endl;
+//				std::cout << "raaOctaveKernel::csm_uiOCScreenMatrixChanged" << std::endl;
 				std::string sName = pMsg->asString(3);
 				osg::Matrixf mPersp = pMsg->asMatrix(4);
 				osg::Matrixf mView = pMsg->asMatrix(5);
-				osg::Matrixf mP;
-				mP.makePerspective(60.0f, 1.0f, 0.1f, 100.0f);
 
-//				float l = pMsg->asFloat(5);
-//				float r = pMsg->asFloat(6);
-//				float b = pMsg->asFloat(7);
-//				float t = pMsg->asFloat(8);
-//				float n = pMsg->asFloat(9);
-//				float f = pMsg->asFloat(10);
-
-//				l = -0.5f;
-//				r = 0.5f;
-//				t = 0.5f;
-//				b = -0.5f;
-//				n = 0.01f;
-//				f = 100.0f;
-
-//				osg::Matrixf m;
-//				m.makeFrustum(l, r, b, t, n, f);
-
-//				osg::Matrixf mP;
-//				mP.makePerspective(60.0f, 1.0f, 0.1f, 100.0f);
-
-
-				m_mViews[sName]->getCamera()->setProjectionMatrix(mView*mPersp);
-				m_mViews[sName]->getCamera()->setViewMatrix(osg::Matrixf());
+				m_mViews[sName]->getCamera()->setProjectionMatrix(mPersp);
+				m_mViews[sName]->getCamera()->setViewMatrix(mView);
 			}
 			break;
 			case raaOctaveKernel::csm_uiOCScreenChanged:

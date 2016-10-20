@@ -94,7 +94,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCControllerRequestScreenAll:
-					std::cout << "Request -> Request Screen All-> " << pMsg->tcpThread()->name().toStdString() << std::endl;
+//					std::cout << "Request -> Request Screen All-> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 
 					m_mConnections[pMsg->tcpThread()]->sendScreenAll(m_pController);
 
