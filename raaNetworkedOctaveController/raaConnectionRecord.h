@@ -48,7 +48,7 @@ protected:
 	virtual void physicalViewpointChanged(raaOctaveViewPoint* pViewpoint);
 	virtual void virtualViewpointChanged(raaOctaveViewPoint* pViewpoint);
 	virtual void nameChanged(raaScreen* pScreen);
-	virtual void screenMatrixChanged(raaScreen* pScreen);
+	virtual void screenProjMatrixChanged(raaScreen* pScreen);
 	virtual void screenChanged(raaScreen* pScreen);
 	virtual void windowChanged(raaScreen* pScreen);
 

@@ -112,8 +112,8 @@ void raaConnectionRecord::sendScreenAll(raaOctaveController* pController)
 			pMsg->add(pScreen->flipped(0));
 			pMsg->add(pScreen->flipped(1));
 			pMsg->add(pScreen->flipped(2));
-
 			pMsg->add(pScreen->screenProjection());
+			pMsg->add(pScreen->screenView());
 
 			m_pTcpThread->write(pMsg);
 			if (m_bScreenListener) pScreen->addListener(this);
@@ -144,8 +144,14 @@ void raaConnectionRecord::screenAdded(raaOctaveController* pController, raaScree
 		pMsg->add(pScreen->flipped(0));
 		pMsg->add(pScreen->flipped(1));
 		pMsg->add(pScreen->flipped(2));
-
 		pMsg->add(pScreen->screenProjection());
+		pMsg->add(pScreen->screenView());
+		//		pMsg->add(pScreen->projParam(0));
+//		pMsg->add(pScreen->projParam(1));
+//		pMsg->add(pScreen->projParam(2));
+//		pMsg->add(pScreen->projParam(3));
+//		pMsg->add(pScreen->projParam(4));
+//		pMsg->add(pScreen->projParam(5));
 
 		m_pTcpThread->write(pMsg);
 	}
@@ -195,7 +201,7 @@ void raaConnectionRecord::nameChanged(raaScreen* pScreen)
 {
 }
 
-void raaConnectionRecord::screenMatrixChanged(raaScreen* pScreen)
+void raaConnectionRecord::screenProjMatrixChanged(raaScreen* pScreen)
 {
 	if (m_pTcpThread)
 	{
@@ -203,6 +209,13 @@ void raaConnectionRecord::screenMatrixChanged(raaScreen* pScreen)
 		pMsg->add(raaOctaveKernel::csm_uiOCScreenMatrixChanged);
 		pMsg->add(pScreen->name());
 		pMsg->add(pScreen->screenProjection());
+		pMsg->add(pScreen->screenView());
+		//		pMsg->add(pScreen->projParam(0));
+//		pMsg->add(pScreen->projParam(1));
+//		pMsg->add(pScreen->projParam(2));
+//		pMsg->add(pScreen->projParam(3));
+//		pMsg->add(pScreen->projParam(4));
+//		pMsg->add(pScreen->projParam(5));
 		m_pTcpThread->write(pMsg);
 	}
 }

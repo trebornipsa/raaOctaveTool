@@ -94,9 +94,9 @@ void raaOctaveController::readConfig(QString sConfig)
 							else if (e.nodeName() == "MOD")
 							{
 								if (e.hasAttribute("rot")) fRot = e.attribute("rot").toFloat();
-								if (e.hasAttribute("flipx")) fFar = (e.attribute("flipx") == "true") ? true : false;
-								if (e.hasAttribute("flipy")) fFar = (e.attribute("flipy") == "true") ? true : false;
-								if (e.hasAttribute("fipz")) fFar = (e.attribute("flipz") == "true") ? true : false;
+								if (e.hasAttribute("flipx")) bX = (e.attribute("flipx") == "true") ? true : false;
+								if (e.hasAttribute("flipy")) bY = (e.attribute("flipy") == "true") ? true : false;
+								if (e.hasAttribute("fipz")) bZ = (e.attribute("flipz") == "true") ? true : false;
 							}
 							else if (e.nodeName() == "WINDOW")
 							{

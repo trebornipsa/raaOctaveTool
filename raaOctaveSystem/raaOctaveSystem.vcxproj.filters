@@ -18,9 +18,21 @@
     <ClInclude Include="raaOctaveSystemDefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="raaCameraManipulator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthPeeling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="raaOctaveSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="raaCameraManipulator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthPeeling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

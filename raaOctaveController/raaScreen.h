@@ -22,7 +22,8 @@ public:
 	virtual ~raaScreenListener();
 
 	virtual void nameChanged(raaScreen *pScreen) = 0;
-	virtual void screenMatrixChanged(raaScreen *pScreen) = 0;
+	virtual void screenProjMatrixChanged(raaScreen *pScreen) = 0;
+
 	virtual void screenChanged(raaScreen *pScreen) = 0;
 	virtual void windowChanged(raaScreen *pScreen) = 0;
 };
@@ -44,6 +45,7 @@ public:
 	void setScreenVerts(osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTL, osg::Vec3f vTR);
 	osg::Vec3f normal();
 	osg::Matrixf screenProjection();
+	osg::Matrixf screenView();
 	float near();
 	float far();
 	void setNearFar(float fNear, float fFar);
@@ -54,6 +56,8 @@ public:
 
 	void setWindow(int iX, int iY, int iW, int iH);
 	int window(unsigned int uiParam);
+
+	float projParam(unsigned int uiIndex);
 
 protected:
 	virtual void physicalViewpointChanged(raaOctaveViewPoint *pViewpoint);
@@ -74,6 +78,8 @@ protected:
 	float m_fRotation;
 	int m_aiWindow[4];
 
+	float m_afProjParam[6];
+
 	osg::Vec3f m_vNormal;
 	std::string m_sName;
 	raaScreenListeners m_lListeners;
@@ -83,6 +89,8 @@ protected:
 	osg::Matrixf m_mScreenProjectionTranslation;
 	osg::Matrixf m_mScreenProjectionImageRotation;
 	osg::Matrixf m_mScreenProjectionImageFlipScale;
+	osg::Matrixf m_mScreenViewMatrix;
+
 	static osg::Matrixf sm_RotationScale;
 	static bool sm_bIntialised;
 

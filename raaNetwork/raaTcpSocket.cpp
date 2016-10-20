@@ -20,7 +20,7 @@ void raaNet::raaTcpSocket::customEvent(QEvent* pEvent)
 		if (pEvent->type() == raaNetwork::tcpWriteEvent())
 		{
 				raaTcpMsg *pTcpMsg = static_cast<raaTcpMsg*>(pEvent);
-				std::cout << "write -> " << pTcpMsg->asUInt(2) << std::endl;
+//				std::cout << "write -> " << pTcpMsg->asUInt(2) << std::endl;
 
 				int iSize = pTcpMsg->data().length();
 				write((const char*)&iSize, sizeof(int));

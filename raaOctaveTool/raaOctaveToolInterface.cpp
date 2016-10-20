@@ -827,9 +827,13 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 						bool bX = pMsg->asBool(12);
 						bool bY = pMsg->asBool(13);
 						bool bZ = pMsg->asBool(14);
-						osg::Matrixf mPersp =pMsg->asMatrix(15);
+						osg::Matrixf mPersp = pMsg->asMatrix(15);
+						osg::Matrixf mView = pMsg->asMatrix(16);
 
-						m_mDisplays[sName] = new raaDisplayScreen(m_pVirtualScene, sName, vbl, vbr, vtl, vtr, vn, mPersp);
+						m_mDisplays[sName] = new raaDisplayScreen(m_pVirtualScene, sName, vbl, vbr, vtl, vtr, vn,mPersp);
+						m_mDisplays[sName]->setViewMatrix(mView);
+
+
 						gl_widget->addToTranspScene(0, m_mDisplays[sName]->root());
 
 						m_mWindows[sName].sName = sName;
@@ -864,17 +868,22 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 						//std::cout << "Read Info -> raaOctaveKernel::csm_uiOCViewpointVirtualChanged" << std::endl;
 						osg::Matrixf m = pMsg->asMatrix(3);
 
-						for (raaDisplayScreens::iterator it = m_mDisplays.begin(); it != m_mDisplays.end(); it++)
-							it->second->setViewMatrix(m);
+	//					for (raaDisplayScreens::iterator it = m_mDisplays.begin(); it != m_mDisplays.end(); it++)
+	//						it->second->setViewMatrix(m);
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCScreenMatrixChanged:
 					{
 						//std::cout << "Read Info -> raaOctaveKernel::csm_uiOCScreenMatrixChanged" << std::endl;
 						std::string sName = pMsg->asString(3);
-						osg::Matrixf m = pMsg->asMatrix(4);
+						osg::Matrixf mPersp = pMsg->asMatrix(4);
+						osg::Matrixf mView = pMsg->asMatrix(5);
 
-						if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end()) m_mDisplays[sName]->screenMatrixChanged(m);
+						if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end())
+						{
+							m_mDisplays[sName]->screenMatrixChanged(mPersp);
+							m_mDisplays[sName]->setViewMatrix(mView);
+						}
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCScreenChanged:
@@ -1123,6 +1132,7 @@ osg::Geode* raaOctaveToolInterface::makeGrid(float fWidth, float fDepth, unsigne
 
 	osg::Vec3Array *pVerts = new osg::Vec3Array();
 	osg::Vec3Array *pNorms = new osg::Vec3Array();
+	osg::Vec4Array *pCols = new osg::Vec4Array();
 	osg::Vec3 vNorm(0.0f, 0.0f, 1.0f);
 
 	for(unsigned int i=0;i<=uiWidthSegs;i++, fW+=fWS)
@@ -1131,6 +1141,8 @@ osg::Geode* raaOctaveToolInterface::makeGrid(float fWidth, float fDepth, unsigne
 		pVerts->push_back(osg::Vec3f(fW, -fD, 0.0f));
 		pNorms->push_back(vNorm);
 		pNorms->push_back(vNorm);
+		pCols->push_back(osg::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+		pCols->push_back(osg::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	for (unsigned int i = 0; i <= uiDepthSegs; i++, fD += fDS)
@@ -1139,10 +1151,14 @@ osg::Geode* raaOctaveToolInterface::makeGrid(float fWidth, float fDepth, unsigne
 		pVerts->push_back(osg::Vec3f(-fWW, fD, 0.0f));
 		pNorms->push_back(vNorm);
 		pNorms->push_back(vNorm);
+		pCols->push_back(osg::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
+		pCols->push_back(osg::Vec4f(1.0f, 0.0f, 0.0f, 1.0f));
 	}
 
+	pGeom->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
 	pGeom->setVertexArray(pVerts);
 	pGeom->setNormalArray(pNorms, osg::Array::BIND_PER_VERTEX);
+	pGeom->setColorArray(pCols, osg::Array::BIND_PER_VERTEX);
 	pGeom->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, pVerts->size()));
 	pGeode->addChild(pGeom);
 

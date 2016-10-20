@@ -13,12 +13,14 @@
 using namespace raaNet;
 
 typedef std::map<std::string, osgViewer::View*>raaViews;
+typedef std::vector<class DepthPeeling*> raaDepthPeelings;
+
 
 class RAAOCTAVESYSTEM_DLL_DEF raaOctaveSystem: public QObject, public osgViewer::CompositeViewer
 {
 	Q_OBJECT
 public:
-	raaOctaveSystem();
+	raaOctaveSystem(osg::Node *pNode=0);
 	virtual ~raaOctaveSystem();
 
 	void addSceneData(osg::Node *pNode);
@@ -33,13 +35,15 @@ public slots:
 
 protected:
 
-	void addDisplay(int iScreen, std::string sName, int iX, int iY, int iW, int iH);
+	void addDisplay(int iScreen, std::string sName, int iX, int iY, int iW, int iH, osg::Matrixf mPersp);
 
 	osg::Group *m_pScene;
 
 	raaNet::raaNetwork *m_pNetwork;
 	raaNet::raaTcpThread *m_pTcpClient;
 	raaNet::raaUdpThread *m_pUdpClient;
+
+	raaDepthPeelings m_vPeelings;
 
 	raaViews m_mViews;
 	int m_iScreen;

@@ -95,7 +95,7 @@ osg::Node* makeScene()
 	pMTC->addChild(pG2);
 
 	pVirtualScene->addChild(pG2);
-
+//	pVirtualScene->addChild(makeGrid(10.0f, 10.0f, 10, 10));
 	return pVirtualScene;
 }
 
@@ -103,8 +103,8 @@ int main(int argc, char* argv[])
 {
 	QCoreApplication a(argc, argv);
 
-	raaOctaveSystem *pSystem = new raaOctaveSystem();
-	pSystem->addSceneData(makeScene());
+	raaOctaveSystem *pSystem = new raaOctaveSystem(makeScene());
+//	pSystem->addSceneData(makeScene());
 	a.exec();
 
     return 0;

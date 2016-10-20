@@ -159,9 +159,13 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">raaMOC %(filename)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(filename).moc</Outputs>
     </CustomBuild>
+    <ClInclude Include="DepthPeeling.h" />
+    <ClInclude Include="raaCameraManipulator.h" />
     <ClInclude Include="raaOctaveSystemDefs.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DepthPeeling.cpp" />
+    <ClCompile Include="raaCameraManipulator.cpp" />
     <ClCompile Include="raaOctaveSystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
