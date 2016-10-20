@@ -14,7 +14,7 @@ raaScreenListener::~raaScreenListener()
 {
 }
 
-raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, int iX ,int iY, int iH, int iW, raaOctaveViewPoint *pViewpoint)
+raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, int iX ,int iY, int iW, int iH, raaOctaveViewPoint *pViewpoint)
 {
 	initialise();
 	m_fNear = fNear;

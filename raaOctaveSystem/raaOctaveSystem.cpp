@@ -26,7 +26,7 @@ raaOctaveSystem::raaOctaveSystem(osg::Node *pNode)
 	osg::Matrixf mP;
 	mP.makePerspective(60.0f, 1.0f, 0.1f, 100.0f);
 
-	addDisplay(1, "null", 0, 0, 200, 200, mP);
+	addDisplay(0, "null", 0, 0, 200, 200, mP);
 	m_mViews["null"]->setCameraManipulator(new osgGA::TrackballManipulator());
 	realize();
 	m_pTimer = new QTimer(this);
@@ -55,10 +55,6 @@ void raaOctaveSystem::addDisplay(int iScreen, std::string sName, int iX, int iY,
 	pTraits->windowDecoration = false;
 	pTraits->doubleBuffer = true;
 	pTraits->sharedContext = getNumViews()? pTraits->sharedContext=getView(0)->getCamera()->getGraphicsContext():0;
-//	pTraits->sharedContext = 0;
-
-	osg::Matrixf mP;
-	mP.makePerspective(60.0f, 1.0f, 0.1f, 100.0f);
 
 
 	osg::GraphicsContext *pGC = osg::GraphicsContext::createGraphicsContext(pTraits);
@@ -125,7 +121,7 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 				bool bZ = pMsg->asBool(14);
 				osg::Matrixf mPersp = pMsg->asMatrix(15);
 				osg::Matrixf mView = pMsg->asMatrix(16);
-				addDisplay(2, sName, 0, 0, 200, 200, mPersp);
+				addDisplay(0, sName, 0, 0, 200, 200, mPersp);
 				m_mViews[sName]->getCamera()->setViewMatrix(mView);
 
 				raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
