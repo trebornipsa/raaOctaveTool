@@ -14,7 +14,6 @@ raaOctaveViewPoint::raaOctaveViewPoint()
 	m_uiViewpointUpdateCount = 0;
 }
 
-
 raaOctaveViewPoint::~raaOctaveViewPoint()
 {
 }
@@ -22,7 +21,6 @@ raaOctaveViewPoint::~raaOctaveViewPoint()
 void raaOctaveViewPoint::setVirtualMatrix(osg::Matrixf m)
 {
 	m_Virtual = m;
-	m_Overall = m_Virtual*m_Physical;
 	m_uiViewpointUpdateCount++;
 	for (raaOctaveViewPointListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++) (*it)->virtualViewpointChanged(this);
 }
@@ -30,7 +28,6 @@ void raaOctaveViewPoint::setVirtualMatrix(osg::Matrixf m)
 void raaOctaveViewPoint::setPhysicalMatrix(osg::Matrixf m)
 {
 	m_Physical = m;
-	m_Overall = m_Virtual*m_Physical;
 	m_uiViewpointUpdateCount++;
 	for (raaOctaveViewPointListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++) (*it)->physicalViewpointChanged(this);
 }
@@ -43,11 +40,6 @@ osg::Matrixf raaOctaveViewPoint::physicalMatrix()
 osg::Matrixf raaOctaveViewPoint::virtualMatrix()
 {
 	return m_Virtual;
-}
-
-osg::Matrixf raaOctaveViewPoint::overallMatrix()
-{
-	return m_Overall;
 }
 
 void raaOctaveViewPoint::addListener(raaOctaveViewPointListener* pListener)
@@ -65,10 +57,3 @@ unsigned raaOctaveViewPoint::currentScreenUpdate()
 	return m_uiViewpointUpdateCount;
 }
 
-void raaOctaveViewPoint::updateMatrix()
-{
-//	m_Overall = m_Virtual*m_Physical;
-//	m_uiViewpointUpdateCount++;
-
-//	for (raaOctaveViewPointListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++) (*it)->physicalViewpointChanged(this);
-}

@@ -1,7 +1,9 @@
 #include <iostream>
+#include <windows.h>
+
 #include <raaOctaveKernel/raaOctaveKernel.h>
 #include <raaNetwork/raaTcpMsg.h>
-
+#include <osg/MatrixTransform>
 #include "raaOctaveSystem.h"
 #include "raaOctaveSystem.moc"
 #include "raaCameraManipulator.h"
@@ -11,7 +13,7 @@
 raaOctaveSystem::raaOctaveSystem(osg::Node *pNode)
 {
 	m_iScreen = 0;
-	m_pScene = new osg::Group();
+	m_pScene = new osg::MatrixTransform();
 	m_pScene->ref();
 
 	setThreadingModel(osgViewer::ViewerBase::CullThreadPerCameraDrawThreadPerContext);
@@ -146,6 +148,8 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 			case raaOctaveKernel::csm_uiOCViewpointVirtualChanged:
 			{
 				osg::Matrixf m = pMsg->asMatrix(3);
+
+				m_pScene->setMatrix(m);
 
 //				for (raaViews::iterator it = m_mViews.begin(); it != m_mViews.end(); it++) it->second->getCamera()->setViewMatrix(m);
 			}

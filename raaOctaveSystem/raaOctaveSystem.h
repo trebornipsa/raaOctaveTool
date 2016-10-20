@@ -37,7 +37,7 @@ protected:
 
 	void addDisplay(int iScreen, std::string sName, int iX, int iY, int iW, int iH, osg::Matrixf mPersp);
 
-	osg::Group *m_pScene;
+	osg::MatrixTransform *m_pScene;
 
 	raaNet::raaNetwork *m_pNetwork;
 	raaNet::raaTcpThread *m_pTcpClient;

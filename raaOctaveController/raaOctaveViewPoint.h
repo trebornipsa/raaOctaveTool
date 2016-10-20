@@ -31,19 +31,14 @@ public:
 
 	osg::Matrixf physicalMatrix();
 	osg::Matrixf virtualMatrix();
-	osg::Matrixf overallMatrix();
 
 	void addListener(raaOctaveViewPointListener *pListener);
 	void removeListener(raaOctaveViewPointListener *pListener);
 
 	unsigned int currentScreenUpdate();
-
 protected:
-	virtual void updateMatrix();
-
 	osg::Matrixf m_Virtual;
 	osg::Matrixf m_Physical;
-	osg::Matrixf m_Overall;
 
 	raaOctaveViewPointListeners m_lListener;
 	unsigned int m_uiViewpointUpdateCount;

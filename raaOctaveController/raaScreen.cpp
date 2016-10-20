@@ -214,11 +214,39 @@ void raaScreen::calcProjectionMatrix(raaOctaveViewPoint* pViewpoint)
 	vc = m_vScreen[raaOctaveControllerTypes::csm_uiTL] - pe;
 	float d = -(m_vNormal*va);
 
+	osg::Matrixf mS, mR;
+	mS.makeScale(m_abFlip[0] ? -1.0 : 1.0, m_abFlip[1] ? -1.0 : 1.0, m_abFlip[2] ? -1.0 : 1.0);
+	mR.makeRotate(osg::DegreesToRadians(m_fRotation), osg::Vec3f(0.0f, 1.0f, 0.0f));
+
 	m_mScreenProjection.makeFrustum((m_vScreenRight * va)*m_fNear / d,(m_vScreenRight * vb)*m_fNear / d,(m_vScreenUp * va)*m_fNear / d,(m_vScreenUp * vc)*m_fNear / d,m_fNear,m_fFar);
+
+	m_mScreenProjection = mR*m_mScreenProjection*mS;
+
 	m_mScreenViewMatrix.makeLookAt(pe, pe-m_vNormal, m_vScreenUp);
 
 	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->screenProjMatrixChanged(this);
 }
+
+/* safe version
+void raaScreen::calcProjectionMatrix(raaOctaveViewPoint* pViewpoint)
+{
+	m_pLastViewpoint = pViewpoint;
+
+	osg::Vec3f va, vb, vc, pe;
+	pe = pe*pViewpoint->physicalMatrix();
+	va = m_vScreen[raaOctaveControllerTypes::csm_uiBL] - pe;
+	vb = m_vScreen[raaOctaveControllerTypes::csm_uiBR] - pe;
+	vc = m_vScreen[raaOctaveControllerTypes::csm_uiTL] - pe;
+	float d = -(m_vNormal*va);
+
+
+
+	m_mScreenProjection.makeFrustum((m_vScreenRight * va)*m_fNear / d, (m_vScreenRight * vb)*m_fNear / d, (m_vScreenUp * va)*m_fNear / d, (m_vScreenUp * vc)*m_fNear / d, m_fNear, m_fFar);
+	m_mScreenViewMatrix.makeLookAt(pe, pe - m_vNormal, m_vScreenUp);
+
+	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->screenProjMatrixChanged(this);
+}
+*/
 
 void raaScreen::initialise()
 {

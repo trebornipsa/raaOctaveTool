@@ -114,7 +114,7 @@ protected:
 
 	raaDisplayScreens m_mDisplays;
 
-	osg::Group *m_pVirtualScene;
+	osg::MatrixTransform *m_pVirtualScene;
 	osg::MatrixTransform *m_pPhysicalViewpoint;
 
 	bool m_abPhysical[8];
