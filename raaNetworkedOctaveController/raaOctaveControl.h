@@ -8,7 +8,7 @@
 #include <raaNetwork/raaUdpMsg.h>
 #include <raaNetwork/raaUdpThread.h>
 #include <raaNetwork/raaNetworkTypes.h>
-
+#include <raaVRPNClient/raaVRPNClient.h>
 #include <raaOctaveController/raaOctaveController.h>
 
 using namespace raaNet;
@@ -17,12 +17,14 @@ class raaConnectionRecord;
 
 typedef std::map<raaTcpThread*, raaConnectionRecord*> raaConnectionRecordMap;
 
-class raaOctaveControl: public QObject, public raaOctaveControllerListener
+class raaOctaveControl: public QObject, public raaOctaveControllerListener, public raaVRPNClientListener
 {
 	Q_OBJECT
 public:
-	raaOctaveControl();
+	raaOctaveControl(std::string sTracker="");
 	virtual ~raaOctaveControl();
+
+	virtual void updatedTracker(raaVRPNClient* pClient);
 
 public slots:
 	void tcpRead(raaTcpMsg*);

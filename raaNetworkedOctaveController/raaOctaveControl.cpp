@@ -5,12 +5,13 @@
 #include <raaOctaveKernel/raaOctaveKernel.h>
 
 #include <raaOctaveController/raaScreen.h>
+#include <raaVRPNClient/raaVRPNClient.h>
 
 #include "raaConnectionRecord.h"
 #include "raaOctaveControl.h"
 #include "raaOctaveControl.moc"
 
-raaOctaveControl::raaOctaveControl()
+raaOctaveControl::raaOctaveControl(std::string sTracker)
 {
 	srand(0);
 	m_iTimer = 0;
@@ -18,17 +19,33 @@ raaOctaveControl::raaOctaveControl()
 	m_uiTcpCounter = 0;
 	m_pController = new raaOctaveController(this);
 
+
 	m_pNetwork = new raaNet::raaNetwork(65204, this);
 
 	connect(m_pNetwork, SIGNAL(tcpRead(raaTcpMsg *)), SLOT(tcpRead(raaTcpMsg *)));
 	connect(m_pNetwork, SIGNAL(tcpState(raaTcpThread*, unsigned int)), this, SLOT(tcpState(raaTcpThread*, unsigned int)));
 	connect(m_pNetwork, SIGNAL(udpRead(raaUdpMsg *)), SLOT(udpRead(raaUdpMsg *)));
 	connect(m_pNetwork, SIGNAL(udpState(raaUdpThread*, unsigned int)), this, SLOT(udpState(raaUdpThread*, unsigned int)));
+
+	if (sTracker.length())
+	{
+		raaVRPNClient *pTracker = new raaVRPNClient(sTracker);
+		pTracker->start();
+		pTracker->addListener(this);
+	}
 }
 
 raaOctaveControl::~raaOctaveControl()
 {
 	if (m_pNetwork) delete m_pNetwork;
+}
+
+void raaOctaveControl::updatedTracker(raaVRPNClient* pClient)
+{
+	if(pClient && m_pController)
+	{
+		m_pController->viewpoint()->setPhysicalMatrix(pClient->sensorTransform());
+	}
 }
 
 void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
@@ -112,8 +129,10 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 					pM->add(m_pController->getScreen(sName)->screenVert(raaOctaveControllerTypes::csm_uiTL));
 					pM->add(m_pController->getScreen(sName)->screenVert(raaOctaveControllerTypes::csm_uiTR));
 					pM->add(m_pController->getScreen(sName)->normal());
-					pM->add(m_pController->getScreen(sName)->near());
-					pM->add(m_pController->getScreen(sName)->far());
+
+					pM->add(m_pController->getScreen(sName)->nearClip());
+
+					pM->add(m_pController->getScreen(sName)->farClip());
 					pM->add(m_pController->getScreen(sName)->rotation());
 					pM->add(m_pController->getScreen(sName)->flipped(0));
 					pM->add(m_pController->getScreen(sName)->flipped(1));

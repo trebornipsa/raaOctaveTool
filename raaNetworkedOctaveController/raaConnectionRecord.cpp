@@ -106,8 +106,8 @@ void raaConnectionRecord::sendScreenAll(raaOctaveController* pController)
 			pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL));
 			pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTR));
 			pMsg->add(pScreen->normal());
-			pMsg->add(pScreen->near());
-			pMsg->add(pScreen->far());
+			pMsg->add(pScreen->nearClip());
+			pMsg->add(pScreen->farClip());
 			pMsg->add(pScreen->rotation());
 			pMsg->add(pScreen->flipped(0));
 			pMsg->add(pScreen->flipped(1));
@@ -138,8 +138,8 @@ void raaConnectionRecord::screenAdded(raaOctaveController* pController, raaScree
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL));
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTR));
 		pMsg->add(pScreen->normal());
-		pMsg->add(pScreen->near());
-		pMsg->add(pScreen->far());
+		pMsg->add(pScreen->nearClip());
+		pMsg->add(pScreen->farClip());
 		pMsg->add(pScreen->rotation());
 		pMsg->add(pScreen->flipped(0));
 		pMsg->add(pScreen->flipped(1));
@@ -232,8 +232,8 @@ void raaConnectionRecord::screenChanged(raaScreen* pScreen)
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL));
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTR));
 		pMsg->add(pScreen->normal());
-		pMsg->add(pScreen->near());
-		pMsg->add(pScreen->far());
+		pMsg->add(pScreen->nearClip());
+		pMsg->add(pScreen->farClip());
 		pMsg->add(pScreen->rotation());
 		pMsg->add(pScreen->flipped(0));
 		pMsg->add(pScreen->flipped(1));

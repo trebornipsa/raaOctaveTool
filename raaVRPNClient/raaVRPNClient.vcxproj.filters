@@ -18,13 +18,15 @@
     <ClInclude Include="raaVRPNClientDefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="raaVRPNClient.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="raaVRPNClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="raaVRPNClient.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

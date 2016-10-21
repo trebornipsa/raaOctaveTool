@@ -46,8 +46,8 @@ public:
 	osg::Vec3f normal();
 	osg::Matrixf screenProjection();
 	osg::Matrixf screenView();
-	float near();
-	float far();
+	float nearClip();
+	float farClip();
 	void setNearFar(float fNear, float fFar);
 	bool flipped(unsigned int uiAxis);
 	float rotation();

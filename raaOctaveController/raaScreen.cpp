@@ -107,12 +107,12 @@ osg::Matrixf raaScreen::screenView()
 	return m_mScreenViewMatrix;
 }
 
-float raaScreen::near()
+float raaScreen::nearClip()
 {
 	return m_fNear;
 }
 
-float raaScreen::far()
+float raaScreen::farClip()
 {
 	return m_fFar;
 }
