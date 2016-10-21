@@ -2,7 +2,7 @@
 
 #include <QtCore/QThread>
 #include <QtNetwork/QAbstractSocket>
-#include <QtNetwork/QTcpSocket>
+//#include <QtNetwork/QTcpSocket>
 
 #include "raaNetwork.h"
 #include "raaTcpSocket.h"

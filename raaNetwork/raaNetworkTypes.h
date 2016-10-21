@@ -2,7 +2,7 @@
 
 #include <map>
 #include <list>
-#include <QtCore/QString>
+//#include <QtCore/QString>
 
 namespace raaNet
 {

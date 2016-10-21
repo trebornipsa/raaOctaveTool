@@ -8,7 +8,6 @@ raaVRPNClient::raaVRPNClient(std::string sTracker)
 	m_mTrackerTransform.makeTranslate(0.0f, 2.0f, 1.5f);
 }
 
-
 raaVRPNClient::~raaVRPNClient()
 {
 }
@@ -42,17 +41,13 @@ void raaVRPNClient::run()
 {
 	if (m_sTracker.length())
 	{
-		//	vrpn_Tracker_Remote *pTracker = new vrpn_Tracker_Remote("Tracker0@146.87.112.253");
-
-	//	vrpn_Tracker_Remote *pTracker = new vrpn_Tracker_Remote("Tracker0@146.87.114.199");
-	//		vrpn_Tracker_Remote *pTracker = new vrpn_Tracker_Remote("Tracker0@localhost");
-			vrpn_Tracker_Remote *pTracker = new vrpn_Tracker_Remote(m_sTracker.c_str());
-
-		pTracker->register_change_handler(this, tracker);
+		m_pTracker = new vrpn_Tracker_Remote(m_sTracker.c_str());
+		m_pTracker->register_change_handler(this, tracker);
 
 		while (1)
 		{ 
-			pTracker->mainloop();
+			m_pTracker->mainloop();
+			Sleep(10);
 		}
 	}
 }
@@ -61,16 +56,15 @@ void raaVRPNClient::track(const vrpn_TRACKERCB data)
 {
 	if (data.sensor == 0)
 	{
-//		std::cout << "Tracker-> " << data.sensor << " :: " << data.pos[0] << " :: " << data.pos[1] << " :: " << data.pos[2] << " -> " data.quat[0] << std::endl;
-
 		osg::Matrixf mR, mT;
-		mR.makeRotate(osg::Quat(data.quat[0], data.quat[2], -data.quat[1], data.quat[3]));
-		mT.makeTranslate(data.pos[0], data.pos[1], data.pos[2]);
-//		m_mSensorTransform = m_mTrackerTransform*(mR*mT);
+		mR.makeRotate(osg::Quat(data.quat[0], data.quat[1], data.quat[2], data.quat[3]));
+		mR = mR.rotate(osg::DegreesToRadians(-90.0f), osg::Vec3f(1.0f, 0.0f, 0.0f));
+		mR = mR.scale(osg::Vec3f(1.0f, -1.0f, 1.0f));
+		mT.makeTranslate(data.pos[0], -data.pos[2], data.pos[1]); 
 
-		m_mSensorTransform = m_mTrackerTransform*mT;
+		//		m_mSensorTransform = (mR*mT)*m_mTrackerTransform;
+		m_mSensorTransform = mR*mT;
 
-		for (raaVRPNClientListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++)
-			(*it)->updatedTracker(this);
+		for (raaVRPNClientListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->updatedTracker(this);
 	}
 }

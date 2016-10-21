@@ -31,9 +31,10 @@ raaOctaveSystem::raaOctaveSystem(osg::Node *pNode)
 	addDisplay(0, "null", 0, 0, 200, 200, mP);
 	m_mViews["null"]->setCameraManipulator(new osgGA::TrackballManipulator());
 	realize();
+//	run();
 	m_pTimer = new QTimer(this);
 	connect(m_pTimer, SIGNAL(timeout()), SLOT(timerUpdate()));
-	m_pTimer->start(30);
+	m_pTimer->start(1);
 }
 
 raaOctaveSystem::~raaOctaveSystem()

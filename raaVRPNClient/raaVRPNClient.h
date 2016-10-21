@@ -9,6 +9,7 @@
 #include <vrpn_tracker.h>
 
 #include "raaVRPNClientDefs.h"
+#include <QtCore/QTimer>
 
 class RAAVRPNCLIENT_DLL_DEF raaVRPNClientListener
 {
@@ -32,6 +33,8 @@ public:
 	osg::Matrixf& trackerTransform();
 
 	static void VRPN_CALLBACK tracker(void *pUsr, const vrpn_TRACKERCB data);
+
+
 protected:
 	virtual void run();
 	void track(const vrpn_TRACKERCB data);
@@ -40,5 +43,6 @@ protected:
 	osg::Matrixf m_mSensorTransform;
 	osg::Matrixf m_mTrackerTransform;
 	std::string m_sTracker;
+	vrpn_Tracker_Remote *m_pTracker;
 };
 

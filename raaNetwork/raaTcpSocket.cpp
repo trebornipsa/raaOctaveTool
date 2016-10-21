@@ -3,7 +3,7 @@
 
 #include "raaTcpSocket.moc"
 #include "raaTcpSocket.h"
-#include <iostream>
+//#include <iostream>
 
 raaNet::raaTcpSocket::raaTcpSocket(QObject *pParent) : QTcpSocket(pParent)
 {

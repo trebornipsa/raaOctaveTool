@@ -150,6 +150,8 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;RAAVRPNCLIENT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(QTDIR)\include; $(raaInst)\include; $(raaInst)\3rdParty\vrpn;$(QTDIR)\include\QtOpenGL; $(QTDIR)\include\QtCore</AdditionalIncludeDirectories>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -167,6 +169,8 @@
     <CustomBuild Include="raaVRPNClient.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">raaMOC %(Filename)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">raaMOC %(Filename)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</Outputs>
     </CustomBuild>
     <ClInclude Include="raaVRPNClientDefs.h" />
   </ItemGroup>

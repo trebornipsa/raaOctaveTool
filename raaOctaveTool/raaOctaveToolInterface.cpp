@@ -856,9 +856,8 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 					break;
 					case raaOctaveKernel::csm_uiOCViewpointPhysicalChanged:
 					{
-						//std::cout << "Read Info -> raaOctaveKernel::csm_uiOCViewpointPhysicalChanged" << std::endl;
-//						osg::Matrixf m = pMsg->asMatrix(3);
-//						if (m_pPhysicalViewpoint)m_pPhysicalViewpoint->setMatrix(m);
+						osg::Matrixf m = pMsg->asMatrix(3);
+						if (m_pPhysicalViewpoint)m_pPhysicalViewpoint->setMatrix(m);
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCViewpointVirtualChanged:
@@ -878,9 +877,7 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 						{
 							m_mDisplays[sName]->screenMatrixChanged(mPersp);
 							m_mDisplays[sName]->setViewMatrix(mView);
-							if (m_pPhysicalViewpoint)m_pPhysicalViewpoint->setMatrix(osg::Matrix::inverse(mView));
 							if(m_bLockCamera) gl_widget->getView(0)->getCameraManipulator()->setByMatrix(osg::Matrix::inverse(mView));
-
 						}
 					}
 					break;

@@ -19,9 +19,7 @@ raaOctaveControl::raaOctaveControl(std::string sTracker)
 	m_uiTcpCounter = 0;
 	m_pController = new raaOctaveController(this);
 
-
 	m_pNetwork = new raaNet::raaNetwork(65204, this);
-
 	connect(m_pNetwork, SIGNAL(tcpRead(raaTcpMsg *)), SLOT(tcpRead(raaTcpMsg *)));
 	connect(m_pNetwork, SIGNAL(tcpState(raaTcpThread*, unsigned int)), this, SLOT(tcpState(raaTcpThread*, unsigned int)));
 	connect(m_pNetwork, SIGNAL(udpRead(raaUdpMsg *)), SLOT(udpRead(raaUdpMsg *)));
@@ -30,7 +28,7 @@ raaOctaveControl::raaOctaveControl(std::string sTracker)
 	if (sTracker.length())
 	{
 		raaVRPNClient *pTracker = new raaVRPNClient(sTracker);
-		pTracker->start();
+		pTracker->start(); 
 		pTracker->addListener(this);
 	}
 }

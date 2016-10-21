@@ -154,6 +154,8 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;RAAOCTAVECONTROLLER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(QTDIR)\include; $(raaInst)\include; $(QTDIR)\include\QtOpenGL; $(QTDIR)\include\QtCore</AdditionalIncludeDirectories>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -10,6 +10,7 @@ int raaNet::raaTcpThread::m_i=0;
 
 raaNet::raaTcpThread::raaTcpThread(raaNet::raaNetwork* pNetwork, QString sName, QString sAddress, quint16 uiPort, QObject* pParent) : QThread(pParent)
 {
+	m_piSocketDescriptor = 0;
 	m_sName = sName;
 	m_pNetwork = pNetwork;
 	m_sAddress = sAddress;
@@ -20,6 +21,7 @@ raaNet::raaTcpThread::raaTcpThread(raaNet::raaNetwork* pNetwork, QString sName, 
 
 raaNet::raaTcpThread::raaTcpThread(raaNet::raaNetwork* pNetwork, qintptr piSocketDescriptor, QObject* pParent) : QThread(pParent)
 {
+	m_uiPort = 0;
 	m_sName = "pending";
 	m_pNetwork = pNetwork;
 	m_piSocketDescriptor = piSocketDescriptor;

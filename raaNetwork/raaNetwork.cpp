@@ -1,5 +1,5 @@
 #include <QtCore/QCoreApplication>
-#include <QtCore/QEvent>
+//#include <QtCore/QEvent>
 
 #include "raaTcpMsg.h"
 #include "raaTcpThread.h"

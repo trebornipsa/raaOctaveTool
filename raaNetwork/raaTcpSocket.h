@@ -3,7 +3,7 @@
 #include <QtNetwork/QTcpSocket>
 
 #include "raaNetworkDefs.h"
-#include <QtCore/QMutex>
+//#include <QtCore/QMutex>
 
 namespace raaNet
 {
