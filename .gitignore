@@ -243,3 +243,10 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/vs2015.3.exe
+/vrpn_07_33.zip
+/vrpn-07.33.zip
+/KinectSDK-v2.0_1409-Setup.exe
+/FAAST-K4W.zip
+/FAAST-1.2-x64.zip
+/CodeMap1.dgml
