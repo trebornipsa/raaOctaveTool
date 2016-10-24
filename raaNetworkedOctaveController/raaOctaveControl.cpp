@@ -13,7 +13,9 @@
 
 raaOctaveControl::raaOctaveControl(std::string sTracker)
 {
+
 	srand(0);
+	m_pEyeTracker = 0;
 	m_iTimer = 0;
 	m_pNetwork = 0;
 	m_uiTcpCounter = 0;
@@ -25,12 +27,19 @@ raaOctaveControl::raaOctaveControl(std::string sTracker)
 	connect(m_pNetwork, SIGNAL(udpRead(raaUdpMsg *)), SLOT(udpRead(raaUdpMsg *)));
 	connect(m_pNetwork, SIGNAL(udpState(raaUdpThread*, unsigned int)), this, SLOT(udpState(raaUdpThread*, unsigned int)));
 
+	osg::Matrixf m;
+	m.makeTranslate(0.0f, 2.0f, 1.8f);
+
+	addClient("raaTest", "raaKinect2", sTracker, m, 30, 0x0001)->start();
+/*
 	if (sTracker.length())
 	{
 		raaVRPNKinect2 *pTracker = new raaVRPNKinect2(sTracker, 30);
 		pTracker->start(); 
 		pTracker->addListener(this, 0x0001);
 	}
+*/
+
 }
 
 raaOctaveControl::~raaOctaveControl()
@@ -40,7 +49,7 @@ raaOctaveControl::~raaOctaveControl()
 
 void raaOctaveControl::updatedTracker(raaVRPNClient* pClient, unsigned int uiSensor)
 {
-	if(pClient && m_pController && !uiSensor)
+	if(m_pEyeTracker && pClient == m_pEyeTracker && m_pController && (m_pEyeTracker->eyeTracker() & 1 << uiSensor))
 	{
 		m_pController->viewpoint()->setPhysicalMatrix(pClient->sensorTransform(uiSensor));
 	}
@@ -403,6 +412,23 @@ void raaOctaveControl::screenRemoved(raaOctaveController* pController, raaScreen
 }
 
 void raaOctaveControl::screenUpdated(raaOctaveController* pController, raaScreen* pScreen)
+{
+}
+
+void raaOctaveControl::trackerAdded(raaVRPNClient* pClient)
+{
+	if(pClient)
+	{
+		if(pClient->eyeTracker())
+		{
+			if (m_pEyeTracker) m_pEyeTracker->removeListener(this);
+			m_pEyeTracker = pClient;
+			m_pEyeTracker->addListener(this, m_pEyeTracker->eyeTracker());
+		}
+	}
+}
+
+void raaOctaveControl::trackerRemoved(raaVRPNClient* pClient)
 {
 }
 

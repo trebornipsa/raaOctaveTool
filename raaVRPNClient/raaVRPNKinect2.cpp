@@ -2,10 +2,9 @@
 
 
 
-raaVRPNKinect2::raaVRPNKinect2(std::string sTracker, unsigned int uiMSecPoll): raaVRPNClient(sTracker, uiMSecPoll)
+raaVRPNKinect2::raaVRPNKinect2(std::string sName, std::string sTracker, osg::Matrixf mOrigin, unsigned int uiMSecPoll, unsigned int uiEyeSensor): raaVRPNClient(sName, sTracker, mOrigin, uiMSecPoll, uiEyeSensor)
 {
 }
-
 
 raaVRPNKinect2::~raaVRPNKinect2()
 {

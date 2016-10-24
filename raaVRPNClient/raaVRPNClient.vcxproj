@@ -166,6 +166,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="raaVRPN.h" />
     <ClInclude Include="raaVRPNKinect2.h" />
     <CustomBuild Include="raaVRPNClient.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">raaMOC %(Filename)</Command>
@@ -176,6 +177,7 @@
     <ClInclude Include="raaVRPNClientDefs.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="raaVRPN.cpp" />
     <ClCompile Include="raaVRPNClient.cpp" />
     <ClCompile Include="raaVRPNKinect2.cpp" />
   </ItemGroup>

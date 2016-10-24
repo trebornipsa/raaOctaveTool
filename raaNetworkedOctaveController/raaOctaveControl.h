@@ -8,6 +8,7 @@
 #include <raaNetwork/raaUdpMsg.h>
 #include <raaNetwork/raaUdpThread.h>
 #include <raaNetwork/raaNetworkTypes.h>
+#include <raaVRPNClient/raaVRPN.h>
 #include <raaVRPNClient/raaVRPNClient.h>
 #include <raaOctaveController/raaOctaveController.h>
 
@@ -17,7 +18,7 @@ class raaConnectionRecord;
 
 typedef std::map<raaTcpThread*, raaConnectionRecord*> raaConnectionRecordMap;
 
-class raaOctaveControl: public QObject, public raaOctaveControllerListener, public raaVRPNClientListener
+class raaOctaveControl: public QObject, public raaOctaveControllerListener, public raaVRPN, public raaVRPNClientListener
 {
 	Q_OBJECT
 public:
@@ -43,11 +44,14 @@ protected:
 	virtual void screenAdded(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void screenRemoved(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
+	virtual void trackerAdded(raaVRPNClient* pClient);
+	virtual void trackerRemoved(raaVRPNClient* pClient);
 
 
 	void timerEvent(QTimerEvent *pEvent);
 	int m_iTimer;
 
+	raaVRPNClient *m_pEyeTracker;
 
 	unsigned int m_uiTcpCounter;
 
