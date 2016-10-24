@@ -51,7 +51,7 @@ public:
 	const static unsigned int csm_uiWindow = 2;
 
 
-	raaOctaveToolInterface();
+	raaOctaveToolInterface(std::string sConfig, std::string sName, std::string sIp, unsigned short int usiPort);
 	virtual ~raaOctaveToolInterface();
 
 public slots:
@@ -137,8 +137,12 @@ protected:
 	raaNet::raaTcpThread *m_pTcpClient;
 	raaNet::raaUdpThread *m_pUdpClient;
 
+
 	unsigned int m_uiMode;
 	QGraphicsScene m_Scene;
 	raaWindows m_mWindows;
+
+	std::string m_sConfig;
+	std::string m_sName;
 };
 

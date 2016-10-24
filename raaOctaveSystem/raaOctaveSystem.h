@@ -20,7 +20,7 @@ class RAAOCTAVESYSTEM_DLL_DEF raaOctaveSystem: public QObject, public osgViewer:
 {
 	Q_OBJECT
 public:
-	raaOctaveSystem(osg::Node *pNode=0);
+	raaOctaveSystem(osg::Node *pNode, std::string sConfig, std::string sName, std::string sIp, unsigned short int usiPort);
 	virtual ~raaOctaveSystem();
 
 	void addSceneData(osg::Node *pNode);
@@ -49,5 +49,7 @@ protected:
 	int m_iScreen;
 
 	QTimer *m_pTimer;
+	std::string m_sConfig;
+	std::string m_sName;
 };
 

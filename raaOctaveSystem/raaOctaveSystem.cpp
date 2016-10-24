@@ -10,8 +10,9 @@
 #include <osgGA/TrackballManipulator>
 #include "DepthPeeling.h"
 
-raaOctaveSystem::raaOctaveSystem(osg::Node *pNode)
+raaOctaveSystem::raaOctaveSystem(osg::Node *pNode, std::string sConfig, std::string sName, std::string sIp, unsigned short int usiPort)
 {
+	m_sConfig = sConfig;
 	m_iScreen = 0;
 	m_pScene = new osg::MatrixTransform();
 	m_pScene->ref();
@@ -23,7 +24,14 @@ raaOctaveSystem::raaOctaveSystem(osg::Node *pNode)
 	m_pNetwork = new raaNet::raaNetwork(0, this);
 	connect(m_pNetwork, SIGNAL(tcpRead(raaTcpMsg*)), SLOT(tcpRead(raaTcpMsg*)));
 	connect(m_pNetwork, SIGNAL(tcpState(raaTcpThread*, unsigned int)), SLOT(tcpState(raaTcpThread*, unsigned int)));
-	m_pNetwork->createTcpClient("raaOctaveSystem", "localhost", 65204);
+
+//	sName = "raaOctaveSystem";
+//	sIp = "localhost";
+//	usiPort = 65201;
+
+	m_sName = sName;
+	m_pTcpClient = m_pNetwork->createTcpClient(m_sName.c_str(), "localhost", 65204);
+//	m_pNetwork->createTcpClient("raaOctaveSystem", "localhost", 65204);
 
 	osg::Matrixf mP;
 	mP.makePerspective(60.0f, 1.0f, 0.1f, 100.0f);
@@ -99,7 +107,8 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 			{
 				raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
 				pM->add(raaOctaveKernel::csm_uiOCLoadConfig);
-				pM->add(std::string("C:\\robbie\\data\\octave_config.raa"));
+				pM->add(m_sConfig);
+//				pM->add(std::string("C:\\robbie\\data\\octave_config.raa"));
 				m_pTcpClient->write(pM);
 			}
 		}
@@ -212,7 +221,7 @@ void raaOctaveSystem::tcpState(raaNet::raaTcpThread* pThread, unsigned uiState)
 		break;
 	case raaNet::csm_uiNameConnectedState:
 		msg += " -> StateChanged::NameConnectedState";
-		if (pThread->name() == "raaOctaveSystem")
+		if (pThread->name() == m_sName.c_str())
 		{
 			m_pTcpClient = pThread;
 

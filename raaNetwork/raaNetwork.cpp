@@ -49,22 +49,38 @@ QEvent::Type raaNet::raaNetwork::udpWriteEvent()
 	return QEvent::Type(sm_iUdpWrite);
 }
 
-bool raaNet::raaNetwork::raaNetwork::createTcpClient(QString sName, QString sIP, quint16 uiPort)
+raaNet::raaTcpThread* raaNet::raaNetwork::raaNetwork::createTcpClient(QString sName, QString sIP, quint16 uiPort)
 {
-	if (sName.length() && m_mTcpThreads.find(sName) == m_mTcpThreads.end())
-	{
+//	std::cout << "Name -> " << sName.toStdString() << " :: Ip -> " << sIP.toStdString() << " :: Port -> " << uiPort << std::endl;
+
+//	if (sName.length() && m_mTcpThreads.find(sName) == m_mTcpThreads.end())
+
+//	{
 		raaTcpThread *pThread = new raaTcpThread(this, sName, sIP, uiPort, this);
 		connect(pThread, SIGNAL(finished()), pThread, SLOT(deleteLater()));
 		connect(pThread, SIGNAL(stateChanged(raaTcpThread*, unsigned int)), SLOT(tcpStateChanged(raaTcpThread*, unsigned int)));
 		pThread->start();
 //		pThread->localRun();
-		return true;
-	}
-	return false;
+		return pThread;
+//	}
+//	return false;
 }
 
+raaNet::raaTcpThread* raaNet::raaNetwork::closeTcpConnection(raaTcpThread* pThread)
+{
+	if (std::find(m_lTcpThreads.begin(),m_lTcpThreads.end(), pThread)!=m_lTcpThreads.end())
+	{
+		m_lTcpThreads.remove(pThread);
+		pThread->close();
+	}
+
+	return pThread;
+}
+
+/*
 bool raaNet::raaNetwork::raaNetwork::closeTcpConnection(QString sName)
 {
+
 	if (sName.length() && m_mTcpThreads.find(sName) != m_mTcpThreads.end())
 	{
 		m_mTcpThreads[sName]->close();
@@ -72,6 +88,7 @@ bool raaNet::raaNetwork::raaNetwork::closeTcpConnection(QString sName)
 	}
 	return false;
 }
+*/
 
 bool raaNet::raaNetwork::createUdpClient(QString sName, QString sIP, quint16 uiPort)
 {
@@ -113,7 +130,7 @@ bool raaNet::raaNetwork::closeUdpConnection(QString sName)
 	}
 	return false;
 }
-
+/*
 void raaNet::raaNetwork::raaNetwork::writeTcp(QString sName, raaTcpMsg *pMsg)
 {
 	if (pMsg && sName.length() && m_mTcpThreads.find(sName) != m_mTcpThreads.end())
@@ -121,6 +138,7 @@ void raaNet::raaNetwork::raaNetwork::writeTcp(QString sName, raaTcpMsg *pMsg)
 		m_mTcpThreads[sName]->write(pMsg); 
 	}
 }
+*/
 
 void raaNet::raaNetwork::writeUdp(QString sName, raaUdpMsg *pMsg)
 {
@@ -165,13 +183,13 @@ raaNet::raaUdpThread* raaNet::raaNetwork::udpThread(std::string sName)
 	if (sName.length() && m_mUdpThreads.find(QString(sName.c_str())) != m_mUdpThreads.end()) return m_mUdpThreads[QString(sName.c_str())];
 	return 0;
 }
-
+/*
 raaNet::raaTcpThread* raaNet::raaNetwork::tcpThread(std::string sName)
 {
 	if (sName.length() && m_mTcpThreads.find(QString(sName.c_str())) != m_mTcpThreads.end()) return m_mTcpThreads[QString(sName.c_str())];
 	return 0;
 }
-
+*/
 void raaNet::raaNetwork::raaNetwork::tcpStateChanged(raaTcpThread* pThread, unsigned int uiState)
 {
 	//std::cout << "Tcp State Changed -> " << (int)pThread << std::endl;
@@ -185,8 +203,10 @@ void raaNet::raaNetwork::raaNetwork::tcpStateChanged(raaTcpThread* pThread, unsi
 	case csm_uiConnectingState:
 		break;
 	case csm_uiConnectedState:
+		m_lTcpThreads.push_back(pThread);
 		break;
 	case csm_uiNameConnectedState:
+/*
 		if (pThread &&pThread->name().length() && (std::find(m_lTcpThreads.begin(), m_lTcpThreads.end(), pThread) == m_lTcpThreads.end()) && (m_mTcpThreads.find(pThread->name()) == m_mTcpThreads.end()))
 		{
 			//std::cout << "Name connected state -> " << pThread->name().toStdString() << std::endl;
@@ -202,6 +222,8 @@ void raaNet::raaNetwork::raaNetwork::tcpStateChanged(raaTcpThread* pThread, unsi
 		{
 			pThread->close();
 		}		
+*/
+		m_lTcpThreads.push_back(pThread);
 		break;
 	case csm_uiBoundState:
 		break;
@@ -209,7 +231,7 @@ void raaNet::raaNetwork::raaNetwork::tcpStateChanged(raaTcpThread* pThread, unsi
 		if (pThread && std::find(m_lTcpThreads.begin(), m_lTcpThreads.end(), pThread) != m_lTcpThreads.end())
 		{
 			m_lTcpThreads.remove(pThread);
-			m_mTcpThreads.erase(pThread->name());
+//			m_mTcpThreads.erase(pThread->name());
 		}
 		break;
 	case csm_uiListeningState:

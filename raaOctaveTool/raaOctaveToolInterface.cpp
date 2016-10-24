@@ -18,10 +18,10 @@
 #include "raaOctaveToolInterface.moc"
 #include <osg/MatrixTransform>
 
-raaOctaveToolInterface::raaOctaveToolInterface()
+raaOctaveToolInterface::raaOctaveToolInterface(std::string sConfig, std::string sName, std::string sIp, unsigned short int usiPort)
 {
 	m_uiMode = csm_uiTransform;
-
+	m_sConfig = sConfig;
 	m_pUdpClient= 0;
 	m_pTcpClient = 0;
 	m_bScreenUpdate = true;
@@ -82,11 +82,11 @@ raaOctaveToolInterface::raaOctaveToolInterface()
 	updateView();
 	m_bLockCamera = false;
 
+	m_sName=sName;
 	m_pNetwork = new raaNet::raaNetwork(0, this);
 	connect(m_pNetwork, SIGNAL(tcpRead(raaTcpMsg*)), SLOT(tcpRead(raaTcpMsg*)));
 	connect(m_pNetwork, SIGNAL(tcpState(raaTcpThread*, unsigned int)), SLOT(tcpState(raaTcpThread*, unsigned int)));
-	m_pNetwork->createTcpClient("raaOctaveTool", "localhost", 65204);
-
+	m_pTcpClient=m_pNetwork->createTcpClient(sName.c_str(), sIp.c_str(), usiPort);
 
 	connect(physical_translation_radio, SIGNAL(clicked(bool)), SLOT(phyTrans(bool)));
 	connect(physical_rotation_radio, SIGNAL(clicked(bool)), SLOT(phyRot(bool)));
@@ -800,10 +800,10 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 					updateView();
 				}
 				else if (pMsg->asUInt(2) == raaOctaveKernel::csm_uiOCHasConfigFalse)
-				{
+				{ 
 					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
 					pM->add(raaOctaveKernel::csm_uiOCLoadConfig);
-					pM->add(std::string("C:\\robbie\\data\\octave_config.raa"));
+					pM->add(m_sConfig);
 					m_pTcpClient->write(pM);
 					updateView();
 				}
@@ -1046,7 +1046,7 @@ void raaOctaveToolInterface::tcpState(raaNet::raaTcpThread* pThread, unsigned ui
 		break;
 	case raaNet::csm_uiNameConnectedState:
 		msg += " -> StateChanged::NameConnectedState";
-		if (pThread->name() == "raaOctaveTool")
+		if (pThread->name() == m_sName.c_str())
 		{
 			m_pTcpClient = pThread;
 
@@ -1097,9 +1097,10 @@ void raaOctaveToolInterface::udpState(raaNet::raaTcpThread*, unsigned)
 
 raaOctaveToolInterface::~raaOctaveToolInterface()
 {
-	if(m_pNetwork)
+	if(m_pNetwork && m_pTcpClient)
 	{
-		m_pNetwork->closeTcpConnection("raaOctaveTool");
+//		m_pNetwork->closeTcpConnection("raaOctaveTool");
+		m_pNetwork->closeTcpConnection(m_pTcpClient);
 		delete m_pNetwork;
 	}
 }

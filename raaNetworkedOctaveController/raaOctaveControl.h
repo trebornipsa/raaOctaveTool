@@ -24,7 +24,7 @@ public:
 	raaOctaveControl(std::string sTracker="");
 	virtual ~raaOctaveControl();
 
-	virtual void updatedTracker(raaVRPNClient* pClient);
+	virtual void updatedTracker(raaVRPNClient* pClient, unsigned int uiSensor);
 
 public slots:
 	void tcpRead(raaTcpMsg*);

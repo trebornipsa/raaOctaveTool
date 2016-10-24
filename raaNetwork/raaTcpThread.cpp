@@ -50,13 +50,13 @@ void raaNet::raaTcpThread::readyRead()
 {
 	while (m_pSocket->bytesAvailable())
 	{
-		while (m_pSocket->bytesAvailable() < sizeof(int)) m_pSocket->waitForReadyRead(1);
+//		while (m_pSocket->bytesAvailable() < sizeof(int)) m_pSocket->waitForReadyRead(1);
 		int iSize = 0;
 		m_pSocket->read((char*)&iSize, sizeof(unsigned int));
 
 		if (iSize > 0)
 		{
-			while (m_pSocket->bytesAvailable() < iSize) m_pSocket->waitForReadyRead(1);
+//			while (m_pSocket->bytesAvailable() < iSize) m_pSocket->waitForReadyRead(1);
 			QCoreApplication::postEvent(m_pNetwork, new raaTcpMsg(this, m_pSocket->read((qint64)iSize), raaNetwork::tcpReadEvent()));
 		}
 	}

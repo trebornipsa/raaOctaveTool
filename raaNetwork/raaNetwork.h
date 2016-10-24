@@ -29,14 +29,16 @@ namespace raaNet
 		static QEvent::Type udpReadEvent();
 		static QEvent::Type udpWriteEvent();
 
-		bool createTcpClient(QString sName, QString sIP, quint16 uiPort);
-		bool closeTcpConnection(QString sName);
+		raaTcpThread* createTcpClient(QString sName, QString sIP, quint16 uiPort);
+		//		bool closeTcpConnection(QString sName);
+		raaTcpThread* closeTcpConnection(raaTcpThread* pThread);
+
 
 		bool createUdpClient(QString sName, QString sIP, quint16 uiPort);
 		bool createUdpServer(QString sName, QString sIP, quint16 uiPort);
 		bool closeUdpConnection(QString sName);
 
-		void writeTcp(QString sName, raaTcpMsg *pMsg);
+//		void writeTcp(QString sName, raaTcpMsg *pMsg);
 		void writeUdp(QString sName, raaUdpMsg *pMsg);
 
 		bool write(raaTcpThread* pThread, raaTcpMsg *pMsg);
@@ -45,7 +47,7 @@ namespace raaNet
 		bool write(raaTcpMsg *pMsg); // write to all
 
 		raaUdpThread* udpThread(std::string sName);
-		raaTcpThread* tcpThread(std::string sName);
+//		raaTcpThread* tcpThread(std::string sName);
 
 	public slots:
 	void tcpStateChanged(raaTcpThread*, unsigned int);
@@ -65,7 +67,7 @@ namespace raaNet
 		static bool sm_bInit;
 		static void initEvents();
 
-		raaStrngTcpThreadMap m_mTcpThreads;
+//		raaStrngTcpThreadMap m_mTcpThreads;
 		raaTcpThreadList m_lTcpThreads;
 		raaStrngUdpThreadMap m_mUdpThreads;
 		raaUdpThreadList m_lUdpThreads;

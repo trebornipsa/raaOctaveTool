@@ -5,7 +5,7 @@
 #include <raaOctaveKernel/raaOctaveKernel.h>
 
 #include <raaOctaveController/raaScreen.h>
-#include <raaVRPNClient/raaVRPNClient.h>
+#include <raaVRPNClient/raaVRPNKinect2.h>
 
 #include "raaConnectionRecord.h"
 #include "raaOctaveControl.h"
@@ -27,9 +27,9 @@ raaOctaveControl::raaOctaveControl(std::string sTracker)
 
 	if (sTracker.length())
 	{
-		raaVRPNClient *pTracker = new raaVRPNClient(sTracker);
+		raaVRPNKinect2 *pTracker = new raaVRPNKinect2(sTracker, 30);
 		pTracker->start(); 
-		pTracker->addListener(this);
+		pTracker->addListener(this, 0x0001);
 	}
 }
 
@@ -38,11 +38,11 @@ raaOctaveControl::~raaOctaveControl()
 	if (m_pNetwork) delete m_pNetwork;
 }
 
-void raaOctaveControl::updatedTracker(raaVRPNClient* pClient)
+void raaOctaveControl::updatedTracker(raaVRPNClient* pClient, unsigned int uiSensor)
 {
-	if(pClient && m_pController)
+	if(pClient && m_pController && !uiSensor)
 	{
-		m_pController->viewpoint()->setPhysicalMatrix(pClient->sensorTransform());
+		m_pController->viewpoint()->setPhysicalMatrix(pClient->sensorTransform(uiSensor));
 	}
 }
 
@@ -296,7 +296,7 @@ void raaOctaveControl::tcpState(raaTcpThread* pThread, unsigned uiState)
 		msg += " -> StateChanged::ConnectedState";
 		break;
 	case raaNet::csm_uiNameConnectedState:
-		msg += " -> StateChanged::NameConnectedState";
+		msg += " -> StateChanged::NameConnectedState -> " + pThread->name();
 		m_mConnections[pThread] = new raaConnectionRecord(pThread->name().toStdString(), m_pController);
 		m_mConnections[pThread]->setTcpThread(pThread);
 
@@ -315,7 +315,7 @@ void raaOctaveControl::tcpState(raaTcpThread* pThread, unsigned uiState)
 		break;
 	}
 
-	//std::cout << msg.toStdString() << std::endl;
+	std::cout << msg.toStdString() << std::endl;
 }
 
 void raaOctaveControl::udpState(raaUdpThread* pThread, unsigned uiState)

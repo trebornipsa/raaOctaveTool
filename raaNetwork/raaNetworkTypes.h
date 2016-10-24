@@ -27,6 +27,7 @@ namespace raaNet
 	const static unsigned short csm_usTcpMsgInfo = 1;
 	const static unsigned short csm_usTcpMsgRequest = 2;
 	const static unsigned short csm_usTcpMsgReply = 3;
+	const static unsigned short csm_usTcpMsgRequestName = 4;
 
 	const static unsigned short csm_usUdpMsgSystem = 0;
 	const static unsigned short csm_usUdpMsgInfo = 1;

@@ -2,29 +2,39 @@
 #include "raaVRPNClient.h"
 #include "raaVRPNClient.moc"
 
-raaVRPNClient::raaVRPNClient(std::string sTracker)
+raaVRPNClient::raaVRPNClient(std::string sTracker, unsigned int uiMSecPoll)
 {
 	m_sTracker = sTracker;
 	m_mTrackerTransform.makeTranslate(0.0f, 2.0f, 1.5f);
+	m_uiSensors = 0;
+	m_uiPoll = uiMSecPoll;
 }
 
 raaVRPNClient::~raaVRPNClient()
 {
 }
 
-void raaVRPNClient::addListener(raaVRPNClientListener* pListener)
+void raaVRPNClient::addListener(raaVRPNClientListener* pListener, unsigned int uiSensorMask)
 {
-	if (pListener && std::find(m_lListeners.begin(), m_lListeners.end(), pListener) == m_lListeners.end()) m_lListeners.push_back(pListener);
+	if (pListener && m_lListeners.find(pListener) == m_lListeners.end())
+	{
+		m_lListeners[pListener] = uiSensorMask;
+		m_uiSensors = m_uiSensors | uiSensorMask;
+	}
 }
 
 void raaVRPNClient::removeListener(raaVRPNClientListener* pListener)
 {
-	if (pListener && std::find(m_lListeners.begin(), m_lListeners.end(), pListener) != m_lListeners.end()) m_lListeners.remove(pListener);
+	if (pListener && m_lListeners.find(pListener) != m_lListeners.end())
+	{
+		m_lListeners.erase(pListener);
+	}
 }
 
-osg::Matrixf& raaVRPNClient::sensorTransform()
+osg::Matrixf& raaVRPNClient::sensorTransform(unsigned uiSensor)
 {
-	return m_mSensorTransform;
+	if (m_uiSensors & 1 << uiSensor) return m_mSensors[uiSensor];
+	return osg::Matrixf();
 }
 
 osg::Matrixf& raaVRPNClient::trackerTransform()
@@ -47,24 +57,15 @@ void raaVRPNClient::run()
 		while (1)
 		{ 
 			m_pTracker->mainloop();
-			Sleep(10);
+			Sleep(m_uiPoll);
 		}
 	}
 }
 
-void raaVRPNClient::track(const vrpn_TRACKERCB data)
+void raaVRPNClient::tellListeners(unsigned uiSensor)
 {
-	if (data.sensor == 0)
+	for(raaVRPNClientListeners::iterator it=m_lListeners.begin();it!=m_lListeners.end();it++)
 	{
-		osg::Matrixf mR, mT;
-		mR.makeRotate(osg::Quat(data.quat[0], data.quat[1], data.quat[2], data.quat[3]));
-		mR = mR.rotate(osg::DegreesToRadians(-90.0f), osg::Vec3f(1.0f, 0.0f, 0.0f));
-		mR = mR.scale(osg::Vec3f(1.0f, -1.0f, 1.0f));
-		mT.makeTranslate(data.pos[0], -data.pos[2], data.pos[1]); 
-
-		//		m_mSensorTransform = (mR*mT)*m_mTrackerTransform;
-		m_mSensorTransform = mR*mT;
-
-		for (raaVRPNClientListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->updatedTracker(this);
+		if (it->second & 1 << uiSensor) it->first->updatedTracker(this, uiSensor);
 	}
 }

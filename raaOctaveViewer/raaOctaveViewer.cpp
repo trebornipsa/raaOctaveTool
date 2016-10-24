@@ -101,9 +101,22 @@ osg::Node* makeScene()
 
 int main(int argc, char* argv[])
 {
+	std::string sConfig;
+	std::string sIp = "localhost";
+	std::string sName = "raaOctaveViewer";
+	unsigned short int usiPort= 65204;
+
+	for(int i=0;i<argc;i++)
+	{
+		if (!strcmp(argv[i], "-config")) sConfig = argv[++i];
+		if (!strcmp(argv[i], "-server")) sIp = argv[++i];
+		if (!strcmp(argv[i], "-name")) sName = argv[++i];
+		if (!strcmp(argv[i], "-port")) usiPort = QString(argv[++i]).toUInt();
+	}
+
 	QCoreApplication a(argc, argv);
 
-	raaOctaveSystem *pSystem = new raaOctaveSystem(makeScene());
+	raaOctaveSystem *pSystem = new raaOctaveSystem(makeScene(), sConfig, sName, sIp, usiPort);
 //	pSystem->addSceneData(makeScene());
 	a.exec();
 
