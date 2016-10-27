@@ -43,14 +43,36 @@ osg::Matrixf& raaVRPNClient::trackerTransform()
 	return m_mTrackerTransform;
 }
 
+void raaVRPNClient::setTRackerTransform(osg::Matrixf& m)
+{
+	m_mTrackerTransform = m;
+	tellListenersOrigin();
+}
+
 std::string raaVRPNClient::name()
 {
 	return m_sName;
 }
 
+unsigned raaVRPNClient::activeSensors()
+{
+	return m_uiSensors;
+}
+
+void raaVRPNClient::setActiveSensors(unsigned uiSensors)
+{
+	m_uiSensors = uiSensors;
+	tellListenersSensors();
+}
+
 unsigned raaVRPNClient::eyeTracker()
 {
 	return m_uiEyeSensor;
+}
+
+void raaVRPNClient::setEyeTracker(unsigned uiSensor)
+{
+	m_uiEyeSensor = uiSensor;
 }
 
 void raaVRPNClient::tracker(void* pUsr, const vrpn_TRACKERCB data)
@@ -73,7 +95,17 @@ void raaVRPNClient::run()
 	}
 }
 
-void raaVRPNClient::tellListeners(unsigned uiSensor)
+void raaVRPNClient::tellListenersSensor(unsigned uiSensor)
 {
-	for(raaVRPNClientListeners::iterator it=m_lListeners.begin();it!=m_lListeners.end();it++) if (it->second & 1 << uiSensor) it->first->updatedTracker(this, uiSensor);
+	for (raaVRPNClientListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) if (it->second & 1 << uiSensor) it->first->updatedSensor(this, uiSensor);
+}
+
+void raaVRPNClient::tellListenersOrigin()
+{
+	for (raaVRPNClientListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) it->first->updatedOrigin(this);
+}
+
+void raaVRPNClient::tellListenersSensors()
+{
+	for (raaVRPNClientListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) it->first->updatedSensors(this);
 }

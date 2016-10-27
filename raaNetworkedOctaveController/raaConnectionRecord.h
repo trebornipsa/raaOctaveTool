@@ -3,13 +3,15 @@
 #include <raaNetwork/raaTcpThread.h>
 #include <raaNetwork/raaUdpThread.h>
 
+#include <raaVRPNClient/raaVRPNClient.h>
+
 #include <raaOctaveController/raaOctaveController.h>
 #include <raaOctaveController/raaOctaveViewPoint.h>
 #include <raaOctaveController/raaScreen.h>
 
 using namespace raaNet;
 
-class raaConnectionRecord: public raaOctaveControllerListener, public raaOctaveViewPointListener, public raaScreenListener
+class raaConnectionRecord: public raaOctaveControllerListener, public raaOctaveViewPointListener, public raaScreenListener, public raaVRPNClientListener
 {
 public:
 	raaConnectionRecord(std::string sName, raaOctaveController *pController);
@@ -28,6 +30,9 @@ public:
 
 	void sendScreenAll(raaOctaveController *pController);
 
+	virtual void updatedSensor(raaVRPNClient* pClient, unsigned uiSensor);
+	virtual void updatedOrigin(raaVRPNClient* pClient);
+	virtual void updatedSensors(raaVRPNClient* pClient);
 
 
 protected:

@@ -12,11 +12,14 @@
 #include <raaNetwork/raaTcpThread.h>
 
 #include <raaOctaveKernel/raaOctaveKernel.h>
-
+#include <osg/MatrixTransform>
 #include "raaDisplayScreen.h"
+#include "raaTracker.h"
 #include "raaOctaveToolInterface.h"
 #include "raaOctaveToolInterface.moc"
-#include <osg/MatrixTransform>
+
+
+
 
 raaOctaveToolInterface::raaOctaveToolInterface(std::string sConfig, std::string sName, std::string sIp, unsigned short int usiPort)
 {
@@ -26,6 +29,7 @@ raaOctaveToolInterface::raaOctaveToolInterface(std::string sConfig, std::string 
 	m_pTcpClient = 0;
 	m_bScreenUpdate = true;
 	m_bWindowUpdate = true;
+	m_bTrackerUpdate = true;
 	m_bLockCamera = false;
 //	m_pCurrentScreen = 0;
 	m_pPhysicalViewpoint = 0;
@@ -120,6 +124,25 @@ raaOctaveToolInterface::raaOctaveToolInterface(std::string sConfig, std::string 
 	connect(phy_lock_camera_check, SIGNAL(stateChanged(int)), SLOT(lockCamera(int)));
 	connect(toolBox, SIGNAL(currentChanged(int)), SLOT(currentToolboxChanged(int)));
 	connect(screen_combo, SIGNAL(currentIndexChanged(const QString&)), SLOT(currentScreenChanged(const QString&)));
+
+
+	connect(tracker_translate_radio, SIGNAL(clicked(bool)), SLOT(trackerTrans(bool)));
+	connect(tracker_rotate_radio, SIGNAL(clicked(bool)), SLOT(trackerRot(bool)));
+	connect(tracker_x_up_button, SIGNAL(pressed()), SLOT(trackerXUpPressed()));
+	connect(tracker_x_up_button, SIGNAL(released()), SLOT(trackerXUpReleased()));
+	connect(tracker_x_down_button, SIGNAL(pressed()), SLOT(trackerXDownPressed()));
+	connect(tracker_x_down_button, SIGNAL(released()), SLOT(trackerXDownReleased()));
+	connect(tracker_y_up_button, SIGNAL(pressed()), SLOT(trackerYUpPressed()));
+	connect(tracker_y_up_button, SIGNAL(released()), SLOT(trackerYUpReleased()));
+	connect(tracker_y_down_button, SIGNAL(pressed()), SLOT(trackerYDownPressed()));
+	connect(tracker_y_down_button, SIGNAL(released()), SLOT(trackerYDownReleased()));
+	connect(tracker_z_up_button, SIGNAL(pressed()), SLOT(trackerZUpPressed()));
+	connect(tracker_z_up_button, SIGNAL(released()), SLOT(trackerZUpReleased()));
+	connect(tracker_z_down_button, SIGNAL(pressed()), SLOT(trackerZDownPressed()));
+	connect(tracker_z_down_button, SIGNAL(released()), SLOT(trackerZDownReleased()));
+	connect(tracker_combo, SIGNAL(currentIndexChanged(const QString&)), SLOT(trackerChanged(const QString&)));
+	connect(tracker_update_check, SIGNAL(stateChanged(int)), SLOT(trackerContUpdate(int)));
+	connect(tracker_update_button, SIGNAL(pressed()), SLOT(trackerUpdate()));
 
 	connect(screen_continual_update_check, SIGNAL(stateChanged(int)), SLOT(screenContUpdate(int)));
 	connect(screen_updtae_button, SIGNAL(pressed()), SLOT(screenAllChanged()));
@@ -593,6 +616,14 @@ void raaOctaveToolInterface::currentToolboxChanged(int iVal)
 		pMsg->add(raaOctaveKernel::csm_uiOCControllerRequestScreenNames);
 		if (m_pTcpClient) m_pTcpClient->write(pMsg);
 	}
+	else if (iVal == 3)
+	{
+		m_uiMode = csm_uiScreen;
+		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
+		pMsg->add(raaOctaveKernel::csm_uiOCTrackerAllNames);
+		if (m_pTcpClient) m_pTcpClient->write(pMsg);
+		stackedWidget->setCurrentIndex(0);
+	}
 }
 
 void raaOctaveToolInterface::currentScreenChanged(const QString& s)
@@ -733,6 +764,74 @@ void raaOctaveToolInterface::screenAllChanged()
 		pMsg->add(screen_z_flip_check->isChecked());
 		if (m_pTcpClient) m_pTcpClient->write(pMsg);
 	}
+}
+
+void raaOctaveToolInterface::trackerTrans(bool)
+{
+}
+
+void raaOctaveToolInterface::trackerRot(bool)
+{
+}
+
+void raaOctaveToolInterface::trackerXUpPressed()
+{
+}
+
+void raaOctaveToolInterface::trackerXDownPressed()
+{
+}
+
+void raaOctaveToolInterface::trackerYUpPressed()
+{
+}
+
+void raaOctaveToolInterface::trackerYDownPressed()
+{
+}
+
+void raaOctaveToolInterface::trackerZUpPressed()
+{
+}
+
+void raaOctaveToolInterface::trackerZDownPressed()
+{
+}
+
+void raaOctaveToolInterface::trackerXUpReleased()
+{
+}
+
+void raaOctaveToolInterface::trackerXDownReleased()
+{
+}
+
+void raaOctaveToolInterface::trackerYUpReleased()
+{
+}
+
+void raaOctaveToolInterface::trackerYDownReleased()
+{
+}
+
+void raaOctaveToolInterface::trackerZUpReleased()
+{
+}
+
+void raaOctaveToolInterface::trackerContUpdate(int)
+{
+}
+
+void raaOctaveToolInterface::trackerChanged(const QString&)
+{
+}
+
+void raaOctaveToolInterface::trackerUpdate()
+{
+}
+
+void raaOctaveToolInterface::trackerZDownReleased()
+{
 }
 
 void raaOctaveToolInterface::screenContUpdate(int iVal)
@@ -984,7 +1083,6 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 							{
 								window_combo->clear();
 								unsigned int uiNum = pMsg->asUInt(3);
-								raaTcpMsg *pM = 0;
 								for (unsigned int i = 0; i < uiNum; i++) window_combo->addItem(pMsg->asString(4 + i).c_str());
 							}
 							break;
@@ -1017,6 +1115,69 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 							window_width_spin->setValue(iW);
 							window_height_spin->setValue(iH);
 							m_bWindowUpdate = bMode;
+						}
+					}
+					break;
+					case raaOctaveKernel::csm_uiOCTrackerAllNames:
+					{
+						tracker_combo->clear();
+						for (unsigned int i = 0; i < pMsg->asUInt(3); i++)
+						{
+							tracker_combo->addItem(pMsg->asString(i + 4).c_str());
+
+							if (m_mTrackers.find(pMsg->asString(i + 4)) == m_mTrackers.end())
+							{
+								m_mTrackers[pMsg->asString(i + 4)] = new raaTracker(pMsg->asString(i + 4));
+								m_pVirtualScene->addChild(m_mTrackers[pMsg->asString(i + 4)]->root());
+								raaTcpMsg *pM = new raaTcpMsg(raaNet::csm_usTcpMsgRequest);
+								pM->add(raaOctaveKernel::csm_uiOCTrackerAddREmoveListener);
+								pM->add(true);
+								pM->add(pMsg->asString(i + 4));
+								pMsg->tcpThread()->write(pM);
+							}
+						}
+					}
+					break;
+					case raaOctaveKernel::csm_uiOCTrackerInfo:
+					{
+						if(m_mTrackers.find(pMsg->asString(3))!=m_mTrackers.end())
+						{
+							raaTracker *pTracker = m_mTrackers[pMsg->asString(3)];
+							pTracker->setOrigin(pMsg->asMatrix(4));
+							unsigned int uiSensors = pMsg->asUInt(5);
+							pTracker->setSensors(uiSensors);
+
+							unsigned int iCount = 0;
+							for(unsigned int i=0;i<32;i++, iCount++)
+							{
+								if (uiSensors & 1 << i) pTracker->setSensor(i, pMsg->asMatrix(6 + iCount));
+							}
+						}
+					}
+					break;
+					case raaOctaveKernel::csm_uiOCTrackerOriginTransform:
+					{
+						if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
+						{
+							m_mTrackers[pMsg->asString(3)]->setOrigin(pMsg->asMatrix(4));
+						}
+					}
+					break;
+					case raaOctaveKernel::csm_uiOCTrackerSensorTransform:
+					{
+						if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
+						{
+							unsigned int uiSensor = pMsg->asUInt(4);
+							osg::Matrixf m = pMsg->asMatrix(5);
+							m_mTrackers[pMsg->asString(3)]->setSensor(uiSensor, m);
+						}
+					}
+					break;
+					case  raaOctaveKernel::csm_uiOCTrackerSensors:
+					{
+						if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
+						{
+							m_mTrackers[pMsg->asString(3)]->setSensors(pMsg->asUInt(4));
 						}
 					}
 					break;

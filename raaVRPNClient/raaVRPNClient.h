@@ -15,7 +15,9 @@
 class RAAVRPNCLIENT_DLL_DEF raaVRPNClientListener
 {
 public:
-	virtual void updatedTracker(class raaVRPNClient* pClient, unsigned int uiSensor) = 0;
+	virtual void updatedSensor(class raaVRPNClient* pClient, unsigned int uiSensor) = 0;
+	virtual void updatedSensors(class raaVRPNClient* pClient) = 0;
+	virtual void updatedOrigin(class raaVRPNClient* pClient) = 0;
 };
 
 typedef std::map<raaVRPNClientListener*, unsigned int>raaVRPNClientListeners;
@@ -35,15 +37,23 @@ public:
 	osg::Matrixf& sensorTransform(unsigned int uiSensor);
 	osg::Matrixf& trackerTransform();
 
+	void setTRackerTransform(osg::Matrixf &m);
+
 	std::string name();
 	unsigned int eyeTracker();
+	void setEyeTracker(unsigned int uiSensor);
+
+	unsigned int activeSensors();
+	void setActiveSensors(unsigned int uiSensors);
 
 	static void VRPN_CALLBACK tracker(void *pUsr, const vrpn_TRACKERCB data);
 protected:
 	virtual void run();
 	virtual void track(const vrpn_TRACKERCB data)=0;
 
-	void tellListeners(unsigned int uiSensor);
+	void tellListenersSensor(unsigned int uiSensor);
+	void tellListenersSensors();
+	void tellListenersOrigin();
 
 	raaVRPNClientListeners m_lListeners;
 	raaSensors m_mSensors;

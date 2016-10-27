@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include <QtCore/QMutex>
+
 #include <iostream>
 
 #include <raaOctaveKernel/raaOctaveKernel.h>
@@ -30,7 +32,9 @@ raaOctaveControl::raaOctaveControl(std::string sTracker)
 	osg::Matrixf m;
 	m.makeTranslate(0.0f, 2.0f, 1.8f);
 
-	addClient("raaTest", "raaKinect2", sTracker, m, 30, 0x0001)->start();
+	raaVRPNClient *pClient=addClient("raaTest", "raaKinect2", sTracker, m, 30, 0x00000001);
+	pClient->setActiveSensors(0x0000ffff);
+	pClient->start();
 /*
 	if (sTracker.length())
 	{
@@ -47,12 +51,20 @@ raaOctaveControl::~raaOctaveControl()
 	if (m_pNetwork) delete m_pNetwork;
 }
 
-void raaOctaveControl::updatedTracker(raaVRPNClient* pClient, unsigned int uiSensor)
+void raaOctaveControl::updatedSensor(raaVRPNClient* pClient, unsigned uiSensor)
 {
-	if(m_pEyeTracker && pClient == m_pEyeTracker && m_pController && (m_pEyeTracker->eyeTracker() & 1 << uiSensor))
+	if (m_pEyeTracker && pClient == m_pEyeTracker && m_pController && (m_pEyeTracker->eyeTracker() & 1 << uiSensor))
 	{
 		m_pController->viewpoint()->setPhysicalMatrix(pClient->sensorTransform(uiSensor));
 	}
+}
+
+void raaOctaveControl::updatedSensors(raaVRPNClient* pClient)
+{
+}
+
+void raaOctaveControl::updatedOrigin(raaVRPNClient* pClient)
+{
 }
 
 void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
@@ -173,6 +185,44 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 					pMsg->tcpThread()->write(pM);
 				}
 				break;
+				case raaOctaveKernel::csm_uiOCTrackerAllNames:
+				{
+					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+					pM->add(raaOctaveKernel::csm_uiOCTrackerAllNames);
+					pM->add((unsigned int)clients().size());
+					for (raaVRPNClients::const_iterator cit = clients().begin(); cit != clients().end(); cit++) pM->add(cit->second->name());
+					pMsg->tcpThread()->write(pM);
+				}
+				break;
+				case raaOctaveKernel::csm_uiOCTrackerAddREmoveListener:
+				{
+					if(pMsg->asBool(3))
+					{
+						if(clients().find(pMsg->asString(4))!=clients().end())
+						{
+							raaVRPNClient *pClient = clients()[pMsg->asString(4)];
+							unsigned int uiSensors = pClient->activeSensors();
+							raaTcpMsg *pM = new raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+							pM->add(raaOctaveKernel::csm_uiOCTrackerInfo);
+							pM->add(pMsg->asString(4));
+							pM->add(pClient->trackerTransform());
+							pM->add(uiSensors);
+							pMsg->tcpThread()->write(pM);
+
+							for (int i = 0; i < 32; i++) if(uiSensors & 1<<i) pM->add(pClient->sensorTransform(i));
+
+							pClient->addListener(m_mConnections[pMsg->tcpThread()], uiSensors);
+						}
+					}
+					else
+					{
+						if (clients().find(pMsg->asString(4)) != clients().end())
+						{
+							raaVRPNClient *pClient = clients()[pMsg->asString(4)];
+							pClient->removeListener(m_mConnections[pMsg->tcpThread()]);
+						}
+					}
+				}
 			}
 		}
 		break;

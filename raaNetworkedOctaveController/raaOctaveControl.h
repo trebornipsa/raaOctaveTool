@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtCore/QMutex>
 
 #include <raaNetwork/raaNetwork.h>
 #include <raaNetwork/raaTcpMsg.h>
@@ -25,7 +26,9 @@ public:
 	raaOctaveControl(std::string sTracker="");
 	virtual ~raaOctaveControl();
 
-	virtual void updatedTracker(raaVRPNClient* pClient, unsigned int uiSensor);
+	virtual void updatedSensor(raaVRPNClient* pClient, unsigned uiSensor);
+	virtual void updatedSensors(raaVRPNClient* pClient);
+	virtual void updatedOrigin(raaVRPNClient* pClient);
 
 public slots:
 	void tcpRead(raaTcpMsg*);
@@ -58,5 +61,6 @@ protected:
 	raaConnectionRecordMap m_mConnections;
 
 	raaOctaveController *m_pController;
+	QMutex m_Mutex;
 };
 

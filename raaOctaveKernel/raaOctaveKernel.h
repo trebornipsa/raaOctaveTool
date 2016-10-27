@@ -38,8 +38,15 @@ public:
 	const static unsigned int csm_uiOCScreenImageRotationInfo = 30;
 	const static unsigned int csm_uiOCScreenRequestImageFlip = 31;
 	const static unsigned int csm_uiOCScreenImageFlipInfo = 32;
-
 	const static unsigned int csm_uiOCWindowInfo = 33;
+
+	const static unsigned int csm_uiOCTrackerAllNames = 60;
+	const static unsigned int csm_uiOCTrackerInfo = 61;
+	const static unsigned int csm_uiOCTrackerSensors = 62;
+	const static unsigned int csm_uiOCTrackerOriginTransform = 63;
+	const static unsigned int csm_uiOCTrackerSensorTransform = 64;
+	const static unsigned int csm_uiOCTrackerEyeTracker = 65;
+	const static unsigned int csm_uiOCTrackerAddREmoveListener = 66;
 
 	
 	const static unsigned int csm_uiOCBL = 0;

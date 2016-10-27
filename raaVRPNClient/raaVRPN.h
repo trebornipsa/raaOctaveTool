@@ -19,6 +19,8 @@ public:
 
 	raaVRPNClient* addClient(std::string sName, std::string sType, std::string sTrackerID, osg::Matrixf mOrigin, unsigned int uiMSecPoll, unsigned int UiEyeSensor=0);
 
+	raaVRPNClients& clients();
+
 protected:
 	raaVRPNClients m_mClients;
 

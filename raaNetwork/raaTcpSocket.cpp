@@ -23,9 +23,10 @@ void raaNet::raaTcpSocket::customEvent(QEvent* pEvent)
 //				std::cout << "write -> " << pTcpMsg->asUInt(2) << std::endl;
 
 				int iSize = pTcpMsg->data().length();
-				write((const char*)&iSize, sizeof(int));
-
- 				write(pTcpMsg->data().data(), pTcpMsg->data().length());
+				m_Mutex.lock();
+				write((const char*)&iSize, sizeof(int)); 
+				write(pTcpMsg->data().data(), pTcpMsg->data().length());
+				m_Mutex.unlock();
 		}
 	}
 }

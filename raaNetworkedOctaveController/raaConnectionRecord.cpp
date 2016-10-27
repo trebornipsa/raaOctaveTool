@@ -122,6 +122,46 @@ void raaConnectionRecord::sendScreenAll(raaOctaveController* pController)
 
 }
 
+void raaConnectionRecord::updatedOrigin(raaVRPNClient* pClient)
+{
+	if (m_pTcpThread && pClient)
+	{
+		raaTcpMsg *pMsg = new raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCTrackerSensorTransform);
+		pMsg->add(pClient->name());
+		pMsg->add(pClient->trackerTransform());
+		m_pTcpThread->write(pMsg);
+	}
+}
+
+void raaConnectionRecord::updatedSensors(raaVRPNClient* pClient)
+{
+	if (m_pTcpThread && pClient)
+	{
+		raaTcpMsg *pMsg = new raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCTrackerSensors);
+		pMsg->add(pClient->name());
+		pMsg->add(pClient->activeSensors());
+		m_pTcpThread->write(pMsg);
+	}
+}
+
+void raaConnectionRecord::updatedSensor(raaVRPNClient* pClient, unsigned uiSensor)
+{
+	if (m_pTcpThread && pClient)
+	{
+		raaTcpMsg *pMsg = new raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCTrackerSensorTransform);
+		pMsg->add(pClient->name());
+		pMsg->add(uiSensor);
+
+		osg::Matrixf m = pClient->sensorTransform(uiSensor);
+
+		pMsg->add(m);
+		m_pTcpThread->write(pMsg);
+	}
+}
+
 void raaConnectionRecord::originChanged(raaOctaveController* pController)
 {
 }
@@ -146,12 +186,6 @@ void raaConnectionRecord::screenAdded(raaOctaveController* pController, raaScree
 		pMsg->add(pScreen->flipped(2));
 		pMsg->add(pScreen->screenProjection());
 		pMsg->add(pScreen->screenView());
-		//		pMsg->add(pScreen->projParam(0));
-//		pMsg->add(pScreen->projParam(1));
-//		pMsg->add(pScreen->projParam(2));
-//		pMsg->add(pScreen->projParam(3));
-//		pMsg->add(pScreen->projParam(4));
-//		pMsg->add(pScreen->projParam(5));
 
 		m_pTcpThread->write(pMsg);
 	}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtNetwork/QTcpSocket>
+#include <QtCore/QMutex>
 
 #include "raaNetworkDefs.h"
 //#include <QtCore/QMutex>
@@ -15,6 +16,7 @@ namespace raaNet
 		virtual ~raaTcpSocket();
 	protected:
 		virtual void customEvent(QEvent *pEvent);
+		QMutex m_Mutex;
 
 	};
 }

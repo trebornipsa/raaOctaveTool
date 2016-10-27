@@ -14,6 +14,7 @@
 
 class raaOctaveController;
 class raaDisplayScreen;
+class raaTracker;
 
 typedef std::map<std::string, raaDisplayScreen*>raaDisplayScreens;
 
@@ -27,6 +28,7 @@ typedef struct _raaWindow
 } raaWindow;
 
 typedef std::map<std::string, raaWindow>raaWindows;
+typedef std::map<std::string, raaTracker*>raaTrackers;
 
 class raaOctaveToolInterface: public QMainWindow, public Ui::raaOctaveToolInterfaceQt/*, public raaOctaveControllerListener, public raaOctaveViewPointListener*/
 {
@@ -97,6 +99,27 @@ public slots:
 	void screenAllChanged();
 	void screenContUpdate(int);
 
+
+	void trackerTrans(bool);
+	void trackerRot(bool);
+	void trackerXUpPressed();
+	void trackerXDownPressed();
+	void trackerYUpPressed();
+	void trackerYDownPressed();
+	void trackerZUpPressed();
+	void trackerZDownPressed();
+
+	void trackerXUpReleased();
+	void trackerXDownReleased();
+	void trackerYUpReleased();
+	void trackerYDownReleased();
+	void trackerZUpReleased();
+	void trackerZDownReleased();
+
+	void trackerContUpdate(int);
+	void trackerChanged(const QString&);
+	void trackerUpdate();
+
 	void windowUpdate();
 	void windowUpdateMode(int);
 	void windowParam(int);
@@ -129,6 +152,11 @@ protected:
 	osgGA::CameraManipulator *m_pManpulator;
 	std::string m_sCurrentScreen;
 	bool m_bScreenUpdate;
+
+	std::string m_sCurrentTracker;
+	bool m_bTrackerUpdate;
+	raaTrackers m_mTrackers;
+
 
 	std::string m_sCurrentWindow;
 	bool m_bWindowUpdate;

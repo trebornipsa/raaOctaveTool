@@ -4,6 +4,7 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QByteArrayList>
 #include <QtCore/QString>
+#include <QtCore/QMutex>
 #include <osg/Vec3f>
 #include <osg/Matrixf>
 
@@ -67,5 +68,7 @@ namespace raaNet
 
 		static unsigned int sm_uiID;
 		unsigned int m_uiBuildLen;
+
+		QMutex m_Mutex;
 	};
 }

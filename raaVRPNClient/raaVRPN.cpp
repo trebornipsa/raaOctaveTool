@@ -31,3 +31,8 @@ raaVRPNClient* raaVRPN::addClient(std::string sName, std::string sType, std::str
 
 	return pClient;
 }
+
+raaVRPNClients& raaVRPN::clients()
+{
+	return m_mClients;
+}

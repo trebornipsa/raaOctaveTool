@@ -22,6 +22,6 @@ void raaVRPNKinect2::track(const vrpn_TRACKERCB data)
 
 		m_mSensors[data.sensor] = mR*mT;
 
-		tellListeners(data.sensor);
+		tellListenersSensor(data.sensor);
 	}
 }
