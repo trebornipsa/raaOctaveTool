@@ -25,6 +25,8 @@ raaConnectionRecord::~raaConnectionRecord()
 	if (m_pUdpThread) m_pUdpThread->close();
 
 	if (m_bControllerListener) m_pController->removeListener(this);
+	for (raaStringScreenMap::const_iterator it = m_pController->getScreens().begin(); it != m_pController->getScreens().end(); it++) it->second->removeListener(this);
+
 }
 
 std::string raaConnectionRecord::name()

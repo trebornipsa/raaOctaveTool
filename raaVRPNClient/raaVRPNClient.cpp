@@ -18,23 +18,26 @@ raaVRPNClient::~raaVRPNClient()
 
 void raaVRPNClient::addListener(raaVRPNClientListener* pListener, unsigned int uiSensorMask)
 {
+	//m_Mutex.lock();
+
 	if (pListener && m_lListeners.find(pListener) == m_lListeners.end())
 	{
 		m_lListeners[pListener] = uiSensorMask;
 		m_uiSensors = m_uiSensors | uiSensorMask;
 	}
+
+	//m_Mutex.unlock();
 }
 
 void raaVRPNClient::removeListener(raaVRPNClientListener* pListener)
 {
+	//m_Mutex.lock();
 	if (pListener && m_lListeners.find(pListener) != m_lListeners.end()) m_lListeners.erase(pListener);
+	//m_Mutex.unlock();
 }
 
 osg::Matrixf& raaVRPNClient::sensorTransform(unsigned uiSensor)
 {
-//	if (m_uiSensors & 1 << uiSensor) return m_mSensors[uiSensor] * m_mTrackerTransform;
-//	return osg::Matrixf();
-
 	return (m_uiSensors & 1 << uiSensor) ? m_mSensors[uiSensor] * m_mTrackerTransform : osg::Matrixf();
 }
 
@@ -47,6 +50,14 @@ void raaVRPNClient::setTRackerTransform(osg::Matrixf& m)
 {
 	m_mTrackerTransform = m;
 	tellListenersOrigin();
+}
+
+void raaVRPNClient::setTrackerTranslation(osg::Vec3f& v)
+{
+}
+
+void raaVRPNClient::setTrackerRotation(osg::Vec3f& v)
+{
 }
 
 std::string raaVRPNClient::name()
@@ -97,15 +108,22 @@ void raaVRPNClient::run()
 
 void raaVRPNClient::tellListenersSensor(unsigned uiSensor)
 {
+	//m_Mutex.lock();
 	for (raaVRPNClientListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) if (it->second & 1 << uiSensor) it->first->updatedSensor(this, uiSensor);
+	//m_Mutex.unlock();
 }
 
 void raaVRPNClient::tellListenersOrigin()
 {
+	//m_Mutex.lock();
 	for (raaVRPNClientListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) it->first->updatedOrigin(this);
+	//m_Mutex.unlock();
 }
 
 void raaVRPNClient::tellListenersSensors()
 {
+	//m_Mutex.lock();
 	for (raaVRPNClientListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) it->first->updatedSensors(this);
+	//m_Mutex.unlock();
 }
+

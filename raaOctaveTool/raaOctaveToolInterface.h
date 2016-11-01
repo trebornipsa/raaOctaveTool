@@ -158,6 +158,7 @@ protected:
 	raaTrackers m_mTrackers;
 
 
+
 	std::string m_sCurrentWindow;
 	bool m_bWindowUpdate;
 

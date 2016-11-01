@@ -18,6 +18,8 @@ namespace raaNet
 	class RAANETWORK_DLL_DEF raaMsg : public QEvent
 	{
 	public:
+		const static unsigned int csm_uiMsgBadIndex = 5100;
+
 		raaMsg(unsigned short usMsgType, QEvent::Type t);
 		raaMsg(raaTcpThread* pThread, QByteArray &data, QEvent::Type t);
 		raaMsg(raaUdpThread* pThread, QByteArray &data, QEvent::Type t);
@@ -50,7 +52,7 @@ namespace raaNet
 
 		unsigned int length();
 
-		QByteArray data();
+		QByteArray& data();
 		raaTcpThread* tcpThread();
 		raaUdpThread* udpThread();
 

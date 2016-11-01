@@ -38,16 +38,21 @@ raaScreen::raaScreen(std::string sName, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec
 
 raaScreen::~raaScreen()
 {
+	if (m_pLastViewpoint) m_pLastViewpoint->removeListener(this);
 }
 
 void raaScreen::addListener(raaScreenListener* pListener)
 {
+	//m_Mutex.lock();
 	if (pListener && std::find(m_lListeners.begin(), m_lListeners.end(), pListener) == m_lListeners.end()) m_lListeners.push_back(pListener);
+	//m_Mutex.unlock();
 }
 
 void raaScreen::removeListener(raaScreenListener* pListener)
 {
+	//m_Mutex.lock();
 	if (pListener && std::find(m_lListeners.begin(), m_lListeners.end(), pListener) != m_lListeners.end()) m_lListeners.remove(pListener);
+	//m_Mutex.unlock();
 }
 
 std::string raaScreen::name()
@@ -155,7 +160,9 @@ void raaScreen::setWindow(int iX, int iY, int iW, int iH)
 	m_aiWindow[1] = iY;
 	m_aiWindow[2] = iW;
 	m_aiWindow[3] = iH;
+	//m_Mutex.lock();
 	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->windowChanged(this);
+	//m_Mutex.lock();
 }
 
 int raaScreen::window(unsigned uiParam)
@@ -200,7 +207,10 @@ void raaScreen::setScreen(osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::V
 void raaScreen::setName(std::string sName)
 {
 	m_sName = sName;
+	//m_Mutex.lock();
 	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->nameChanged(this);
+	//m_Mutex.unlock();
+
 }
 
 void raaScreen::calcProjectionMatrix(raaOctaveViewPoint* pViewpoint)
@@ -224,7 +234,10 @@ void raaScreen::calcProjectionMatrix(raaOctaveViewPoint* pViewpoint)
 
 	m_mScreenViewMatrix.makeLookAt(pe, pe-m_vNormal, m_vScreenUp);
 
+	//m_Mutex.lock();
 	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->screenProjMatrixChanged(this);
+	//m_Mutex.unlock();
+
 }
 
 /* safe version
@@ -238,8 +251,6 @@ void raaScreen::calcProjectionMatrix(raaOctaveViewPoint* pViewpoint)
 	vb = m_vScreen[raaOctaveControllerTypes::csm_uiBR] - pe;
 	vc = m_vScreen[raaOctaveControllerTypes::csm_uiTL] - pe;
 	float d = -(m_vNormal*va);
-
-
 
 	m_mScreenProjection.makeFrustum((m_vScreenRight * va)*m_fNear / d, (m_vScreenRight * vb)*m_fNear / d, (m_vScreenUp * va)*m_fNear / d, (m_vScreenUp * vc)*m_fNear / d, m_fNear, m_fFar);
 	m_mScreenViewMatrix.makeLookAt(pe, pe - m_vNormal, m_vScreenUp);
@@ -282,7 +293,9 @@ void raaScreen::updateScreen(raaOctaveViewPoint *pViewpoint)
 	m_vNormal = m_vEdgeNorm[raaOctaveControllerTypes::csm_uiBottom] ^ (m_vEdgeNorm[raaOctaveControllerTypes::csm_uiLeft] * -1.0f);
 	m_vNormal.normalize();
 
+	//m_Mutex.lock();
 	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->screenChanged(this);
+	//m_Mutex.unlock();
 
 	m_uiScreenUpdateCount++;
 

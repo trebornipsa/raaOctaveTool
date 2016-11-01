@@ -914,164 +914,208 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 				{
 					case raaOctaveKernel::csm_uiOCControllerScreenAdded:
 					{
-						std::string sName = pMsg->asString(3);
-						osg::Vec3f vbl = pMsg->asVector(4);
-						osg::Vec3f vbr = pMsg->asVector(5);
-						osg::Vec3f vtl = pMsg->asVector(6);
-						osg::Vec3f vtr = pMsg->asVector(7);
-						osg::Vec3f vn = pMsg->asVector(8); 
-						float fN = pMsg->asFloat(9);
-						float fF = pMsg->asFloat(10);
-						float fR = pMsg->asFloat(11);
-						bool bX = pMsg->asBool(12);
-						bool bY = pMsg->asBool(13);
-						bool bZ = pMsg->asBool(14);
-						osg::Matrixf mPersp = pMsg->asMatrix(15);
-						osg::Matrixf mView = pMsg->asMatrix(16);
+						try
+						{
+							std::string sName = pMsg->asString(3);
+							osg::Vec3f vbl = pMsg->asVector(4);
+							osg::Vec3f vbr = pMsg->asVector(5);
+							osg::Vec3f vtl = pMsg->asVector(6);
+							osg::Vec3f vtr = pMsg->asVector(7);
+							osg::Vec3f vn = pMsg->asVector(8);
+							float fN = pMsg->asFloat(9);
+							float fF = pMsg->asFloat(10);
+							float fR = pMsg->asFloat(11);
+							bool bX = pMsg->asBool(12);
+							bool bY = pMsg->asBool(13);
+							bool bZ = pMsg->asBool(14);
+							osg::Matrixf mPersp = pMsg->asMatrix(15);
+							osg::Matrixf mView = pMsg->asMatrix(16);
 
-						m_mDisplays[sName] = new raaDisplayScreen(m_pVirtualScene, sName, vbl, vbr, vtl, vtr, vn,mPersp);
-						m_mDisplays[sName]->setViewMatrix(mView);
+							m_mDisplays[sName] = new raaDisplayScreen(m_pVirtualScene, sName, vbl, vbr, vtl, vtr, vn, mPersp);
+							m_mDisplays[sName]->setViewMatrix(mView);
 
-						gl_widget->addToTranspScene(0, m_mDisplays[sName]->root());
+							gl_widget->addToTranspScene(0, m_mDisplays[sName]->root());
 
-						m_mWindows[sName].sName = sName;
-						m_mWindows[sName].m_aiParam[0] = 0;
-						m_mWindows[sName].m_aiParam[1] = 0;
-						m_mWindows[sName].m_aiParam[2] = 200;
-						m_mWindows[sName].m_aiParam[3] = 200;
-						m_mWindows[sName].m_pItem = m_Scene.addRect(m_mWindows[sName].m_aiParam[0], m_mWindows[sName].m_aiParam[1], m_mWindows[sName].m_aiParam[2], m_mWindows[sName].m_aiParam[3]);
+							m_mWindows[sName].sName = sName;
+							m_mWindows[sName].m_aiParam[0] = 0;
+							m_mWindows[sName].m_aiParam[1] = 0;
+							m_mWindows[sName].m_aiParam[2] = 200;
+							m_mWindows[sName].m_aiParam[3] = 200;
+							m_mWindows[sName].m_pItem = m_Scene.addRect(m_mWindows[sName].m_aiParam[0], m_mWindows[sName].m_aiParam[1], m_mWindows[sName].m_aiParam[2], m_mWindows[sName].m_aiParam[3]);
 
-						raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
-						pM->add(raaOctaveKernel::csm_uiOCWindowInfo);
-						pM->add(sName);
-						m_pTcpClient->write(pM);
+							raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
+							pM->add(raaOctaveKernel::csm_uiOCWindowInfo);
+							pM->add(sName);
+							m_pTcpClient->write(pM);
+						}
+						catch(unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCControllerScreenAdded -> Bad Read Index" << std::endl;
+						}
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCControllerScreenRemoved:
 					{
-						//std::cout << "Read Info -> raaOctaveKernel::csm_uiOCControllerScreenRemoved" << std::endl;
-//						std::string sName = pMsg->asString(3);
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCViewpointPhysicalChanged:
 					{
-						osg::Matrixf m = pMsg->asMatrix(3);
-						if (m_pPhysicalViewpoint)m_pPhysicalViewpoint->setMatrix(m);
+						try
+						{
+							osg::Matrixf m = pMsg->asMatrix(3);
+							if (m_pPhysicalViewpoint)m_pPhysicalViewpoint->setMatrix(m);
+						}
+						catch(unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCViewpointPhysicalChanged -> bad read index" << std::endl;
+						}
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCViewpointVirtualChanged:
 					{
-						osg::Matrixf m;
-						m.invert_4x4(pMsg->asMatrix(3));
-						if (m_pVirtualScene)m_pVirtualScene->setMatrix(m);
+						try
+						{
+							osg::Matrixf m;
+							m.invert_4x4(pMsg->asMatrix(3));
+							if (m_pVirtualScene)m_pVirtualScene->setMatrix(m);
+						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCViewpointVirtualChanged -> bad read index" << std::endl;
+						}
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCScreenMatrixChanged:
 					{
-						std::string sName = pMsg->asString(3);
-						osg::Matrixf mPersp = pMsg->asMatrix(4);
-						osg::Matrixf mView = pMsg->asMatrix(5);
-
-						if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end())
+						try
 						{
-							m_mDisplays[sName]->screenMatrixChanged(mPersp);
-							m_mDisplays[sName]->setViewMatrix(mView);
-							if(m_bLockCamera) gl_widget->getView(0)->getCameraManipulator()->setByMatrix(osg::Matrix::inverse(mView));
+							std::string sName = pMsg->asString(3);
+							osg::Matrixf mPersp = pMsg->asMatrix(4);
+							osg::Matrixf mView = pMsg->asMatrix(5);
+
+							if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end())
+							{
+								m_mDisplays[sName]->screenMatrixChanged(mPersp);
+								m_mDisplays[sName]->setViewMatrix(mView);
+								if(m_bLockCamera) gl_widget->getView(0)->getCameraManipulator()->setByMatrix(osg::Matrix::inverse(mView));
+							}
 						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCScreenMatrixChanged -> bad read index" << std::endl;
+						}
+
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCScreenChanged:
 					{
-						std::string sName = pMsg->asString(3);
-						osg::Vec3f vbl = pMsg->asVector(4);
-						osg::Vec3f vbr = pMsg->asVector(5);
-						osg::Vec3f vtl = pMsg->asVector(6);
-						osg::Vec3f vtr = pMsg->asVector(7);
-						osg::Vec3f vn = pMsg->asVector(8);
-						float fN = pMsg->asFloat(9);
-						float fF = pMsg->asFloat(10);
-						float fR = pMsg->asFloat(11);
-						bool bX = pMsg->asBool(12);
-						bool bY = pMsg->asBool(13);
-						bool bZ = pMsg->asBool(14);
-
-						if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end()) m_mDisplays[sName]->screenChanged(vbl ,vbr, vtl, vtr, vn);
-
-						if(m_sCurrentScreen==sName)
+						try
 						{
-							bool b = m_bScreenUpdate;
-							m_bScreenUpdate = false;
-							screen_bl_x_spin->setValue(vbl[0]);
-							screen_bl_y_spin->setValue(vbl[1]);
-							screen_bl_z_spin->setValue(vbl[2]);
-							screen_br_x_spin->setValue(vbr[0]);
-							screen_br_y_spin->setValue(vbr[1]);
-							screen_br_z_spin->setValue(vbr[2]);
-							screen_tl_x_spin->setValue(vtl[0]);
-							screen_tl_y_spin->setValue(vtl[1]);
-							screen_tl_z_spin->setValue(vtl[2]);
-							screen_tr_x_spin->setValue(vtr[0]);
-							screen_tr_y_spin->setValue(vtr[1]);
-							screen_tr_z_spin->setValue(vtr[2]);
-							screen_near_spin->setValue(fN);
-							screen_far_spin->setValue(fF);
-							screen_image_rot_spin->setValue(fR);
-							screen_x_flip_check->setCheckState(bX ? Qt::Checked : Qt::Unchecked);
-							screen_y_flip_check->setCheckState(bY ? Qt::Checked : Qt::Unchecked);
-							screen_z_flip_check->setCheckState(bZ ? Qt::Checked : Qt::Unchecked);
+							std::string sName = pMsg->asString(3);
+							osg::Vec3f vbl = pMsg->asVector(4);
+							osg::Vec3f vbr = pMsg->asVector(5);
+							osg::Vec3f vtl = pMsg->asVector(6);
+							osg::Vec3f vtr = pMsg->asVector(7);
+							osg::Vec3f vn = pMsg->asVector(8);
+							float fN = pMsg->asFloat(9);
+							float fF = pMsg->asFloat(10);
+							float fR = pMsg->asFloat(11);
+							bool bX = pMsg->asBool(12);
+							bool bY = pMsg->asBool(13);
+							bool bZ = pMsg->asBool(14);
 
-							m_bScreenUpdate = b;
+							if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end()) m_mDisplays[sName]->screenChanged(vbl, vbr, vtl, vtr, vn);
+
+							if (m_sCurrentScreen == sName)
+							{
+								bool b = m_bScreenUpdate;
+								m_bScreenUpdate = false;
+								screen_bl_x_spin->setValue(vbl[0]);
+								screen_bl_y_spin->setValue(vbl[1]);
+								screen_bl_z_spin->setValue(vbl[2]);
+								screen_br_x_spin->setValue(vbr[0]);
+								screen_br_y_spin->setValue(vbr[1]);
+								screen_br_z_spin->setValue(vbr[2]);
+								screen_tl_x_spin->setValue(vtl[0]);
+								screen_tl_y_spin->setValue(vtl[1]);
+								screen_tl_z_spin->setValue(vtl[2]);
+								screen_tr_x_spin->setValue(vtr[0]);
+								screen_tr_y_spin->setValue(vtr[1]);
+								screen_tr_z_spin->setValue(vtr[2]);
+								screen_near_spin->setValue(fN);
+								screen_far_spin->setValue(fF);
+								screen_image_rot_spin->setValue(fR);
+								screen_x_flip_check->setCheckState(bX ? Qt::Checked : Qt::Unchecked);
+								screen_y_flip_check->setCheckState(bY ? Qt::Checked : Qt::Unchecked);
+								screen_z_flip_check->setCheckState(bZ ? Qt::Checked : Qt::Unchecked);
+
+								m_bScreenUpdate = b;
+							}
+						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCScreenChanged -> bad read index" << std::endl;
 						}
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCScreenInfo:
 					{
-						std::string sName = pMsg->asString(3);
-						osg::Vec3f vbl = pMsg->asVector(4);
-						osg::Vec3f vbr = pMsg->asVector(5);
-						osg::Vec3f vtl = pMsg->asVector(6);
-						osg::Vec3f vtr = pMsg->asVector(7);
-						osg::Vec3f vn = pMsg->asVector(8);
-						float fN = pMsg->asFloat(9);
-						float fF = pMsg->asFloat(10);
-						float fR = pMsg->asFloat(11);
-						bool bX = pMsg->asBool(12);
-						bool bY = pMsg->asBool(13);
-						bool bZ = pMsg->asBool(14);
-
-
-						if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end()) m_mDisplays[sName]->screenChanged(vbl, vbr, vtl, vtr, vn);
-
-						if (m_sCurrentScreen == sName)
+						try
 						{
-							bool b = m_bScreenUpdate;
-							m_bScreenUpdate = false;
-							screen_bl_x_spin->setValue(vbl[0]);
-							screen_bl_y_spin->setValue(vbl[1]);
-							screen_bl_z_spin->setValue(vbl[2]);
-							screen_br_x_spin->setValue(vbr[0]);
-							screen_br_y_spin->setValue(vbr[1]);
-							screen_br_z_spin->setValue(vbr[2]);
-							screen_tl_x_spin->setValue(vtl[0]);
-							screen_tl_y_spin->setValue(vtl[1]);
-							screen_tl_z_spin->setValue(vtl[2]);
-							screen_tr_x_spin->setValue(vtr[0]);
-							screen_tr_y_spin->setValue(vtr[1]);
-							screen_tr_z_spin->setValue(vtr[2]);
-							screen_near_spin->setValue(fN);
-							screen_far_spin->setValue(fF);
-							screen_image_rot_spin->setValue(fR);
-							screen_x_flip_check->setCheckState(bX ? Qt::Checked : Qt::Unchecked);
-							screen_y_flip_check->setCheckState(bY ? Qt::Checked : Qt::Unchecked);
-							screen_z_flip_check->setCheckState(bZ ? Qt::Checked : Qt::Unchecked);
-							m_bScreenUpdate = b;
+							std::string sName = pMsg->asString(3);
+							osg::Vec3f vbl = pMsg->asVector(4);
+							osg::Vec3f vbr = pMsg->asVector(5);
+							osg::Vec3f vtl = pMsg->asVector(6);
+							osg::Vec3f vtr = pMsg->asVector(7);
+							osg::Vec3f vn = pMsg->asVector(8);
+							float fN = pMsg->asFloat(9);
+							float fF = pMsg->asFloat(10);
+							float fR = pMsg->asFloat(11);
+							bool bX = pMsg->asBool(12);
+							bool bY = pMsg->asBool(13);
+							bool bZ = pMsg->asBool(14);
+
+
+							if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end()) m_mDisplays[sName]->screenChanged(vbl, vbr, vtl, vtr, vn);
+
+							if (m_sCurrentScreen == sName)
+							{
+								bool b = m_bScreenUpdate;
+								m_bScreenUpdate = false;
+								screen_bl_x_spin->setValue(vbl[0]);
+								screen_bl_y_spin->setValue(vbl[1]);
+								screen_bl_z_spin->setValue(vbl[2]);
+								screen_br_x_spin->setValue(vbr[0]);
+								screen_br_y_spin->setValue(vbr[1]);
+								screen_br_z_spin->setValue(vbr[2]);
+								screen_tl_x_spin->setValue(vtl[0]);
+								screen_tl_y_spin->setValue(vtl[1]);
+								screen_tl_z_spin->setValue(vtl[2]);
+								screen_tr_x_spin->setValue(vtr[0]);
+								screen_tr_y_spin->setValue(vtr[1]);
+								screen_tr_z_spin->setValue(vtr[2]);
+								screen_near_spin->setValue(fN);
+								screen_far_spin->setValue(fF);
+								screen_image_rot_spin->setValue(fR);
+								screen_x_flip_check->setCheckState(bX ? Qt::Checked : Qt::Unchecked);
+								screen_y_flip_check->setCheckState(bY ? Qt::Checked : Qt::Unchecked);
+								screen_z_flip_check->setCheckState(bZ ? Qt::Checked : Qt::Unchecked);
+								m_bScreenUpdate = b;
+							}
 						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCScreenInfo -> bad read index" << std::endl;
+						}
+
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCControllerRequestScreenNames:
 					{
-						switch (m_uiMode)
+						try
 						{
+							switch (m_uiMode)
+							{
 							case csm_uiScreen:
 							{
 								screen_combo->clear();
@@ -1086,98 +1130,158 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 								for (unsigned int i = 0; i < uiNum; i++) window_combo->addItem(pMsg->asString(4 + i).c_str());
 							}
 							break;
+							}
 						}
-
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCControllerRequestScreenNames -> bad read index" << std::endl;
+						}
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCWindowInfo:
 					{
-						std::string sName = pMsg->asString(3);
-						int iX = pMsg->asInt(4);
-						int iY = pMsg->asInt(5);
-						int iW = pMsg->asInt(6);
-						int iH = pMsg->asInt(7);
-
-						m_mWindows[sName].sName = sName;
-						m_mWindows[sName].m_aiParam[0] = iX;
-						m_mWindows[sName].m_aiParam[1] = iY;
-						m_mWindows[sName].m_aiParam[2] = iW;
-						m_mWindows[sName].m_aiParam[3] = iH;
-
-						m_mWindows[sName].m_pItem->setRect(iX, iY, iW, iH);
-
-						if (m_sCurrentWindow == sName)
+						try
 						{
-							bool bMode = m_bWindowUpdate;
-							m_bWindowUpdate = false;
-							window_pos_x_spin->setValue(iX);
-							window_pos_y_spin->setValue(iY);
-							window_width_spin->setValue(iW);
-							window_height_spin->setValue(iH);
-							m_bWindowUpdate = bMode;
+							std::string sName = pMsg->asString(3);
+							int iX = pMsg->asInt(4);
+							int iY = pMsg->asInt(5);
+							int iW = pMsg->asInt(6);
+							int iH = pMsg->asInt(7);
+
+							m_mWindows[sName].sName = sName;
+							m_mWindows[sName].m_aiParam[0] = iX;
+							m_mWindows[sName].m_aiParam[1] = iY;
+							m_mWindows[sName].m_aiParam[2] = iW;
+							m_mWindows[sName].m_aiParam[3] = iH;
+
+							m_mWindows[sName].m_pItem->setRect(iX, iY, iW, iH);
+
+							if (m_sCurrentWindow == sName)
+							{
+								bool bMode = m_bWindowUpdate;
+								m_bWindowUpdate = false;
+								window_pos_x_spin->setValue(iX);
+								window_pos_y_spin->setValue(iY);
+								window_width_spin->setValue(iW);
+								window_height_spin->setValue(iH);
+								m_bWindowUpdate = bMode;
+							}
+						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCWindowInfo -> bad read index" << std::endl;
 						}
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCTrackerAllNames:
 					{
-						tracker_combo->clear();
-						for (unsigned int i = 0; i < pMsg->asUInt(3); i++)
+						try
 						{
-							tracker_combo->addItem(pMsg->asString(i + 4).c_str());
-
-							if (m_mTrackers.find(pMsg->asString(i + 4)) == m_mTrackers.end())
+							tracker_combo->clear();
+							for (unsigned int i = 0; i < pMsg->asUInt(3); i++)
 							{
-								m_mTrackers[pMsg->asString(i + 4)] = new raaTracker(pMsg->asString(i + 4));
-								m_pVirtualScene->addChild(m_mTrackers[pMsg->asString(i + 4)]->root());
-								raaTcpMsg *pM = new raaTcpMsg(raaNet::csm_usTcpMsgRequest);
-								pM->add(raaOctaveKernel::csm_uiOCTrackerAddREmoveListener);
-								pM->add(true);
-								pM->add(pMsg->asString(i + 4));
-								pMsg->tcpThread()->write(pM);
+								try
+								{
+									tracker_combo->addItem(pMsg->asString(i + 4).c_str());
+
+									if (m_mTrackers.find(pMsg->asString(i + 4)) == m_mTrackers.end())
+									{
+										m_mTrackers[pMsg->asString(i + 4)] = new raaTracker(pMsg->asString(i + 4));
+										m_pVirtualScene->addChild(m_mTrackers[pMsg->asString(i + 4)]->root());
+										raaTcpMsg *pM = new raaTcpMsg(raaNet::csm_usTcpMsgRequest);
+										pM->add(raaOctaveKernel::csm_uiOCTrackerAddREmoveListener);
+										pM->add(true);
+										pM->add(pMsg->asString(i + 4));
+										pMsg->tcpThread()->write(pM);
+									}
+								}
+								catch (unsigned int e)
+								{
+									if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCTrackerAllNames " << i << " -> bad read index" << std::endl;
+								}
 							}
+						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCTrackerAllNames -> bad read index" << std::endl;
 						}
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCTrackerInfo:
 					{
-						if(m_mTrackers.find(pMsg->asString(3))!=m_mTrackers.end())
+						try
 						{
-							raaTracker *pTracker = m_mTrackers[pMsg->asString(3)];
-							pTracker->setOrigin(pMsg->asMatrix(4));
-							unsigned int uiSensors = pMsg->asUInt(5);
-							pTracker->setSensors(uiSensors);
-
-							unsigned int iCount = 0;
-							for(unsigned int i=0;i<32;i++, iCount++)
+							if(m_mTrackers.find(pMsg->asString(3))!=m_mTrackers.end())
 							{
-								if (uiSensors & 1 << i) pTracker->setSensor(i, pMsg->asMatrix(6 + iCount));
+								raaTracker *pTracker = m_mTrackers[pMsg->asString(3)];
+								pTracker->setOrigin(pMsg->asMatrix(4));
+								unsigned int uiSensors = pMsg->asUInt(5);
+								pTracker->setSensors(uiSensors);
+
+								unsigned int iCount = 0;
+								for(unsigned int i=0;i<32;i++, iCount++)
+								{
+									try
+									{
+										if (uiSensors & 1 << i) pTracker->setSensor(i, pMsg->asMatrix(6 + iCount));
+									}
+									catch (unsigned int e)
+									{
+										if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCTrackerInfo " << i << " -> bad read index" << std::endl;
+									}
+								}
 							}
+						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCTrackerInfo -> bad read index" << std::endl;
 						}
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCTrackerOriginTransform:
 					{
-						if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
+						try
 						{
-							m_mTrackers[pMsg->asString(3)]->setOrigin(pMsg->asMatrix(4));
+							if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
+							{
+								m_mTrackers[pMsg->asString(3)]->setOrigin(pMsg->asMatrix(4));
+							}
+						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCTrackerOriginTransform -> bad read index" << std::endl;
 						}
 					}
 					break;
 					case raaOctaveKernel::csm_uiOCTrackerSensorTransform:
 					{
-						if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
+						try
 						{
-							unsigned int uiSensor = pMsg->asUInt(4);
-							osg::Matrixf m = pMsg->asMatrix(5);
-							m_mTrackers[pMsg->asString(3)]->setSensor(uiSensor, m);
+							if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
+							{
+								unsigned int uiSensor = pMsg->asUInt(4);
+								osg::Matrixf m = pMsg->asMatrix(5);
+								m_mTrackers[pMsg->asString(3)]->setSensor(uiSensor, m);
+							}
+						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCTrackerSensorTransform -> bad read index" << std::endl;
 						}
 					}
 					break;
 					case  raaOctaveKernel::csm_uiOCTrackerSensors:
 					{
-						if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
+						try
 						{
-							m_mTrackers[pMsg->asString(3)]->setSensors(pMsg->asUInt(4));
+							if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
+							{
+								m_mTrackers[pMsg->asString(3)]->setSensors(pMsg->asUInt(4));
+							}
+						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCTrackerSensors -> bad read index" << std::endl;
 						}
 					}
 					break;

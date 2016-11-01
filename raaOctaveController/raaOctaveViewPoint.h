@@ -2,6 +2,7 @@
 #include <list>
 #include "raaOctaveControllerDefs.h"
 #include <osg/Matrix>
+#include <QtCore/QMutex>
 
 class raaOctaveViewPoint;
 
@@ -42,5 +43,7 @@ protected:
 
 	raaOctaveViewPointListeners m_lListener;
 	unsigned int m_uiViewpointUpdateCount;
+
+	QMutex m_Mutex;
 };
 

@@ -81,64 +81,87 @@ void raaNet::raaMsg::add(float* pfVal, unsigned uiCount)
 }
 
 unsigned short raaNet::raaMsg::asUShort(unsigned uiIndex)
-{
-	return *((unsigned short*)m_DataList[uiIndex].data());
+{ 
+	if(uiIndex<m_DataList.size()) return *((unsigned short*)m_DataList[uiIndex].data());
+	throw csm_uiMsgBadIndex;
 }
 
 unsigned int raaNet::raaMsg::asUInt(unsigned uiIndex)
 {
-	return *((unsigned int*)m_DataList[uiIndex].data());
+	if (uiIndex<m_DataList.size()) return *((unsigned int*)m_DataList[uiIndex].data());
+	throw csm_uiMsgBadIndex;
 }
 
 int raaNet::raaMsg::asInt(unsigned uiIndex)
 {
-	return *((int*)m_DataList[uiIndex].data());
+	if (uiIndex<m_DataList.size()) return *((int*)m_DataList[uiIndex].data());
+	throw csm_uiMsgBadIndex;
 }
 
 std::string raaNet::raaMsg::asString(unsigned uiIndex)
 {
-	std::string s = m_DataList[uiIndex].data();
-	return s;
+	if (uiIndex < m_DataList.size())
+	{
+		std::string s= m_DataList[uiIndex].data();
+		return s;
+	}
+	throw csm_uiMsgBadIndex;
 }
 
 float* raaNet::raaMsg::asFloatArray(unsigned uiIndex)
 {
-	return (float*)m_DataList[uiIndex].data();
+	if (uiIndex<m_DataList.size()) return (float*)m_DataList[uiIndex].data();
+	throw csm_uiMsgBadIndex;
 }
 
 unsigned* raaNet::raaMsg::asUIntArray(unsigned uiIndex)
 {
-	return (unsigned int*)m_DataList[uiIndex].data();
+	if (uiIndex<m_DataList.size()) return (unsigned int*)m_DataList[uiIndex].data();
+	throw csm_uiMsgBadIndex;
 }
 
 const char* raaNet::raaMsg::asConstChar(unsigned uiIndex)
 {
-	return m_DataList[uiIndex].data();
+	if (uiIndex<m_DataList.size()) return m_DataList[uiIndex].data();
+	throw csm_uiMsgBadIndex;
 }
 
 bool raaNet::raaMsg::asBool(unsigned uiIndex)
 {
-	if (m_DataList[uiIndex].contains('t')) return true;
-	return false;
+	if (uiIndex < m_DataList.size())
+	{
+		if (m_DataList[uiIndex].contains('t')) return true;
+		return false;
+	}
+	throw csm_uiMsgBadIndex;
 }
 
 float raaNet::raaMsg::asFloat(unsigned uiIndex)
 {
-	return *((float*)m_DataList[uiIndex].data());
+	if (uiIndex<m_DataList.size()) return *((float*)m_DataList[uiIndex].data());
+	throw csm_uiMsgBadIndex;
 }
 
 osg::Vec3f raaNet::raaMsg::asVector(unsigned uiIndex)
 {
-	float *pf = (float*)m_DataList[uiIndex].data();
-	osg::Vec3f v(pf[0], pf[1], pf[2]);
-	return v;
+	if (uiIndex < m_DataList.size())
+	{
+		float *pf = (float*)m_DataList[uiIndex].data();
+		osg::Vec3f v(pf[0], pf[1], pf[2]);
+		return v;
+	}
+	throw csm_uiMsgBadIndex;
 }
 
 osg::Matrixf raaNet::raaMsg::asMatrix(unsigned uiIndex)
 {
-	float *pm = (float*)m_DataList[uiIndex].data();
-	osg::Matrixf m(pm);
-	return m;
+	if (uiIndex < m_DataList.size())
+	{
+		float *pm = (float*)m_DataList[uiIndex].data();
+		osg::Matrixf m(pm);
+		return m;
+	}
+	throw csm_uiMsgBadIndex;
 }
 
 unsigned raaNet::raaMsg::length()
@@ -174,20 +197,21 @@ void raaNet::raaMsg::add(osg::Matrixf& m)
 	m_DataList.push_back(QByteArray((const char*)m.ptr(), 16 * sizeof(float)));
 }
 
-QByteArray raaNet::raaMsg::data()
+QByteArray& raaNet::raaMsg::data()
 {
 	if (m_uiBuildLen != m_DataList.length())
 	{
+		//m_Mutex.lock();
 		m_Data.clear();
 
-		for (QByteArrayList::iterator it = m_DataList.begin(); it != m_DataList.end();)
+		for (QByteArrayList::iterator it = m_DataList.begin(); it != m_DataList.end();it++)
 		{
 			m_Data.append((*it));
-			it++;
-			if (it != m_DataList.end()) m_Data.append(csm_pcSepperator);
+			m_Data.append(csm_pcSepperator);
 		}
-	
+
 		m_uiBuildLen = m_DataList.length();
+		//m_Mutex.unlock();
 	}
 	return m_Data;
 }
@@ -215,6 +239,8 @@ unsigned raaNet::raaMsg::msgID()
 void raaNet::raaMsg::unpack()
 {
 	unsigned int uiIndex = 0, i;
+	//m_Mutex.lock();
+
 	m_DataList.clear();
 
 	do
@@ -232,4 +258,5 @@ void raaNet::raaMsg::unpack()
 			uiIndex = -1;
 		}
 	} while (uiIndex != -1);
+	//m_Mutex.unlock();
 }

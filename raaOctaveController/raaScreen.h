@@ -8,6 +8,7 @@
 
 #include "raaOctaveViewPoint.h"
 #include "raaOctaveControllerDefs.h"
+#include <QtCore/QMutex>
 
 
 class raaScreen;
@@ -99,5 +100,7 @@ protected:
 	unsigned int m_uiCurrentViewpointUpdate;
 
 	raaOctaveViewPoint *m_pLastViewpoint;
+
+	QMutex m_Mutex;
 };
 

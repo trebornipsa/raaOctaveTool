@@ -119,60 +119,90 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 			{
 			case raaOctaveKernel::csm_uiOCControllerScreenAdded:
 			{
-				std::string sName = pMsg->asString(3);
-				osg::Vec3f vbl = pMsg->asVector(4);
-				osg::Vec3f vbr = pMsg->asVector(5);
-				osg::Vec3f vtl = pMsg->asVector(6);
-				osg::Vec3f vtr = pMsg->asVector(7);
-				osg::Vec3f vn = pMsg->asVector(8);
-				float fN = pMsg->asFloat(9);
-				float fF = pMsg->asFloat(10);
-				float fR = pMsg->asFloat(11);
-				bool bX = pMsg->asBool(12);
-				bool bY = pMsg->asBool(13);
-				bool bZ = pMsg->asBool(14);
-				osg::Matrixf mPersp = pMsg->asMatrix(15);
-				osg::Matrixf mView = pMsg->asMatrix(16);
-				addDisplay(0, sName, 0, 0, 200, 200, mPersp);
-				m_mViews[sName]->getCamera()->setViewMatrix(mView);
+				try
+				{
+					std::string sName = pMsg->asString(3);
+					osg::Vec3f vbl = pMsg->asVector(4);
+					osg::Vec3f vbr = pMsg->asVector(5);
+					osg::Vec3f vtl = pMsg->asVector(6);
+					osg::Vec3f vtr = pMsg->asVector(7);
+					osg::Vec3f vn = pMsg->asVector(8);
+					float fN = pMsg->asFloat(9);
+					float fF = pMsg->asFloat(10);
+					float fR = pMsg->asFloat(11);
+					bool bX = pMsg->asBool(12);
+					bool bY = pMsg->asBool(13);
+					bool bZ = pMsg->asBool(14);
+					osg::Matrixf mPersp = pMsg->asMatrix(15);
+					osg::Matrixf mView = pMsg->asMatrix(16);
+					addDisplay(0, sName, 0, 0, 200, 200, mPersp);
+					m_mViews[sName]->getCamera()->setViewMatrix(mView);
 
-				raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
-				pM->add(raaOctaveKernel::csm_uiOCWindowInfo);
-				pM->add(sName);
-				m_pTcpClient->write(pM);
+					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
+					pM->add(raaOctaveKernel::csm_uiOCWindowInfo);
+					pM->add(sName);
+					m_pTcpClient->write(pM);
+				}
+				catch(unsigned int e)
+				{
+					if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCControllerScreenAdded -> Bad read index" << std::endl;
+				}
 			}
 			break;
 			case raaOctaveKernel::csm_uiOCControllerScreenRemoved:
 			{
-				//std::cout << "Read Info -> raaOctaveKernel::csm_uiOCControllerScreenRemoved" << std::endl;
-				std::string sName = pMsg->asString(3);
+				try
+				{
+					std::string sName = pMsg->asString(3);
+				}
+				catch (unsigned int e)
+				{
+					if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCControllerScreenRemoved -> Bad read index" << std::endl;
+				}
+
 			}
 			break;
 			case raaOctaveKernel::csm_uiOCViewpointPhysicalChanged:
 			{
-				//std::cout << "Read Info -> raaOctaveKernel::csm_uiOCViewpointPhysicalChanged" << std::endl;
-				osg::Matrixf m = pMsg->asMatrix(3);
-//				if (m_pPhysicalViewpoint)m_pPhysicalViewpoint->setMatrix(m);
+				try
+				{
+					osg::Matrixf m = pMsg->asMatrix(3);
+				}
+				catch (unsigned int e)
+				{
+					if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCViewpointPhysicalChanged -> Bad read index" << std::endl;
+				}
 			}
 			break;
 			case raaOctaveKernel::csm_uiOCViewpointVirtualChanged:
 			{
-				osg::Matrixf m = pMsg->asMatrix(3);
-
-				m_pScene->setMatrix(m);
-
-//				for (raaViews::iterator it = m_mViews.begin(); it != m_mViews.end(); it++) it->second->getCamera()->setViewMatrix(m);
+				try
+				{
+					osg::Matrixf m = pMsg->asMatrix(3);
+					m_pScene->setMatrix(m);
+				}
+				catch (unsigned int e)
+				{
+					if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCViewpointVirtualChanged -> Bad read index" << std::endl;
+				}
 			}
 			break;
 			case raaOctaveKernel::csm_uiOCScreenMatrixChanged:
 			{
-//				std::cout << "raaOctaveKernel::csm_uiOCScreenMatrixChanged" << std::endl;
-				std::string sName = pMsg->asString(3);
-				osg::Matrixf mPersp = pMsg->asMatrix(4);
-				osg::Matrixf mView = pMsg->asMatrix(5);
+				try
+				{
+					std::string sName = pMsg->asString(3);
+					osg::Matrixf mPersp = pMsg->asMatrix(4);
+					osg::Matrixf mView = pMsg->asMatrix(5);
 
-				m_mViews[sName]->getCamera()->setProjectionMatrix(mPersp);
-				m_mViews[sName]->getCamera()->setViewMatrix(mView);
+					m_mViews[sName]->getCamera()->setProjectionMatrix(mPersp);
+					m_mViews[sName]->getCamera()->setViewMatrix(mView);
+				}
+				catch (unsigned int e)
+				{
+					if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCScreenMatrixChanged -> Bad read index" << std::endl;
+				}
+
 			}
 			break;
 			case raaOctaveKernel::csm_uiOCScreenChanged:
@@ -181,17 +211,25 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 				break;
 			case raaOctaveKernel::csm_uiOCWindowInfo:
 			{
-				std::string sName = pMsg->asString(3);
-				int iX = pMsg->asInt(4);
-				int iY = pMsg->asInt(5);
-				int iW = pMsg->asInt(6);
-				int iH = pMsg->asInt(7);
-
-				if (m_mViews.find(sName) != m_mViews.end())
+				try
 				{
-					osgViewer::GraphicsWindow *pWindow = dynamic_cast<osgViewer::GraphicsWindow*>(m_mViews[sName]->getCamera()->getGraphicsContext());
-					if (pWindow) pWindow->setWindowRectangle(iX, iY, iW, iH);
+					std::string sName = pMsg->asString(3);
+					int iX = pMsg->asInt(4);
+					int iY = pMsg->asInt(5);
+					int iW = pMsg->asInt(6);
+					int iH = pMsg->asInt(7);
+
+					if (m_mViews.find(sName) != m_mViews.end())
+					{
+						osgViewer::GraphicsWindow *pWindow = dynamic_cast<osgViewer::GraphicsWindow*>(m_mViews[sName]->getCamera()->getGraphicsContext());
+						if (pWindow) pWindow->setWindowRectangle(iX, iY, iW, iH);
+					}
 				}
+				catch (unsigned int e)
+				{
+					if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCWindowInfo -> Bad read index" << std::endl;
+				}
+
 
 			}
 			break;

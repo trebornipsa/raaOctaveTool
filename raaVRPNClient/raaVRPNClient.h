@@ -11,6 +11,7 @@
 
 #include "raaVRPNClientDefs.h"
 #include <QtCore/QTimer>
+#include <QtCore/QMutex>
 
 class RAAVRPNCLIENT_DLL_DEF raaVRPNClientListener
 {
@@ -38,6 +39,8 @@ public:
 	osg::Matrixf& trackerTransform();
 
 	void setTRackerTransform(osg::Matrixf &m);
+	void setTrackerTranslation(osg::Vec3f &v);
+	void setTrackerRotation(osg::Vec3f &v);
 
 	std::string name();
 	unsigned int eyeTracker();
@@ -64,5 +67,7 @@ protected:
 	unsigned int m_uiSensors;
 	unsigned int m_uiPoll;
 	unsigned int m_uiEyeSensor;
+
+	QMutex m_Mutex;
 };
 
