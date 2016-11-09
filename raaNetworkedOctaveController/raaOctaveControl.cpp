@@ -29,21 +29,18 @@ raaOctaveControl::raaOctaveControl(std::string sTracker)
 	connect(m_pNetwork, SIGNAL(udpRead(raaUdpMsg *)), SLOT(udpRead(raaUdpMsg *)));
 	connect(m_pNetwork, SIGNAL(udpState(raaUdpThread*, unsigned int)), this, SLOT(udpState(raaUdpThread*, unsigned int)));
 
-	osg::Matrixf m;
-	m.makeTranslate(0.0f, 2.0f, 1.8f);
+	osg::Vec3f vPos(0.0f, 2.0f, 1.8f);
+	osg::Vec3f vDir(0.0f, -1.0f, 0.0f); 
+	osg::Vec3f vUp(0.0f, 0.0f, 1.0f);
 
-	raaVRPNClient *pClient=addClient("raaTest", "raaKinect2", sTracker, m, 30, 0x00000001);
+//	osg::Vec3f vPos(0.0f, 1.8f, -2.0f);
+//	osg::Vec3f vDir(0.0f, 0.0f, 1.0f);
+//	osg::Vec3f vUp(0.0f, 1.0f, 0.0f);
+
+
+	raaVRPNClient *pClient=addClient("raaTest", "raaKinect2", sTracker, vPos, vDir, vUp, 30, 0x00000001);
 	pClient->setActiveSensors(0x0000ffff);
 	pClient->start();
-/*
-	if (sTracker.length())
-	{
-		raaVRPNKinect2 *pTracker = new raaVRPNKinect2(sTracker, 30);
-		pTracker->start(); 
-		pTracker->addListener(this, 0x0001);
-	}
-*/
-
 }
 
 raaOctaveControl::~raaOctaveControl()
@@ -64,6 +61,10 @@ void raaOctaveControl::updatedSensors(raaVRPNClient* pClient)
 }
 
 void raaOctaveControl::updatedOrigin(raaVRPNClient* pClient)
+{
+}
+
+void raaOctaveControl::timerSensorUpdate(raaVRPNClient* pClient)
 {
 }
 
@@ -194,7 +195,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 					pMsg->tcpThread()->write(pM);
 				}
 				break;
-				case raaOctaveKernel::csm_uiOCTrackerAddREmoveListener:
+				case raaOctaveKernel::csm_uiOCTrackerAddRemoveListener:
 				{
 					if(pMsg->asBool(3))
 					{
@@ -207,9 +208,9 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 							pM->add(pMsg->asString(4));
 							pM->add(pClient->trackerTransform());
 							pM->add(uiSensors);
+							for (int i = 0; i < 32; i++) if (uiSensors & 1 << i) pM->add(pClient->sensorTransform(i));
 							pMsg->tcpThread()->write(pM);
 
-							for (int i = 0; i < 32; i++) if(uiSensors & 1<<i) pM->add(pClient->sensorTransform(i));
 
 							pClient->addListener(m_mConnections[pMsg->tcpThread()], uiSensors);
 						}
@@ -484,12 +485,12 @@ void raaOctaveControl::trackerRemoved(raaVRPNClient* pClient)
 
 void raaOctaveControl::timerEvent(QTimerEvent* pEvent)
 {
+/*
 	if (m_pNetwork)
 	{
 		QByteArray data;
 		int i = rand();
 		data.append((const char*)&i, sizeof(int));
-
-//		m_pNetwork->writeUdp("raaOctaveControl",new raa data);
 	}
+*/
 }

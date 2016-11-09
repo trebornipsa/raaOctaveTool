@@ -5,6 +5,10 @@
 
 #include <QtCore/QString>
 #include <osg/Vec3>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomNode>
+#include <QtXml/QDomElement>
+
 
 #include "raaOctaveViewPoint.h"
 #include "raaOctaveControllerTypes.h"
@@ -24,10 +28,22 @@ protected:
 	virtual void originChanged(raaOctaveController *pController)=0;
 	virtual void screenAdded(raaOctaveController *pController, raaScreen *pScreen)=0;
 	virtual void screenRemoved(raaOctaveController *pController, raaScreen *pScreen)=0;
-//	virtual void screenUpdated(raaOctaveController *pController, raaScreen *pScreen) = 0;
 };
 
+class RAAOCTAVECONTROLLER_DLL_DEF raaOctaveControllerConfigListener
+{
+	friend raaOctaveController;
+public:
+	raaOctaveControllerConfigListener();
+	virtual ~raaOctaveControllerConfigListener();
+protected:
+	virtual void readTracker(QDomElement &e) = 0;
+	virtual void writeTracker(QDomElement &e) = 0;
+};
+
+
 typedef std::list<raaOctaveControllerListener*> raaOctaveControllerListeners;
+typedef std::list<raaOctaveControllerConfigListener*> raaOctaveControllerConfigListeners;
 
 class RAAOCTAVECONTROLLER_DLL_DEF raaOctaveController
 {
@@ -41,6 +57,8 @@ public:
 
 	void addListener(raaOctaveControllerListener *pListener);
 	void removeListener(raaOctaveControllerListener *pListener);
+	void addConfigListener(raaOctaveControllerConfigListener *pListener);
+	void removeConfigListener(raaOctaveControllerListener *pListener);
 
 	raaOctaveViewPoint *viewpoint();
 
@@ -57,6 +75,7 @@ protected:
 
 	raaStringScreenMap m_mScreens;
 	raaOctaveControllerListeners m_lListener;
+	raaOctaveControllerConfigListeners m_lConfigListener;
 	raaOctaveViewPoint m_ViewPoint;
 	bool m_bConfig;
 };

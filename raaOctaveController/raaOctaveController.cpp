@@ -4,6 +4,7 @@
 #include <QtXml/QDomNode>
 #include <QtXml/QDomElement>
 #include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
 #include "raaScreen.h"
 #include "raaOctaveController.h"
@@ -20,6 +21,14 @@ raaOctaveControllerListener::raaOctaveControllerListener()
 }
 
 raaOctaveControllerListener::~raaOctaveControllerListener()
+{
+}
+
+raaOctaveControllerConfigListener::raaOctaveControllerConfigListener()
+{
+}
+
+raaOctaveControllerConfigListener::~raaOctaveControllerConfigListener()
 {
 }
 
@@ -113,7 +122,7 @@ void raaOctaveController::readConfig(QString sConfig)
 
 						if (sName.length())
 						{
-							m_mScreens[sName] = new raaScreen(sName, vBL, vBR, vTR, vTL, fNear, fFar, fRot, bX, bY, bZ, iX, iY, iW, iH, &m_ViewPoint);
+							m_mScreens[sName] = new raaScreen(sName, 0, vBL, vBR, vTR, vTL, fNear, fFar, fRot, bX, bY, bZ, iX, iY, iW, iH, &m_ViewPoint);
 							for (raaOctaveControllerListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++)(*it)->screenAdded(this, m_mScreens[sName]);
 						}
 					}
@@ -126,6 +135,98 @@ void raaOctaveController::readConfig(QString sConfig)
 
 void raaOctaveController::writeConfig(QString sConfig, QString sName)
 {
+	if(sConfig.length())
+	{
+		QDomDocument doc("raaConfig");
+		QDomElement eDocElement = doc.createElement("CONFIG");
+		eDocElement.setAttribute("name", sName);
+
+		QDomElement eOrigin = doc.createElement("ORIGIN");
+		eDocElement.appendChild(eOrigin);
+		eOrigin.setAttribute("x", m_vOrigin[0]);
+		eOrigin.setAttribute("y", m_vOrigin[1]);
+		eOrigin.setAttribute("z", m_vOrigin[2]);
+
+		QDomElement eViewpoint = doc.createElement("VIEWPOINT");
+		QDomElement eViewpointPos = doc.createElement("POS");
+		QDomElement eViewpointUp = doc.createElement("UP");
+		QDomElement eViewpointDir = doc.createElement("DIR");
+		eDocElement.appendChild(eViewpoint);
+		eViewpoint.appendChild(eViewpointPos);
+		eViewpoint.appendChild(eViewpointUp);
+		eViewpoint.appendChild(eViewpointDir);
+/*
+		eViewpointPos.setAttribute("x", m_ViewPoint.physicalMatrix()[12]);
+		eViewpointPos.setAttribute("y", m_ViewPoint.physicalMatrix()[13]);
+		eViewpointPos.setAttribute("z", m_ViewPoint.physicalMatrix()[14]);
+
+		eViewpointDir.setAttribute("x", m_ViewPoint.physicalMatrix()[1]);
+		eViewpointDir.setAttribute("y", m_ViewPoint.physicalMatrix()[5]);
+		eViewpointDir.setAttribute("z", m_ViewPoint.physicalMatrix()[9]);
+
+		eViewpointUp.setAttribute("x", m_ViewPoint.physicalMatrix()[2]);
+		eViewpointUp.setAttribute("y", m_ViewPoint.physicalMatrix()[6]);
+		eViewpointUp.setAttribute("z", m_ViewPoint.physicalMatrix()[10]);
+*/
+		for(raaStringScreenMap::iterator it; it!=m_mScreens.end();it++)
+		{
+			QDomElement eScreen = doc.createElement("SCREEN");
+			QDomElement eScreenClip = doc.createElement("CLIP");
+			QDomElement eScreenBL = doc.createElement("BL");
+			QDomElement eScreenBR = doc.createElement("BR");
+			QDomElement eScreenTL = doc.createElement("TL");
+			QDomElement eScreenTR = doc.createElement("TR");
+			QDomElement eScreenMOD = doc.createElement("MOD");
+			QDomElement eScreenWindow = doc.createElement("WINDOW");
+			eDocElement.appendChild(eScreen);
+			eScreen.appendChild(eScreenClip);
+			eScreen.appendChild(eScreenBL);
+			eScreen.appendChild(eScreenBR);
+			eScreen.appendChild(eScreenTL);
+			eScreen.appendChild(eScreenTR);
+			eScreen.appendChild(eScreenMOD);
+			eScreen.appendChild(eScreenWindow);
+
+			eScreen.setAttribute("name", it->second->name().c_str());
+			eScreen.setAttribute("screen", it->second->screen());
+
+			eScreenClip.setAttribute("near", it->second->nearClip());
+			eScreenClip.setAttribute("far", it->second->farClip());
+
+			eScreenBL.setAttribute("x", it->second->screenVert(raaOctaveControllerTypes::csm_uiBL)[0]);
+			eScreenBL.setAttribute("y", it->second->screenVert(raaOctaveControllerTypes::csm_uiBL)[1]);
+			eScreenBL.setAttribute("z", it->second->screenVert(raaOctaveControllerTypes::csm_uiBL)[2]);
+			eScreenBR.setAttribute("x", it->second->screenVert(raaOctaveControllerTypes::csm_uiBR)[0]);
+			eScreenBR.setAttribute("y", it->second->screenVert(raaOctaveControllerTypes::csm_uiBR)[1]);
+			eScreenBR.setAttribute("z", it->second->screenVert(raaOctaveControllerTypes::csm_uiBR)[2]);
+			eScreenTL.setAttribute("x", it->second->screenVert(raaOctaveControllerTypes::csm_uiTL)[0]);
+			eScreenTL.setAttribute("y", it->second->screenVert(raaOctaveControllerTypes::csm_uiTL)[1]);
+			eScreenTL.setAttribute("z", it->second->screenVert(raaOctaveControllerTypes::csm_uiTL)[2]);
+			eScreenTR.setAttribute("x", it->second->screenVert(raaOctaveControllerTypes::csm_uiTR)[0]);
+			eScreenTR.setAttribute("y", it->second->screenVert(raaOctaveControllerTypes::csm_uiTR)[1]);
+			eScreenTR.setAttribute("z", it->second->screenVert(raaOctaveControllerTypes::csm_uiTR)[2]);
+
+			eScreenMOD.setAttribute("rot", it->second->rotation());
+			eScreenMOD.setAttribute("flipx", it->second->flipped(0) ? "true" : "false");
+			eScreenMOD.setAttribute("flipy", it->second->flipped(1) ? "true" : "false");
+			eScreenMOD.setAttribute("flipz", it->second->flipped(2) ? "true" : "false");
+
+			eScreenWindow.setAttribute("x", it->second->window(0));
+			eScreenWindow.setAttribute("y", it->second->window(1));
+			eScreenWindow.setAttribute("width", it->second->window(2));
+			eScreenWindow.setAttribute("height", it->second->window(3));
+		}
+
+		QFile file(sName);
+		if(file.open(QIODevice::WriteOnly))
+		{
+			const int IndentSize = 4;
+
+//			QTextStream out(file);
+//			doc.save(out, IndentSize);
+			file.close();
+		}
+	}
 }
 
 bool raaOctaveController::hasConfig()
@@ -141,6 +242,11 @@ void raaOctaveController::addListener(raaOctaveControllerListener* pListener)
 void raaOctaveController::removeListener(raaOctaveControllerListener* pListener)
 {
 	if (pListener && std::find(m_lListener.begin(), m_lListener.end(), pListener) != m_lListener.end()) m_lListener.remove(pListener);
+}
+
+void raaOctaveController::addConfigListener(raaOctaveControllerConfigListener* pListener)
+{
+	if (pListener && std::find(m_lConfigListener.begin(), m_lConfigListener.end(), pListener) == m_lConfigListener.end()) m_lConfigListener.push_back(pListener);
 }
 
 raaOctaveViewPoint* raaOctaveController::viewpoint()

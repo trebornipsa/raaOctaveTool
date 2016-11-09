@@ -99,26 +99,10 @@ public slots:
 	void screenAllChanged();
 	void screenContUpdate(int);
 
-
-	void trackerTrans(bool);
-	void trackerRot(bool);
-	void trackerXUpPressed();
-	void trackerXDownPressed();
-	void trackerYUpPressed();
-	void trackerYDownPressed();
-	void trackerZUpPressed();
-	void trackerZDownPressed();
-
-	void trackerXUpReleased();
-	void trackerXDownReleased();
-	void trackerYUpReleased();
-	void trackerYDownReleased();
-	void trackerZUpReleased();
-	void trackerZDownReleased();
-
 	void trackerContUpdate(int);
 	void trackerChanged(const QString&);
 	void trackerUpdate();
+	void trackerTransformChanged(double);
 
 	void windowUpdate();
 	void windowUpdateMode(int);

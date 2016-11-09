@@ -45,8 +45,9 @@ public:
 	const static unsigned int csm_uiOCTrackerSensors = 62;
 	const static unsigned int csm_uiOCTrackerOriginTransform = 63;
 	const static unsigned int csm_uiOCTrackerSensorTransform = 64;
-	const static unsigned int csm_uiOCTrackerEyeTracker = 65;
-	const static unsigned int csm_uiOCTrackerAddREmoveListener = 66;
+	const static unsigned int csm_uiOCTrackerSensorTimeout = 65;
+	const static unsigned int csm_uiOCTrackerEyeTracker = 66;
+	const static unsigned int csm_uiOCTrackerAddRemoveListener = 67;
 
 	
 	const static unsigned int csm_uiOCBL = 0;

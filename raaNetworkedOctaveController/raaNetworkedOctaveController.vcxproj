@@ -166,7 +166,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="raaConnectionRecord.h" />
+    <ClInclude Include="raaConnectionRecord.h">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">raaMOC %(FileName)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</Outputs>
+    </ClInclude>
     <CustomBuild Include="raaOctaveControl.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">raaMOC %(FileName)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</Outputs>

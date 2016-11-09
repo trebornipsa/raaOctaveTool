@@ -17,7 +17,7 @@ public:
 	raaVRPN();
 	virtual ~raaVRPN();
 
-	raaVRPNClient* addClient(std::string sName, std::string sType, std::string sTrackerID, osg::Matrixf mOrigin, unsigned int uiMSecPoll, unsigned int UiEyeSensor=0);
+	raaVRPNClient* addClient(std::string sName, std::string sType, std::string sTrackerID, osg::Vec3f vTrackerPos, osg::Vec3f vTrackerDir, osg::Vec3f vTrackerUp, unsigned int uiMSecPoll, unsigned int UiEyeSensor=0);
 
 	raaVRPNClients& clients();
 

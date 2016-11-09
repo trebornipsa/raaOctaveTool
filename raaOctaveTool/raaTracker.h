@@ -30,5 +30,6 @@ protected:
 	osg::Group *m_pRoot;
 
 	osg::Vec4f m_vCol;
+	osg::Vec4f m_vOriginCol;
 };
 

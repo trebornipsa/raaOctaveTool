@@ -48,16 +48,47 @@ void raaNet::raaTcpThread::write(raaTcpMsg* pMsg)
 
 void raaNet::raaTcpThread::readyRead()
 {
+/*
+	while(m_pSocket->bytesAvailable())
+	{
+		unsigned int iSize = 0;
+
+		if (m_pSocket->read((char*)&iSize, sizeof(unsigned int)) == -1)
+			std::cout << "Read msg Size error" << std::endl;
+
+		if (iSize > 0)
+		{
+			unsigned int uiReadBytes = 0;
+			QByteArray b;
+			while (uiReadBytes < iSize)
+			{
+				unsigned int uiBytes = m_pSocket->bytesAvailable();
+
+				if (uiBytes > (iSize - uiReadBytes)) 
+					uiBytes = iSize - uiReadBytes;
+
+					b.append(m_pSocket->read(uiBytes));
+					uiReadBytes += uiBytes;
+			}
+			if(b.length())
+			{
+				QCoreApplication::postEvent(m_pNetwork, new raaTcpMsg(this, b, raaNetwork::tcpReadEvent()));
+//				QCoreApplication::processEvents();
+			}
+		}
+	}
+*/
+
 	while (m_pSocket->bytesAvailable())
 	{
-//		while (m_pSocket->bytesAvailable() < sizeof(int)) m_pSocket->waitForReadyRead(1);
-		int iSize = 0;
+		qint64 iSize = 0;
 		m_pSocket->read((char*)&iSize, sizeof(unsigned int));
 
 		if (iSize > 0)
 		{
-//			while (m_pSocket->bytesAvailable() < iSize) m_pSocket->waitForReadyRead(1);
-			QCoreApplication::postEvent(m_pNetwork, new raaTcpMsg(this, m_pSocket->read((qint64)iSize), raaNetwork::tcpReadEvent()));
+			QByteArray b;
+			b.append(m_pSocket->read(iSize));
+			if (b.length()==iSize) 	QCoreApplication::postEvent(m_pNetwork, new raaTcpMsg(this, b, raaNetwork::tcpReadEvent()));
 		}
 	}
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <QtCore/QObject>
 #include <raaNetwork/raaTcpThread.h>
 #include <raaNetwork/raaUdpThread.h>
 
@@ -33,6 +34,7 @@ public:
 	virtual void updatedSensor(raaVRPNClient* pClient, unsigned uiSensor);
 	virtual void updatedOrigin(raaVRPNClient* pClient);
 	virtual void updatedSensors(raaVRPNClient* pClient);
+	virtual void timerSensorUpdate(raaVRPNClient* pClient);
 
 
 protected:

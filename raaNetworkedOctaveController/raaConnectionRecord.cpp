@@ -132,6 +132,9 @@ void raaConnectionRecord::updatedOrigin(raaVRPNClient* pClient)
 		pMsg->add(raaOctaveKernel::csm_uiOCTrackerSensorTransform);
 		pMsg->add(pClient->name());
 		pMsg->add(pClient->trackerTransform());
+		pMsg->add(pClient->trackerPosition());
+		pMsg->add(pClient->trackerDirection());
+		pMsg->add(pClient->trackerUp());
 		m_pTcpThread->write(pMsg);
 	}
 }
@@ -148,9 +151,34 @@ void raaConnectionRecord::updatedSensors(raaVRPNClient* pClient)
 	}
 }
 
+void raaConnectionRecord::timerSensorUpdate(raaVRPNClient* pClient)
+{
+	if(pClient && pClient->activeSensors() && m_pTcpThread)
+	{
+		raaTcpMsg *pMsg = new raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCTrackerSensorTimeout);
+		pMsg->add(pClient->name());
+		pMsg->add(pClient->activeSensors());
+
+		for(unsigned int i=0;i<32;i++)
+		{
+			if(pClient->activeSensors()&1<<i)
+			{
+				osg::Matrixf m = pClient->sensorTransform(i);
+				pMsg->add(m);
+			}
+		}
+		m_pTcpThread->write(pMsg);
+	}
+}
+
+
+
 void raaConnectionRecord::updatedSensor(raaVRPNClient* pClient, unsigned uiSensor)
 {
-	if (m_pTcpThread && pClient)
+
+/*
+	if (m_pTcpThread && pClient && pClient->activeSensors() & 1<<uiSensor)
 	{
 		raaTcpMsg *pMsg = new raaTcpMsg(raaNet::csm_usTcpMsgInfo);
 		pMsg->add(raaOctaveKernel::csm_uiOCTrackerSensorTransform);
@@ -162,6 +190,7 @@ void raaConnectionRecord::updatedSensor(raaVRPNClient* pClient, unsigned uiSenso
 		pMsg->add(m);
 		m_pTcpThread->write(pMsg);
 	}
+*/
 }
 
 void raaConnectionRecord::originChanged(raaOctaveController* pController)

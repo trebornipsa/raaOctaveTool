@@ -29,6 +29,7 @@ public:
 	virtual void updatedSensor(raaVRPNClient* pClient, unsigned uiSensor);
 	virtual void updatedSensors(raaVRPNClient* pClient);
 	virtual void updatedOrigin(raaVRPNClient* pClient);
+	virtual void timerSensorUpdate(raaVRPNClient* pClient);
 
 public slots:
 	void tcpRead(raaTcpMsg*);

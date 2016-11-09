@@ -32,8 +32,11 @@ namespace raaNet
 	const static unsigned short csm_usUdpMsgSystem = 0;
 	const static unsigned short csm_usUdpMsgInfo = 1;
 
-	const static char csm_pcSepperator[] = "<raa>";
-	const static char csm_pcInnerSepperator[] = "<rii>";
+//	const static char csm_pcSepperator[] = "<raa>";
+//	const static char csm_pcInnerSepperator[] = "<rii>";
+
+	const static QByteArray csm_pcSepperator("<rs>", 4);
+	const static QByteArray csm_pcInnerSepperator("<ri>", 4);
 
 	static QString tcpMsgTypeToString(unsigned short usType)
 	{

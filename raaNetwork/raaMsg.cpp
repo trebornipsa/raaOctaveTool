@@ -1,5 +1,6 @@
 #include "raaTcpThread.h"
 #include "raaMsg.h"
+#include <iostream>
 
 unsigned int raaNet::raaMsg::sm_uiID=0;
 
@@ -42,42 +43,55 @@ raaNet::raaMsg::~raaMsg()
 
 void raaNet::raaMsg::add(unsigned short usVal)
 {
+	//m_Mutex.lock();
 	m_DataList.push_back(QByteArray((const char*)&usVal, sizeof(unsigned short)));
+	//m_Mutex.unlock();
 }
 
 void raaNet::raaMsg::add(unsigned uiVal)
 {
+	//m_Mutex.lock();
 	m_DataList.push_back(QByteArray((const char*)&uiVal, sizeof(unsigned int)));
+	//m_Mutex.unlock();
 }
 
 void raaNet::raaMsg::add(int iVal)
 {
+	//m_Mutex.lock();
 	m_DataList.push_back(QByteArray((const char*)&iVal, sizeof(int)));
+	//m_Mutex.unlock();
 }
 
 void raaNet::raaMsg::add(std::string sVal)
 {
+	//m_Mutex.lock();
 	m_DataList.push_back(sVal.c_str());
+	//m_Mutex.unlock();
 }
 
 void raaNet::raaMsg::add(unsigned int* puiVal, unsigned uiCount)
 {
+	//m_Mutex.lock();
+
 	if (puiVal && uiCount)
 	{
 		QByteArray data;
 		for (unsigned int i = 0; i<uiCount; i++) data.append((const char*)puiVal + i, sizeof(unsigned int));
 		m_DataList.push_back(data);
 	}
+	//m_Mutex.unlock();
 }
 
 void raaNet::raaMsg::add(float* pfVal, unsigned uiCount)
 {
+	//m_Mutex.lock();
 	if (pfVal && uiCount)
 	{
 		QByteArray data;
 		for (unsigned int i = 0; i<uiCount; i++) data.append((const char*)pfVal + i, sizeof(float));
 		m_DataList.push_back(data);
 	}
+	//m_Mutex.unlock();
 }
 
 unsigned short raaNet::raaMsg::asUShort(unsigned uiIndex)
@@ -171,47 +185,58 @@ unsigned raaNet::raaMsg::length()
 
 void raaNet::raaMsg::add(const char* pccVal, unsigned int uiSize)
 {
+	//m_Mutex.lock();
 	m_DataList.push_back(QByteArray(pccVal, uiSize));
+	//m_Mutex.unlock();
 }
 
 void raaNet::raaMsg::add(bool bVal)
 {
+	//m_Mutex.lock();
 	if (bVal)
 		m_DataList.push_back(QByteArray(1, 't'));
 	else
 		m_DataList.push_back(QByteArray(1, 'f'));
+	//m_Mutex.unlock();
 }
 
 void raaNet::raaMsg::add(float f)
 {
+	//m_Mutex.lock();
 	m_DataList.push_back(QByteArray((const char*)&f, sizeof(float)));
+	//m_Mutex.unlock();
 }
 
 void raaNet::raaMsg::add(osg::Vec3f& v)
 {
+	//m_Mutex.lock();
 	m_DataList.push_back(QByteArray((const char*)v.ptr(), 3*sizeof(float)));
+	//m_Mutex.unlock();
 }
 
 void raaNet::raaMsg::add(osg::Matrixf& m)
 {
+	//m_Mutex.lock();
 	m_DataList.push_back(QByteArray((const char*)m.ptr(), 16 * sizeof(float)));
+	//m_Mutex.unlock();
 }
 
 QByteArray& raaNet::raaMsg::data()
 {
+
 	if (m_uiBuildLen != m_DataList.length())
 	{
-		//m_Mutex.lock();
 		m_Data.clear();
 
-		for (QByteArrayList::iterator it = m_DataList.begin(); it != m_DataList.end();it++)
+		for (QByteArrayList::iterator it = m_DataList.begin(); it != m_DataList.end();)
 		{
-			m_Data.append((*it));
-			m_Data.append(csm_pcSepperator);
+				m_Data.append((*it));
+				it++;
+				if(it!=m_DataList.end()) m_Data.append(csm_pcSepperator);
 		}
 
+		m_Data=qCompress(m_Data, 1);
 		m_uiBuildLen = m_DataList.length();
-		//m_Mutex.unlock();
 	}
 	return m_Data;
 }
@@ -238,10 +263,11 @@ unsigned raaNet::raaMsg::msgID()
 
 void raaNet::raaMsg::unpack()
 {
-	unsigned int uiIndex = 0, i;
-	//m_Mutex.lock();
+	qint64 uiIndex = 0, i;
 
 	m_DataList.clear();
+
+	m_Data = qUncompress(m_Data);
 
 	do
 	{
@@ -250,7 +276,7 @@ void raaNet::raaMsg::unpack()
 		if (i != -1)
 		{
 			m_DataList.push_back(QByteArray(m_Data.data() + uiIndex, i - uiIndex));
-			uiIndex = i + 5;
+			uiIndex = i + csm_pcSepperator.size();
 		}
 		else
 		{
@@ -258,5 +284,4 @@ void raaNet::raaMsg::unpack()
 			uiIndex = -1;
 		}
 	} while (uiIndex != -1);
-	//m_Mutex.unlock();
 }
