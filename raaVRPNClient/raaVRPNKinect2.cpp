@@ -20,7 +20,16 @@ void raaVRPNKinect2::track(const vrpn_TRACKERCB data)
 ////		mR = mR.scale(osg::Vec3f(1.0f, -1.0f, 1.0f));
 		mT.makeTranslate(data.pos[0], -data.pos[2], data.pos[1]);
 
-		m_mSensors[data.sensor] = mR*mT;
+//		mT.makeTranslate(data.pos[0], data.pos[1], data.pos[2]);
+
+		mR.set(1.0f, 0.0f, 0.0f, 0.0f,
+			1.0f, -1.0f, 0.0f, 0.0f,
+			1.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f);
+
+
+
+		m_mSensors[data.sensor] = mT;
 
 		tellListenersSensor(data.sensor);
 	}

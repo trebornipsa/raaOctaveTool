@@ -4,7 +4,10 @@
 #include <QtXml/QDomNode>
 #include <QtXml/QDomElement>
 #include <QtCore/QFile>
+#include <QtCore/QFileDevice>
 #include <QtCore/QTextStream>
+
+#include <osg/Matrixf>
 
 #include "raaScreen.h"
 #include "raaOctaveController.h"
@@ -72,14 +75,59 @@ void raaOctaveController::readConfig(QString sConfig)
 					}
 					if (dE.nodeName() == "VIEWPOINT")
 					{
-						osg::Vec3f vPos, vUp, vDir;
-						for (QDomNode n = dN.firstChild(); !n.isNull(); n = n.nextSibling())
+						for (QDomNode n = dE.firstChild(); !n.isNull(); n = n.nextSibling())
 						{
 							QDomElement e = n.toElement();
-							if (e.nodeName() == "POS") readVec(e, vPos);
-							else if (e.nodeName() == "DIR") readVec(e, vDir);
-							else if (e.nodeName() == "UP") readVec(e, vUp);
+
+							if (e.nodeName() == "PHYSICAL")
+							{
+								osg::Vec3f vPos, vUp, vDir, vRight;
+								for (QDomNode n = dN.firstChild(); !n.isNull(); n = n.nextSibling())
+								{
+									QDomElement e = n.toElement();
+									if (e.nodeName() == "POS") readVec(e, vPos);
+									else if (e.nodeName() == "DIR") readVec(e, vDir);
+									else if (e.nodeName() == "UP") readVec(e, vUp);
+								}
+
+								vRight = vDir^vUp;
+								vRight.normalize();
+
+								osg::Matrixf m(vRight[0], vDir[0], vUp[0], 0.0f,
+									vRight[1], vDir[1], vUp[1], 0.0f,
+									vRight[2], vDir[1], vUp[2], 0.0f,
+									vPos[0], vPos[1], vPos[2], 1.0f);
+
+
+								m_ViewPoint.setDefaultPhysicalMatrix(m);
+							}
+							else if (e.nodeName() == "VIRTUAL")
+							{
+								osg::Vec3f vPos, vUp, vDir, vRight;
+								for (QDomNode n = dN.firstChild(); !n.isNull(); n = n.nextSibling())
+								{
+									QDomElement e = n.toElement();
+									if (e.nodeName() == "POS") readVec(e, vPos);
+									else if (e.nodeName() == "DIR") readVec(e, vDir);
+									else if (e.nodeName() == "UP") readVec(e, vUp);
+								}
+								vRight = vDir^vUp;
+								vRight.normalize();
+
+								osg::Matrixf m(vRight[0], vDir[0], vUp[0], 0.0f,
+									vRight[1], vDir[1], vUp[1], 0.0f,
+									vRight[2], vDir[1], vUp[2], 0.0f,
+									vPos[0], vPos[1], vPos[2], 1.0f);
+
+
+								m_ViewPoint.setVirtualMatrix(m);
+
+							}
 						}
+					}
+					else if (dE.nodeName() == "TRACKERS")
+					{
+						for(raaOctaveControllerConfigListeners::iterator it=m_lConfigListener.begin();it!=m_lConfigListener.end();it++) (*it)->readTracker(dE);
 					}
 					else if (dE.nodeName() == "SCREEN")
 					{
@@ -148,26 +196,48 @@ void raaOctaveController::writeConfig(QString sConfig, QString sName)
 		eOrigin.setAttribute("z", m_vOrigin[2]);
 
 		QDomElement eViewpoint = doc.createElement("VIEWPOINT");
-		QDomElement eViewpointPos = doc.createElement("POS");
-		QDomElement eViewpointUp = doc.createElement("UP");
-		QDomElement eViewpointDir = doc.createElement("DIR");
+		QDomElement eViewpointPhysical = doc.createElement("PHYSICAL");
+		QDomElement eViewpointVirtual = doc.createElement("VIRTUAL");
+		QDomElement eViewpointPhysicalPos = doc.createElement("POS");
+		QDomElement eViewpointPhysicalUp = doc.createElement("UP");
+		QDomElement eViewpointPhysicalDir = doc.createElement("DIR");
+		QDomElement eViewpointVirtualPos = doc.createElement("POS");
+		QDomElement eViewpointVirtualUp = doc.createElement("UP");
+		QDomElement eViewpointVirtualDir = doc.createElement("DIR");
 		eDocElement.appendChild(eViewpoint);
-		eViewpoint.appendChild(eViewpointPos);
-		eViewpoint.appendChild(eViewpointUp);
-		eViewpoint.appendChild(eViewpointDir);
-/*
-		eViewpointPos.setAttribute("x", m_ViewPoint.physicalMatrix()[12]);
-		eViewpointPos.setAttribute("y", m_ViewPoint.physicalMatrix()[13]);
-		eViewpointPos.setAttribute("z", m_ViewPoint.physicalMatrix()[14]);
+		eViewpoint.appendChild(eViewpointPhysical);
+		eViewpoint.appendChild(eViewpointVirtual);
+		eViewpointPhysical.appendChild(eViewpointPhysicalPos);
+		eViewpointPhysical.appendChild(eViewpointPhysicalUp);
+		eViewpointPhysical.appendChild(eViewpointPhysicalDir);
+		eViewpointVirtual.appendChild(eViewpointVirtualPos);
+		eViewpointVirtual.appendChild(eViewpointVirtualUp);
+		eViewpointVirtual.appendChild(eViewpointVirtualDir);
 
-		eViewpointDir.setAttribute("x", m_ViewPoint.physicalMatrix()[1]);
-		eViewpointDir.setAttribute("y", m_ViewPoint.physicalMatrix()[5]);
-		eViewpointDir.setAttribute("z", m_ViewPoint.physicalMatrix()[9]);
+		eViewpointPhysicalPos.setAttribute("x", m_ViewPoint.defaultPhysicalMatrix().ptr()[12]);
+		eViewpointPhysicalPos.setAttribute("y", m_ViewPoint.defaultPhysicalMatrix().ptr()[13]);
+		eViewpointPhysicalPos.setAttribute("z", m_ViewPoint.defaultPhysicalMatrix().ptr()[14]);
 
-		eViewpointUp.setAttribute("x", m_ViewPoint.physicalMatrix()[2]);
-		eViewpointUp.setAttribute("y", m_ViewPoint.physicalMatrix()[6]);
-		eViewpointUp.setAttribute("z", m_ViewPoint.physicalMatrix()[10]);
-*/
+		eViewpointPhysicalUp.setAttribute("x", m_ViewPoint.defaultPhysicalMatrix().ptr()[1]);
+		eViewpointPhysicalUp.setAttribute("y", m_ViewPoint.defaultPhysicalMatrix().ptr()[5]);
+		eViewpointPhysicalUp.setAttribute("z", m_ViewPoint.defaultPhysicalMatrix().ptr()[9]);
+
+		eViewpointPhysicalDir.setAttribute("x", m_ViewPoint.defaultPhysicalMatrix().ptr()[2]);
+		eViewpointPhysicalDir.setAttribute("y", m_ViewPoint.defaultPhysicalMatrix().ptr()[6]);
+		eViewpointPhysicalDir.setAttribute("z", m_ViewPoint.defaultPhysicalMatrix().ptr()[10]);
+
+		eViewpointVirtualPos.setAttribute("x", m_ViewPoint.virtualMatrix().ptr()[12]);
+		eViewpointVirtualPos.setAttribute("y", m_ViewPoint.virtualMatrix().ptr()[13]);
+		eViewpointVirtualPos.setAttribute("z", m_ViewPoint.virtualMatrix().ptr()[14]);
+
+		eViewpointVirtualUp.setAttribute("x", m_ViewPoint.virtualMatrix().ptr()[1]);
+		eViewpointVirtualUp.setAttribute("y", m_ViewPoint.virtualMatrix().ptr()[5]);
+		eViewpointVirtualUp.setAttribute("z", m_ViewPoint.virtualMatrix().ptr()[9]);
+
+		eViewpointVirtualDir.setAttribute("x", m_ViewPoint.virtualMatrix().ptr()[2]);
+		eViewpointVirtualDir.setAttribute("y", m_ViewPoint.virtualMatrix().ptr()[6]);
+		eViewpointVirtualDir.setAttribute("z", m_ViewPoint.virtualMatrix().ptr()[10]);
+
 		for(raaStringScreenMap::iterator it; it!=m_mScreens.end();it++)
 		{
 			QDomElement eScreen = doc.createElement("SCREEN");
@@ -217,13 +287,18 @@ void raaOctaveController::writeConfig(QString sConfig, QString sName)
 			eScreenWindow.setAttribute("height", it->second->window(3));
 		}
 
+		QDomElement eTrackers = doc.createElement("TRACKERS");
+		eDocElement.appendChild(eTrackers);
+
+
+
 		QFile file(sName);
 		if(file.open(QIODevice::WriteOnly))
 		{
 			const int IndentSize = 4;
 
-//			QTextStream out(file);
-//			doc.save(out, IndentSize);
+			QTextStream out(&file);
+			doc.save(out, IndentSize);
 			file.close();
 		}
 	}

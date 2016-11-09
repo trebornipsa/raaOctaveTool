@@ -29,7 +29,10 @@ public:
 
 	void setVirtualMatrix(osg::Matrixf m);
 	void setPhysicalMatrix(osg::Matrixf m);
+	void setDefaultPhysicalMatrix(osg::Matrixf m);
+	void setDefaultPhysicalMatrix();
 
+	osg::Matrixf defaultPhysicalMatrix();
 	osg::Matrixf physicalMatrix();
 	osg::Matrixf virtualMatrix();
 
@@ -40,6 +43,7 @@ public:
 protected:
 	osg::Matrixf m_Virtual;
 	osg::Matrixf m_Physical;
+	osg::Matrixf m_DefaultPhysical;
 
 	raaOctaveViewPointListeners m_lListener;
 	unsigned int m_uiViewpointUpdateCount;

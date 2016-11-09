@@ -36,6 +36,22 @@ void raaOctaveViewPoint::setPhysicalMatrix(osg::Matrixf m)
 	//m_Mutex.unlock();
 }
 
+void raaOctaveViewPoint::setDefaultPhysicalMatrix(osg::Matrixf m)
+{
+	m_DefaultPhysical = m;
+	setPhysicalMatrix(m);
+}
+
+void raaOctaveViewPoint::setDefaultPhysicalMatrix()
+{
+	m_DefaultPhysical = m_Physical;
+}
+
+osg::Matrixf raaOctaveViewPoint::defaultPhysicalMatrix()
+{
+	return m_DefaultPhysical;
+}
+
 osg::Matrixf raaOctaveViewPoint::physicalMatrix()
 {
 	return m_Physical;

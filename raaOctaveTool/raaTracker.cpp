@@ -56,7 +56,7 @@ raaTracker::raaTracker(std::string sName)
 	pVertsS->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
 	pVertsS->push_back(osg::Vec3f(0.1f, 0.0f, 0.0f));
 	pVertsS->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
-	pVertsS->push_back(osg::Vec3f(0.0f, 0.1f, 0.0f));
+	pVertsS->push_back(osg::Vec3f(0.0f, -0.1f, 0.0f));
 	pVertsS->push_back(osg::Vec3f(0.0f, 0.0f, 0.0f));
 	pVertsS->push_back(osg::Vec3f(0.0f, 0.0f, 0.1f));
 

@@ -235,7 +235,7 @@ QByteArray& raaNet::raaMsg::data()
 				if(it!=m_DataList.end()) m_Data.append(csm_pcSepperator);
 		}
 
-		m_Data=qCompress(m_Data, 1);
+//		m_Data=qCompress(m_Data, 1);
 		m_uiBuildLen = m_DataList.length();
 	}
 	return m_Data;
@@ -267,12 +267,11 @@ void raaNet::raaMsg::unpack()
 
 	m_DataList.clear();
 
-	m_Data = qUncompress(m_Data);
+//	m_Data = qUncompress(m_Data);
 
 	do
 	{
 		i = m_Data.indexOf(csm_pcSepperator, uiIndex);
-
 		if (i != -1)
 		{
 			m_DataList.push_back(QByteArray(m_Data.data() + uiIndex, i - uiIndex));

@@ -46,7 +46,7 @@ void raaVRPNClient::removeListener(raaVRPNClientListener* pListener)
 
 osg::Matrixf& raaVRPNClient::sensorTransform(unsigned uiSensor)
 {
-	return (m_uiSensors & 1 << uiSensor) ? m_mTrackerTransform*m_mSensors[uiSensor] : osg::Matrixf();
+	return (m_uiSensors & 1 << uiSensor) ? m_mTrackerTransform* m_mSensors[uiSensor] : osg::Matrixf();
 }
 
 osg::Matrixf& raaVRPNClient::trackerTransform()
