@@ -12,7 +12,7 @@
 #include "raaScreen.h"
 #include "raaOctaveController.h"
 
-void readVec(QDomElement e, osg::Vec3f &v)
+void readVec(QDomElement &e, osg::Vec3f &v)
 {
 	if (e.hasAttribute("x")) v[0] = e.attribute("x").toFloat();
 	if (e.hasAttribute("y")) v[1] = e.attribute("y").toFloat();
@@ -27,19 +27,42 @@ raaOctaveControllerListener::~raaOctaveControllerListener()
 {
 }
 
-raaOctaveControllerConfigListener::raaOctaveControllerConfigListener()
-{
-}
-
-raaOctaveControllerConfigListener::~raaOctaveControllerConfigListener()
-{
-}
-
 raaOctaveController::raaOctaveController(raaOctaveControllerListener *pListener)
 {
 	m_bConfig = false;
-
+	m_pEyeTracker = 0;
 	addListener(pListener);
+}
+
+void raaOctaveController::trackerAdded(raaVRPNClient* pClient)
+{
+	if (pClient)
+	{
+		if (pClient->eyeTracker())
+		{
+			if (m_pEyeTracker) m_pEyeTracker->removeListener(this);
+			m_pEyeTracker = pClient;
+			m_pEyeTracker->addListener(this, m_pEyeTracker->eyeTracker());
+		}
+	}
+}
+
+void raaOctaveController::trackerRemoved(raaVRPNClient* pClient)
+{
+	if(pClient && pClient==m_pEyeTracker)
+	{
+		pClient->removeListener(this);
+		m_pEyeTracker = 0;
+
+		for(raaVRPNClients::iterator it =clients().begin();it!=clients().end();it++)
+		{
+			if(pClient!=it->second && it->second->eyeTracker())
+			{
+				m_pEyeTracker = it->second;
+				m_pEyeTracker->addListener(this, m_pEyeTracker->eyeTracker());
+			}
+		}
+	}
 }
 
 raaOctaveController::~raaOctaveController()
@@ -77,17 +100,20 @@ void raaOctaveController::readConfig(QString sConfig)
 					{
 						for (QDomNode n = dE.firstChild(); !n.isNull(); n = n.nextSibling())
 						{
-							QDomElement e = n.toElement();
+							QDomElement eV = n.toElement();
 
-							if (e.nodeName() == "PHYSICAL")
+							if (eV.nodeName() == "PHYSICAL")
 							{
 								osg::Vec3f vPos, vUp, vDir, vRight;
-								for (QDomNode n = dN.firstChild(); !n.isNull(); n = n.nextSibling())
+								for (QDomNode nV = eV.firstChild(); !nV.isNull(); nV = nV.nextSibling())
 								{
-									QDomElement e = n.toElement();
-									if (e.nodeName() == "POS") readVec(e, vPos);
-									else if (e.nodeName() == "DIR") readVec(e, vDir);
-									else if (e.nodeName() == "UP") readVec(e, vUp);
+									QDomElement eT = nV.toElement();
+									if (eT.nodeName() == "POS") 
+										readVec(eT, vPos);
+									else if (eT.nodeName() == "DIR") 
+										readVec(eT, vDir);
+									else if (eT.nodeName() == "UP") 
+										readVec(eT, vUp);
 								}
 
 								vRight = vDir^vUp;
@@ -95,21 +121,24 @@ void raaOctaveController::readConfig(QString sConfig)
 
 								osg::Matrixf m(vRight[0], vDir[0], vUp[0], 0.0f,
 									vRight[1], vDir[1], vUp[1], 0.0f,
-									vRight[2], vDir[1], vUp[2], 0.0f,
+									vRight[2], vDir[2], vUp[2], 0.0f,
 									vPos[0], vPos[1], vPos[2], 1.0f);
 
 
 								m_ViewPoint.setDefaultPhysicalMatrix(m);
 							}
-							else if (e.nodeName() == "VIRTUAL")
+							else if (eV.nodeName() == "VIRTUAL")
 							{
 								osg::Vec3f vPos, vUp, vDir, vRight;
-								for (QDomNode n = dN.firstChild(); !n.isNull(); n = n.nextSibling())
+								for (QDomNode nV = eV.firstChild(); !nV.isNull(); nV = nV.nextSibling())
 								{
-									QDomElement e = n.toElement();
-									if (e.nodeName() == "POS") readVec(e, vPos);
-									else if (e.nodeName() == "DIR") readVec(e, vDir);
-									else if (e.nodeName() == "UP") readVec(e, vUp);
+									QDomElement eT = nV.toElement();
+									if (eT.nodeName() == "POS")
+										readVec(eT, vPos);
+									else if (eT.nodeName() == "DIR")
+										readVec(eT, vDir);
+									else if (eT.nodeName() == "UP")
+										readVec(eT, vUp);
 								}
 								vRight = vDir^vUp;
 								vRight.normalize();
@@ -125,9 +154,33 @@ void raaOctaveController::readConfig(QString sConfig)
 							}
 						}
 					}
-					else if (dE.nodeName() == "TRACKERS")
+					else if (dE.nodeName() == "TRACKER")
 					{
-						for(raaOctaveControllerConfigListeners::iterator it=m_lConfigListener.begin();it!=m_lConfigListener.end();it++) (*it)->readTracker(dE);
+						osg::Vec3f vPos, vUp, vDir;
+						QString sName, sType, sAddress;
+						unsigned int uiPollTime = 30, uiEyeSensor = 0, uiActiveSensors = 0;
+
+						if (dE.hasAttribute("name")) sName = dE.attribute("name");
+						if (dE.hasAttribute("type")) sType = dE.attribute("type");
+						if (dE.hasAttribute("address")) sAddress = dE.attribute("address");
+						if (dE.hasAttribute("pollTime")) uiPollTime = dE.attribute("pollTime").toUInt();
+						if (dE.hasAttribute("eyeSensor")) uiEyeSensor = dE.attribute("eyeSensor").toUInt();
+						if (dE.hasAttribute("activeSensors")) uiActiveSensors = dE.attribute("activeSensors").toUInt();
+
+						for (QDomNode n = dN.firstChild(); !n.isNull(); n = n.nextSibling())
+						{
+							QDomElement e = n.toElement();
+							if (e.nodeName() == "POS") readVec(e, vPos);
+							else if (e.nodeName() == "DIR") readVec(e, vDir);
+							else if (e.nodeName() == "UP") readVec(e, vUp);
+						}
+
+						if(sName.length() && sType.length() && sAddress.length() && uiActiveSensors)
+						{
+							raaVRPNClient *pClient = addClient(sName.toStdString(), sType.toStdString(),sAddress.toStdString(), vPos, vDir, vUp, uiPollTime, uiEyeSensor);
+							pClient->setActiveSensors(uiActiveSensors);
+							pClient->start();
+						}
 					}
 					else if (dE.nodeName() == "SCREEN")
 					{
@@ -187,6 +240,7 @@ void raaOctaveController::writeConfig(QString sConfig, QString sName)
 	{
 		QDomDocument doc("raaConfig");
 		QDomElement eDocElement = doc.createElement("CONFIG");
+		doc.appendChild(eDocElement);
 		eDocElement.setAttribute("name", sName);
 
 		QDomElement eOrigin = doc.createElement("ORIGIN");
@@ -238,7 +292,7 @@ void raaOctaveController::writeConfig(QString sConfig, QString sName)
 		eViewpointVirtualDir.setAttribute("y", m_ViewPoint.virtualMatrix().ptr()[6]);
 		eViewpointVirtualDir.setAttribute("z", m_ViewPoint.virtualMatrix().ptr()[10]);
 
-		for(raaStringScreenMap::iterator it; it!=m_mScreens.end();it++)
+		for(raaStringScreenMap::iterator it=m_mScreens.begin(); it!=m_mScreens.end();it++)
 		{
 			QDomElement eScreen = doc.createElement("SCREEN");
 			QDomElement eScreenClip = doc.createElement("CLIP");
@@ -287,12 +341,42 @@ void raaOctaveController::writeConfig(QString sConfig, QString sName)
 			eScreenWindow.setAttribute("height", it->second->window(3));
 		}
 
-		QDomElement eTrackers = doc.createElement("TRACKERS");
-		eDocElement.appendChild(eTrackers);
+		for (raaVRPNClients::iterator it = clients().begin(); it != clients().end(); it++)
+		{
+			QDomElement eTracker = doc.createElement("TRACKER");
+			eDocElement.appendChild(eTracker);
 
+			eTracker.setAttribute("name", it->first.c_str());
+			eTracker.setAttribute("type", it->second->type().c_str());
+			eTracker.setAttribute("address", it->second->tracker().c_str());
+			eTracker.setAttribute("pollTiime", it->second->pollTime());
+			eTracker.setAttribute("eyeSensor", it->second->eyeTracker());
+			eTracker.setAttribute("activeSensors", it->second->activeSensors());
 
+			QDomElement eTrackerPos = doc.createElement("POS");
+			QDomElement eTrackerUp = doc.createElement("UP");
+			QDomElement eTrackerDir = doc.createElement("DIR");
 
-		QFile file(sName);
+			eTracker.appendChild(eTrackerPos);
+			eTracker.appendChild(eTrackerUp);
+			eTracker.appendChild(eTrackerDir);
+
+			eTrackerPos.setAttribute("x", it->second->trackerPosition()[0]);
+			eTrackerPos.setAttribute("y", it->second->trackerPosition()[1]);
+			eTrackerPos.setAttribute("z", it->second->trackerPosition()[2]);
+
+			eTrackerUp.setAttribute("x", it->second->trackerUp()[0]);
+			eTrackerUp.setAttribute("y", it->second->trackerUp()[1]);
+			eTrackerUp.setAttribute("z", it->second->trackerUp()[2]);
+
+			eTrackerDir.setAttribute("x", it->second->trackerDirection()[0]);
+			eTrackerDir.setAttribute("y", it->second->trackerDirection()[1]);
+			eTrackerDir.setAttribute("z", it->second->trackerDirection()[2]);
+		}
+
+		std::cout << "write conf-> " << sName.toStdString() << std::endl;
+
+		QFile file(sConfig);
 		if(file.open(QIODevice::WriteOnly))
 		{
 			const int IndentSize = 4;
@@ -319,10 +403,6 @@ void raaOctaveController::removeListener(raaOctaveControllerListener* pListener)
 	if (pListener && std::find(m_lListener.begin(), m_lListener.end(), pListener) != m_lListener.end()) m_lListener.remove(pListener);
 }
 
-void raaOctaveController::addConfigListener(raaOctaveControllerConfigListener* pListener)
-{
-	if (pListener && std::find(m_lConfigListener.begin(), m_lConfigListener.end(), pListener) == m_lConfigListener.end()) m_lConfigListener.push_back(pListener);
-}
 
 raaOctaveViewPoint* raaOctaveController::viewpoint()
 {
@@ -350,4 +430,35 @@ raaScreen* raaOctaveController::getScreen(std::string sName)
 const raaStringScreenMap& raaOctaveController::getScreens()
 {
 	return m_mScreens;
+}
+
+void raaOctaveController::updatedSensors(raaVRPNClient* pClient)
+{
+}
+
+void raaOctaveController::updatedOrigin(raaVRPNClient* pClient)
+{
+}
+
+void raaOctaveController::timerSensorUpdate(raaVRPNClient* pClient)
+{
+}
+
+bool raaOctaveController::addScreen(std::string sName)
+{
+	if (sName.length() && m_mScreens.find(sName)==m_mScreens.end())
+	{
+		m_mScreens[sName] = new raaScreen(sName, 0, osg::Vec3f(-1.0f, 0.0f, 0.0f), osg::Vec3f(1.0f, 0.0f, 0.0f), osg::Vec3f(1.0f, 0.0f, 1.0f), osg::Vec3f(-1.0f, 0.0f, 1.0f), 0.01f, 100.0f, 0.0f, false, false, false, 0, 0, 100, 100, &m_ViewPoint);
+		for (raaOctaveControllerListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++)(*it)->screenAdded(this, m_mScreens[sName]);
+		return true;
+	}
+	return false;
+}
+
+void raaOctaveController::updatedSensor(raaVRPNClient* pClient, unsigned uiSensor)
+{
+	if (m_pEyeTracker && pClient == m_pEyeTracker && (m_pEyeTracker->eyeTracker() & 1 << uiSensor))
+	{
+		viewpoint()->setPhysicalMatrix(pClient->sensorTransform(uiSensor));
+	}
 }

@@ -17,6 +17,8 @@ raaScreenListener::~raaScreenListener()
 raaScreen::raaScreen(std::string sName, int iScreen, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, int iX ,int iY, int iW, int iH, raaOctaveViewPoint *pViewpoint)
 {
 	initialise();
+//	m_bStereo = false;
+	m_bStereo = true;
 	m_fNear = fNear;
 	m_fFar = fFar;
 	m_uiCurrentScreenUpdate = 0;
@@ -108,9 +110,29 @@ osg::Matrixf raaScreen::screenProjection()
 	return m_mScreenProjection;
 }
 
+osg::Matrixf raaScreen::screenLeftProjection()
+{
+	return m_mScreenLeftProjection;
+}
+
+osg::Matrixf raaScreen::screenRightProjection()
+{
+	return m_mScreenRightProjection;
+}
+
 osg::Matrixf raaScreen::screenView()
 {
 	return m_mScreenViewMatrix;
+}
+
+osg::Matrixf raaScreen::screenLeftView()
+{
+	return m_mScreenLeftViewMatrix;
+}
+
+osg::Matrixf raaScreen::screenRightView()
+{
+	return m_mScreenRightViewMatrix;
 }
 
 float raaScreen::nearClip()
@@ -161,9 +183,7 @@ void raaScreen::setWindow(int iX, int iY, int iW, int iH)
 	m_aiWindow[1] = iY;
 	m_aiWindow[2] = iW;
 	m_aiWindow[3] = iH;
-	//m_Mutex.lock();
 	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->windowChanged(this);
-	//m_Mutex.lock();
 }
 
 int raaScreen::window(unsigned uiParam)
@@ -175,6 +195,16 @@ int raaScreen::window(unsigned uiParam)
 float raaScreen::projParam(unsigned uiIndex)
 {
 	return m_afProjParam[uiIndex];
+}
+
+bool raaScreen::isStereo()
+{
+	return m_bStereo;
+}
+
+void raaScreen::setStereo(bool bStereo)
+{
+	m_bStereo = bStereo;
 }
 
 int raaScreen::screen()
@@ -213,37 +243,58 @@ void raaScreen::setScreen(osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::V
 void raaScreen::setName(std::string sName)
 {
 	m_sName = sName;
-	//m_Mutex.lock();
 	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->nameChanged(this);
-	//m_Mutex.unlock();
-
 }
 
 void raaScreen::calcProjectionMatrix(raaOctaveViewPoint* pViewpoint)
 {
 	m_pLastViewpoint = pViewpoint;
-
 	osg::Vec3f va, vb, vc, pe;
-	pe = pe*pViewpoint->physicalMatrix();
-	va = m_vScreen[raaOctaveControllerTypes::csm_uiBL] - pe;
-	vb = m_vScreen[raaOctaveControllerTypes::csm_uiBR] - pe;
-	vc = m_vScreen[raaOctaveControllerTypes::csm_uiTL] - pe;
-	float d = -(m_vNormal*va);
-
+	float d;
+	m_mScreenViewMatrix.makeLookAt(pe, pe - m_vNormal, m_vScreenUp);
 	osg::Matrixf mS, mR;
 	mS.makeScale(m_abFlip[0] ? -1.0 : 1.0, m_abFlip[1] ? -1.0 : 1.0, m_abFlip[2] ? -1.0 : 1.0);
 	mR.makeRotate(osg::DegreesToRadians(m_fRotation), osg::Vec3f(0.0f, 1.0f, 0.0f));
 
-	m_mScreenProjection.makeFrustum((m_vScreenRight * va)*m_fNear / d,(m_vScreenRight * vb)*m_fNear / d,(m_vScreenUp * va)*m_fNear / d,(m_vScreenUp * vc)*m_fNear / d,m_fNear,m_fFar);
+	if (!m_bStereo)
+	{
+		pe = pe*pViewpoint->physicalMatrix();
+		va = m_vScreen[raaOctaveControllerTypes::csm_uiBL] - pe;
+		vb = m_vScreen[raaOctaveControllerTypes::csm_uiBR] - pe;
+		vc = m_vScreen[raaOctaveControllerTypes::csm_uiTL] - pe;
+		d = -(m_vNormal*va);
 
-	m_mScreenProjection = mR*m_mScreenProjection*mS;
+		osg::Matrixf mS, mR;
+		mS.makeScale(m_abFlip[0] ? -1.0 : 1.0, m_abFlip[1] ? -1.0 : 1.0, m_abFlip[2] ? -1.0 : 1.0);
+		mR.makeRotate(osg::DegreesToRadians(m_fRotation), osg::Vec3f(0.0f, 1.0f, 0.0f));
 
-	m_mScreenViewMatrix.makeLookAt(pe, pe-m_vNormal, m_vScreenUp);
+		m_mScreenProjection.makeFrustum((m_vScreenRight * va)*m_fNear / d, (m_vScreenRight * vb)*m_fNear / d, (m_vScreenUp * va)*m_fNear / d, (m_vScreenUp * vc)*m_fNear / d, m_fNear, m_fFar);
+		m_mScreenProjection = mR*m_mScreenProjection*mS;
+		m_mScreenViewMatrix.makeLookAt(pe, pe - m_vNormal, m_vScreenUp);
+	}
+	else
+	{
+		osg::Vec3f peL, peR;
 
-	//m_Mutex.lock();
+		peL = peL*pViewpoint->physicalLeftMatrix();
+		va = m_vScreen[raaOctaveControllerTypes::csm_uiBL] - peL;
+		vb = m_vScreen[raaOctaveControllerTypes::csm_uiBR] - peL;
+		vc = m_vScreen[raaOctaveControllerTypes::csm_uiTL] - peL;
+		d = -(m_vNormal*va);
+		m_mScreenLeftProjection.makeFrustum((m_vScreenRight * va)*m_fNear / d, (m_vScreenRight * vb)*m_fNear / d, (m_vScreenUp * va)*m_fNear / d, (m_vScreenUp * vc)*m_fNear / d, m_fNear, m_fFar);
+		m_mScreenLeftProjection = mR*m_mScreenLeftProjection*mS;
+		m_mScreenLeftViewMatrix.makeLookAt(peL, peL - m_vNormal, m_vScreenUp);
+
+		peR = peR*pViewpoint->physicalRightMatrix();
+		va = m_vScreen[raaOctaveControllerTypes::csm_uiBL] - peR;
+		vb = m_vScreen[raaOctaveControllerTypes::csm_uiBR] - peR;
+		vc = m_vScreen[raaOctaveControllerTypes::csm_uiTL] - peR;
+		d = -(m_vNormal*va);
+		m_mScreenRightProjection.makeFrustum((m_vScreenRight * va)*m_fNear / d, (m_vScreenRight * vb)*m_fNear / d, (m_vScreenUp * va)*m_fNear / d, (m_vScreenUp * vc)*m_fNear / d, m_fNear, m_fFar);
+		m_mScreenRightProjection = mR*m_mScreenRightProjection*mS;
+		m_mScreenRightViewMatrix.makeLookAt(peR, peR - m_vNormal, m_vScreenUp);
+	}
 	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->screenProjMatrixChanged(this);
-	//m_Mutex.unlock();
-
 }
 
 /* safe version

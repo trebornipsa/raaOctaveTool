@@ -8,6 +8,9 @@
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomNode>
 #include <QtXml/QDomElement>
+#include <raaVRPNClient/raaVRPN.h>
+#include <raaVRPNClient/raaVRPNClient.h>
+
 
 
 #include "raaOctaveViewPoint.h"
@@ -30,22 +33,9 @@ protected:
 	virtual void screenRemoved(raaOctaveController *pController, raaScreen *pScreen)=0;
 };
 
-class RAAOCTAVECONTROLLER_DLL_DEF raaOctaveControllerConfigListener
-{
-	friend raaOctaveController;
-public:
-	raaOctaveControllerConfigListener();
-	virtual ~raaOctaveControllerConfigListener();
-protected:
-	virtual void readTracker(QDomElement &e) = 0;
-	virtual void writeTracker(QDomElement &e) = 0;
-};
-
-
 typedef std::list<raaOctaveControllerListener*> raaOctaveControllerListeners;
-typedef std::list<raaOctaveControllerConfigListener*> raaOctaveControllerConfigListeners;
 
-class RAAOCTAVECONTROLLER_DLL_DEF raaOctaveController
+class RAAOCTAVECONTROLLER_DLL_DEF raaOctaveController: public raaVRPN, public raaVRPNClientListener
 {
 public:
 	raaOctaveController(raaOctaveControllerListener *pListener=0);
@@ -57,8 +47,6 @@ public:
 
 	void addListener(raaOctaveControllerListener *pListener);
 	void removeListener(raaOctaveControllerListener *pListener);
-	void addConfigListener(raaOctaveControllerConfigListener *pListener);
-	void removeConfigListener(raaOctaveControllerListener *pListener);
 
 	raaOctaveViewPoint *viewpoint();
 
@@ -69,14 +57,26 @@ public:
 
 	const raaStringScreenMap& getScreens();
 
+	virtual void updatedSensor(raaVRPNClient* pClient, unsigned uiSensor);
+	virtual void updatedSensors(raaVRPNClient* pClient);
+	virtual void updatedOrigin(raaVRPNClient* pClient);
+	virtual void timerSensorUpdate(raaVRPNClient* pClient);
+
+	bool addScreen(std::string sName);
+
 protected:
 	std::string m_sName;
 	osg::Vec3f m_vOrigin;
 
 	raaStringScreenMap m_mScreens;
 	raaOctaveControllerListeners m_lListener;
-	raaOctaveControllerConfigListeners m_lConfigListener;
 	raaOctaveViewPoint m_ViewPoint;
 	bool m_bConfig;
+
+	raaVRPNClient *m_pEyeTracker;
+
+	virtual void trackerAdded(raaVRPNClient* pClient);
+	virtual void trackerRemoved(raaVRPNClient* pClient);
+
 };
 

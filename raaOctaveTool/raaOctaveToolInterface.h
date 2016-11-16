@@ -98,6 +98,9 @@ public slots:
 	void screenFlipChanged(int);
 	void screenAllChanged();
 	void screenContUpdate(int);
+	void screenAdd();
+	void configSave();
+	void configCurrentChanged();
 
 	void trackerContUpdate(int);
 	void trackerChanged(const QString&);

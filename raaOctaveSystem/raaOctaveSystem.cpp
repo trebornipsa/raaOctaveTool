@@ -8,6 +8,7 @@
 #include "raaOctaveSystem.moc"
 #include "raaCameraManipulator.h"
 #include <osgGA/TrackballManipulator>
+#include "raaDisplaySettings.h"
 #include "DepthPeeling.h"
 
 raaOctaveSystem::raaOctaveSystem(osg::Node *pNode, std::string sConfig, std::string sName, std::string sIp, unsigned short int usiPort)
@@ -67,17 +68,29 @@ void raaOctaveSystem::addDisplay(int iScreen, std::string sName, int iX, int iY,
 	pTraits->doubleBuffer = true;
 	pTraits->sharedContext = getNumViews()? pTraits->sharedContext=getView(0)->getCamera()->getGraphicsContext():0;
 
-
 	osg::GraphicsContext *pGC = osg::GraphicsContext::createGraphicsContext(pTraits);
 	osgViewer::View *pView = new osgViewer::View;
-	m_mViews[sName] = pView;
+	osg::DisplaySettings *pDS = new raaDisplaySettings();
+	pDS->setStereo(true);
+	pDS->setStereoMode(osg::DisplaySettings::ANAGLYPHIC);
+	pDS->setEyeSeparation(0.08f);
+	pView->setDisplaySettings(pDS);
 
+	m_mViews[sName] = pView;
 
 
 	osg::Matrixf m;
 	pView->setSceneData(m_pScene);
 
 	osg::Camera *pCamera = pView->getCamera();
+/*
+	osg::DisplaySettings *pDS = pCamera->getDisplaySettings();
+	pDS->setStereo(true);
+	pDS->setStereoMode(osg::DisplaySettings::ANAGLYPHIC);
+	pDS->setEyeSeparation(0.08f);
+	pCamera->setDisplaySettings(pDS);
+*/
+
 	pCamera->setGraphicsContext(pGC);	
 	pCamera->setDataVariance(osg::Object::DYNAMIC);
 	pCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
@@ -178,7 +191,8 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 			{
 				try
 				{
-					osg::Matrixf m = pMsg->asMatrix(3);
+					osg::Matrixf m;
+					m.invert_4x4(pMsg->asMatrix(3));
 					m_pScene->setMatrix(m);
 				}
 				catch (unsigned int e)
@@ -192,11 +206,33 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 				try
 				{
 					std::string sName = pMsg->asString(3);
-					osg::Matrixf mPersp = pMsg->asMatrix(4);
-					osg::Matrixf mView = pMsg->asMatrix(5);
 
-					m_mViews[sName]->getCamera()->setProjectionMatrix(mPersp);
-					m_mViews[sName]->getCamera()->setViewMatrix(mView);
+					if(pMsg->asBool(4))
+					{
+						osg::Matrixf mLeftPersp = pMsg->asMatrix(5);
+						osg::Matrixf mRightPersp = pMsg->asMatrix(6);
+						osg::Matrixf mLeftView = pMsg->asMatrix(7);
+						osg::Matrixf mRightView = pMsg->asMatrix(8);
+
+						m_mViews[sName]->getCamera()->setProjectionMatrix(mRightPersp);
+						m_mViews[sName]->getCamera()->setViewMatrix(mRightView);
+						// todo -> add stereo
+
+						raaDisplaySettings *pDS = (raaDisplaySettings*)m_mViews[sName]->getDisplaySettings();
+
+						pDS->setLeftEye(pMsg->asMatrix(5), pMsg->asMatrix(7));
+						pDS->setRightEye(pMsg->asMatrix(6), pMsg->asMatrix(8));
+
+//						((pMsg->asMatrix(raaDisplaySettings*)(m_mViews[sName]->getDisplaySettings())->setLeftEye())
+					}
+					else
+					{
+						osg::Matrixf mPersp = pMsg->asMatrix(5);
+						osg::Matrixf mView = pMsg->asMatrix(6);
+
+						m_mViews[sName]->getCamera()->setProjectionMatrix(mPersp);
+						m_mViews[sName]->getCamera()->setViewMatrix(mView);
+					}
 				}
 				catch (unsigned int e)
 				{

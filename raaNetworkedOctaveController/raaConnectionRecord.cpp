@@ -129,9 +129,8 @@ void raaConnectionRecord::updatedOrigin(raaVRPNClient* pClient)
 	if (m_pTcpThread && pClient)
 	{
 		raaTcpMsg *pMsg = new raaTcpMsg(raaNet::csm_usTcpMsgInfo);
-		pMsg->add(raaOctaveKernel::csm_uiOCTrackerSensorTransform);
+		pMsg->add(raaOctaveKernel::csm_uiOCTrackerOriginTransform);
 		pMsg->add(pClient->name());
-		pMsg->add(pClient->trackerTransform());
 		pMsg->add(pClient->trackerPosition());
 		pMsg->add(pClient->trackerDirection());
 		pMsg->add(pClient->trackerUp());
@@ -273,14 +272,20 @@ void raaConnectionRecord::screenProjMatrixChanged(raaScreen* pScreen)
 		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
 		pMsg->add(raaOctaveKernel::csm_uiOCScreenMatrixChanged);
 		pMsg->add(pScreen->name());
-		pMsg->add(pScreen->screenProjection());
-		pMsg->add(pScreen->screenView());
-		//		pMsg->add(pScreen->projParam(0));
-//		pMsg->add(pScreen->projParam(1));
-//		pMsg->add(pScreen->projParam(2));
-//		pMsg->add(pScreen->projParam(3));
-//		pMsg->add(pScreen->projParam(4));
-//		pMsg->add(pScreen->projParam(5));
+		pMsg->add(pScreen->isStereo());
+		// todo -> need to update recievers of this and add left/right screen view
+		if(pScreen->isStereo())
+		{
+			pMsg->add(pScreen->screenLeftProjection());
+			pMsg->add(pScreen->screenRightProjection());
+			pMsg->add(pScreen->screenLeftView());
+			pMsg->add(pScreen->screenRightView());
+		}
+		else
+		{
+			pMsg->add(pScreen->screenProjection());
+			pMsg->add(pScreen->screenView());
+		}
 		m_pTcpThread->write(pMsg);
 	}
 }

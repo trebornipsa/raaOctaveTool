@@ -24,7 +24,6 @@ public:
 
 	virtual void nameChanged(raaScreen *pScreen) = 0;
 	virtual void screenProjMatrixChanged(raaScreen *pScreen) = 0;
-
 	virtual void screenChanged(raaScreen *pScreen) = 0;
 	virtual void windowChanged(raaScreen *pScreen) = 0;
 };
@@ -46,7 +45,11 @@ public:
 	void setScreenVerts(osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTL, osg::Vec3f vTR);
 	osg::Vec3f normal();
 	osg::Matrixf screenProjection();
+	osg::Matrixf screenLeftProjection();
+	osg::Matrixf screenRightProjection();
 	osg::Matrixf screenView();
+	osg::Matrixf screenLeftView();
+	osg::Matrixf screenRightView();
 	float nearClip();
 	float farClip();
 	void setNearFar(float fNear, float fFar);
@@ -61,6 +64,9 @@ public:
 	float projParam(unsigned int uiIndex);
 
 	int screen();
+
+	bool isStereo();
+	void setStereo(bool bStereo);
 
 protected:
 	virtual void physicalViewpointChanged(raaOctaveViewPoint *pViewpoint);
@@ -89,11 +95,15 @@ protected:
 	raaScreenListeners m_lListeners;
 
 	osg::Matrixf m_mScreenProjection;
+	osg::Matrixf m_mScreenLeftProjection;
+	osg::Matrixf m_mScreenRightProjection;
 	osg::Matrixf m_mScreenProjectionRotation;
 	osg::Matrixf m_mScreenProjectionTranslation;
 	osg::Matrixf m_mScreenProjectionImageRotation;
 	osg::Matrixf m_mScreenProjectionImageFlipScale;
 	osg::Matrixf m_mScreenViewMatrix;
+	osg::Matrixf m_mScreenLeftViewMatrix;
+	osg::Matrixf m_mScreenRightViewMatrix;
 
 	static osg::Matrixf sm_RotationScale;
 	static bool sm_bIntialised;
@@ -105,5 +115,7 @@ protected:
 	raaOctaveViewPoint *m_pLastViewpoint;
 
 	QMutex m_Mutex;
+
+	bool m_bStereo;
 };
 

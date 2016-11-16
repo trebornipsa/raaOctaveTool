@@ -115,10 +115,12 @@ public:
 
 	void screenChanged(osg::Vec3f vbl, osg::Vec3f vbr, osg::Vec3f vtl, osg::Vec3f vtr, osg::Vec3f vn);
 	void screenMatrixChanged(osg::Matrixf &m);
+	void screenStereoMatrixChanged(osg::Matrixf &mLeft, osg::Matrixf &mRight);
 
 	osg::Group* root();
 
 	void setViewMatrix(osg::Matrixf &m);
+	void setStereoViewMatrix(osg::Matrixf &mLeft, osg::Matrixf &mRight);
 
 protected:
 

@@ -23,6 +23,9 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
@@ -73,7 +76,7 @@ public:
     QPushButton *virtual_ydown_button;
     QSpacerItem *verticalSpacer;
     QWidget *page_2;
-    QFormLayout *formLayout;
+    QGridLayout *gridLayout_4;
     QPushButton *screen_updtae_button;
     QCheckBox *screen_continual_update_check;
     QComboBox *screen_combo;
@@ -97,15 +100,20 @@ public:
     QDoubleSpinBox *screen_br_x_spin;
     QDoubleSpinBox *screen_br_y_spin;
     QDoubleSpinBox *screen_br_z_spin;
-    QGroupBox *groupBox_7;
-    QVBoxLayout *verticalLayout_8;
-    QDoubleSpinBox *screen_near_spin;
     QGroupBox *groupBox_8;
     QVBoxLayout *verticalLayout_9;
     QDoubleSpinBox *screen_far_spin;
+    QGroupBox *groupBox_7;
+    QVBoxLayout *verticalLayout_8;
+    QDoubleSpinBox *screen_near_spin;
     QGroupBox *groupBox_9;
     QVBoxLayout *verticalLayout_11;
     QDoubleSpinBox *screen_image_rot_spin;
+    QGroupBox *groupBox_19;
+    QVBoxLayout *verticalLayout_16;
+    QLineEdit *screen_add_edit;
+    QPushButton *screen_add_button;
+    QSpacerItem *verticalSpacer_3;
     QGroupBox *groupBox_10;
     QVBoxLayout *verticalLayout_10;
     QCheckBox *screen_x_flip_check;
@@ -125,7 +133,7 @@ public:
     QSpinBox *window_width_spin;
     QSpinBox *window_height_spin;
     QWidget *page_6;
-    QFormLayout *formLayout_3;
+    QGridLayout *gridLayout_3;
     QPushButton *tracker_update_button;
     QCheckBox *tracker_update_check;
     QComboBox *tracker_combo;
@@ -133,25 +141,37 @@ public:
     QVBoxLayout *verticalLayout_15;
     QGroupBox *groupBox_15;
     QHBoxLayout *horizontalLayout_4;
-    QDoubleSpinBox *tracker_translation_x_spin;
-    QDoubleSpinBox *tracker_translation_y_spin;
-    QDoubleSpinBox *tracker_translation_z_spin;
+    QDoubleSpinBox *tracker_position_x_spin;
+    QDoubleSpinBox *tracker_position_y_spin;
+    QDoubleSpinBox *tracker_position_z_spin;
     QGroupBox *groupBox_16;
     QHBoxLayout *horizontalLayout_5;
-    QDoubleSpinBox *tracker_rotation_x_spin;
-    QDoubleSpinBox *tracker_rotation_y_spin;
-    QDoubleSpinBox *tracker_rotation_z_spin;
+    QDoubleSpinBox *tracker_direction_x_spin;
+    QDoubleSpinBox *tracker_direction_y_spin;
+    QDoubleSpinBox *tracker_direction_z_spin;
     QGroupBox *groupBox_17;
     QHBoxLayout *horizontalLayout_6;
-    QDoubleSpinBox *tracker_scale_x_spin;
-    QDoubleSpinBox *tracker_scale_y_spin;
-    QDoubleSpinBox *tracker_scale_z_spin;
+    QDoubleSpinBox *tracker_up_x_spin;
+    QDoubleSpinBox *tracker_up_y_spin;
+    QDoubleSpinBox *tracker_up_z_spin;
+    QGroupBox *groupBox_18;
+    QHBoxLayout *horizontalLayout_7;
+    QLabel *tracker_right_x_label;
+    QLabel *tracker_right_y_label;
+    QLabel *tracker_right_z_label;
     QGroupBox *groupBox_13;
     QVBoxLayout *verticalLayout_14;
     QSpinBox *tracker_sensor_spin;
     QCheckBox *trackr_sensor_show_check;
     QCheckBox *tracker_sensor_eye_tracker_check;
     QSpacerItem *verticalSpacer_2;
+    QWidget *page_7;
+    QFormLayout *formLayout;
+    QGroupBox *groupBox_20;
+    QVBoxLayout *verticalLayout_17;
+    QLineEdit *config_name_edit;
+    QPushButton *config_save_button;
+    QListWidget *config_list_widget;
     QStackedWidget *stackedWidget;
     QWidget *page_3;
     QVBoxLayout *verticalLayout_12;
@@ -164,7 +184,7 @@ public:
     {
         if (raaOctaveToolInterfaceQt->objectName().isEmpty())
             raaOctaveToolInterfaceQt->setObjectName(QStringLiteral("raaOctaveToolInterfaceQt"));
-        raaOctaveToolInterfaceQt->resize(1473, 1121);
+        raaOctaveToolInterfaceQt->resize(1473, 1422);
         centralwidget = new QWidget(raaOctaveToolInterfaceQt);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         horizontalLayout = new QHBoxLayout(centralwidget);
@@ -182,7 +202,7 @@ public:
         toolBox->setMinimumSize(QSize(0, 0));
         page = new QWidget();
         page->setObjectName(QStringLiteral("page"));
-        page->setGeometry(QRect(0, 0, 283, 927));
+        page->setGeometry(QRect(0, 0, 282, 1187));
         verticalLayout = new QVBoxLayout(page);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         groupBox = new QGroupBox(page);
@@ -350,24 +370,24 @@ public:
         toolBox->addItem(page, QStringLiteral("ViewPoint"));
         page_2 = new QWidget();
         page_2->setObjectName(QStringLiteral("page_2"));
-        page_2->setGeometry(QRect(0, 0, 327, 927));
-        formLayout = new QFormLayout(page_2);
-        formLayout->setObjectName(QStringLiteral("formLayout"));
+        page_2->setGeometry(QRect(0, 0, 327, 1157));
+        gridLayout_4 = new QGridLayout(page_2);
+        gridLayout_4->setObjectName(QStringLiteral("gridLayout_4"));
         screen_updtae_button = new QPushButton(page_2);
         screen_updtae_button->setObjectName(QStringLiteral("screen_updtae_button"));
 
-        formLayout->setWidget(0, QFormLayout::LabelRole, screen_updtae_button);
+        gridLayout_4->addWidget(screen_updtae_button, 0, 0, 1, 2);
 
         screen_continual_update_check = new QCheckBox(page_2);
         screen_continual_update_check->setObjectName(QStringLiteral("screen_continual_update_check"));
         screen_continual_update_check->setChecked(true);
 
-        formLayout->setWidget(0, QFormLayout::FieldRole, screen_continual_update_check);
+        gridLayout_4->addWidget(screen_continual_update_check, 0, 2, 1, 1);
 
         screen_combo = new QComboBox(page_2);
         screen_combo->setObjectName(QStringLiteral("screen_combo"));
 
-        formLayout->setWidget(1, QFormLayout::SpanningRole, screen_combo);
+        gridLayout_4->addWidget(screen_combo, 1, 0, 1, 1);
 
         groupBox_5 = new QGroupBox(page_2);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
@@ -401,7 +421,7 @@ public:
         verticalLayout_6->addWidget(screen_tl_z_spin);
 
 
-        formLayout->setWidget(2, QFormLayout::LabelRole, groupBox_5);
+        gridLayout_4->addWidget(groupBox_5, 2, 0, 1, 2);
 
         groupBox_6 = new QGroupBox(page_2);
         groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
@@ -435,7 +455,7 @@ public:
         verticalLayout_7->addWidget(screen_tr_z_spin);
 
 
-        formLayout->setWidget(2, QFormLayout::FieldRole, groupBox_6);
+        gridLayout_4->addWidget(groupBox_6, 2, 2, 1, 1);
 
         groupBox_3 = new QGroupBox(page_2);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
@@ -469,7 +489,7 @@ public:
         verticalLayout_4->addWidget(screen_bl_z_spin);
 
 
-        formLayout->setWidget(3, QFormLayout::LabelRole, groupBox_3);
+        gridLayout_4->addWidget(groupBox_3, 3, 0, 1, 2);
 
         groupBox_4 = new QGroupBox(page_2);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
@@ -503,21 +523,7 @@ public:
         verticalLayout_5->addWidget(screen_br_z_spin);
 
 
-        formLayout->setWidget(3, QFormLayout::FieldRole, groupBox_4);
-
-        groupBox_7 = new QGroupBox(page_2);
-        groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
-        verticalLayout_8 = new QVBoxLayout(groupBox_7);
-        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
-        screen_near_spin = new QDoubleSpinBox(groupBox_7);
-        screen_near_spin->setObjectName(QStringLiteral("screen_near_spin"));
-        screen_near_spin->setMaximum(1000);
-        screen_near_spin->setSingleStep(0.1);
-
-        verticalLayout_8->addWidget(screen_near_spin);
-
-
-        formLayout->setWidget(4, QFormLayout::LabelRole, groupBox_7);
+        gridLayout_4->addWidget(groupBox_4, 3, 2, 1, 1);
 
         groupBox_8 = new QGroupBox(page_2);
         groupBox_8->setObjectName(QStringLiteral("groupBox_8"));
@@ -531,7 +537,21 @@ public:
         verticalLayout_9->addWidget(screen_far_spin);
 
 
-        formLayout->setWidget(4, QFormLayout::FieldRole, groupBox_8);
+        gridLayout_4->addWidget(groupBox_8, 4, 2, 1, 1);
+
+        groupBox_7 = new QGroupBox(page_2);
+        groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
+        verticalLayout_8 = new QVBoxLayout(groupBox_7);
+        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
+        screen_near_spin = new QDoubleSpinBox(groupBox_7);
+        screen_near_spin->setObjectName(QStringLiteral("screen_near_spin"));
+        screen_near_spin->setMaximum(1000);
+        screen_near_spin->setSingleStep(0.1);
+
+        verticalLayout_8->addWidget(screen_near_spin);
+
+
+        gridLayout_4->addWidget(groupBox_7, 5, 2, 1, 1);
 
         groupBox_9 = new QGroupBox(page_2);
         groupBox_9->setObjectName(QStringLiteral("groupBox_9"));
@@ -546,7 +566,28 @@ public:
         verticalLayout_11->addWidget(screen_image_rot_spin);
 
 
-        formLayout->setWidget(6, QFormLayout::SpanningRole, groupBox_9);
+        gridLayout_4->addWidget(groupBox_9, 6, 2, 1, 1);
+
+        groupBox_19 = new QGroupBox(page_2);
+        groupBox_19->setObjectName(QStringLiteral("groupBox_19"));
+        verticalLayout_16 = new QVBoxLayout(groupBox_19);
+        verticalLayout_16->setObjectName(QStringLiteral("verticalLayout_16"));
+        screen_add_edit = new QLineEdit(groupBox_19);
+        screen_add_edit->setObjectName(QStringLiteral("screen_add_edit"));
+
+        verticalLayout_16->addWidget(screen_add_edit);
+
+        screen_add_button = new QPushButton(groupBox_19);
+        screen_add_button->setObjectName(QStringLiteral("screen_add_button"));
+
+        verticalLayout_16->addWidget(screen_add_button);
+
+
+        gridLayout_4->addWidget(groupBox_19, 7, 0, 1, 3);
+
+        verticalSpacer_3 = new QSpacerItem(20, 265, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        gridLayout_4->addItem(verticalSpacer_3, 8, 1, 1, 1);
 
         groupBox_10 = new QGroupBox(page_2);
         groupBox_10->setObjectName(QStringLiteral("groupBox_10"));
@@ -568,12 +609,12 @@ public:
         verticalLayout_10->addWidget(screen_z_flip_check);
 
 
-        formLayout->setWidget(7, QFormLayout::SpanningRole, groupBox_10);
+        gridLayout_4->addWidget(groupBox_10, 4, 0, 3, 2);
 
         toolBox->addItem(page_2, QStringLiteral("Screen"));
         page_5 = new QWidget();
         page_5->setObjectName(QStringLiteral("page_5"));
-        page_5->setGeometry(QRect(0, 0, 327, 927));
+        page_5->setGeometry(QRect(0, 0, 283, 1187));
         formLayout_2 = new QFormLayout(page_5);
         formLayout_2->setObjectName(QStringLiteral("formLayout_2"));
         window_combo = new QComboBox(page_5);
@@ -637,24 +678,24 @@ public:
         toolBox->addItem(page_5, QStringLiteral("Window"));
         page_6 = new QWidget();
         page_6->setObjectName(QStringLiteral("page_6"));
-        page_6->setGeometry(QRect(0, 0, 417, 897));
-        formLayout_3 = new QFormLayout(page_6);
-        formLayout_3->setObjectName(QStringLiteral("formLayout_3"));
+        page_6->setGeometry(QRect(0, 0, 417, 1157));
+        gridLayout_3 = new QGridLayout(page_6);
+        gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
         tracker_update_button = new QPushButton(page_6);
         tracker_update_button->setObjectName(QStringLiteral("tracker_update_button"));
 
-        formLayout_3->setWidget(0, QFormLayout::LabelRole, tracker_update_button);
+        gridLayout_3->addWidget(tracker_update_button, 0, 0, 1, 1);
 
         tracker_update_check = new QCheckBox(page_6);
         tracker_update_check->setObjectName(QStringLiteral("tracker_update_check"));
         tracker_update_check->setChecked(true);
 
-        formLayout_3->setWidget(0, QFormLayout::FieldRole, tracker_update_check);
+        gridLayout_3->addWidget(tracker_update_check, 0, 1, 1, 1);
 
         tracker_combo = new QComboBox(page_6);
         tracker_combo->setObjectName(QStringLiteral("tracker_combo"));
 
-        formLayout_3->setWidget(1, QFormLayout::LabelRole, tracker_combo);
+        gridLayout_3->addWidget(tracker_combo, 1, 0, 1, 1);
 
         groupBox_14 = new QGroupBox(page_6);
         groupBox_14->setObjectName(QStringLiteral("groupBox_14"));
@@ -664,32 +705,32 @@ public:
         groupBox_15->setObjectName(QStringLiteral("groupBox_15"));
         horizontalLayout_4 = new QHBoxLayout(groupBox_15);
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
-        tracker_translation_x_spin = new QDoubleSpinBox(groupBox_15);
-        tracker_translation_x_spin->setObjectName(QStringLiteral("tracker_translation_x_spin"));
-        tracker_translation_x_spin->setAccelerated(true);
-        tracker_translation_x_spin->setMinimum(-1000);
-        tracker_translation_x_spin->setMaximum(1000);
-        tracker_translation_x_spin->setSingleStep(0.1);
+        tracker_position_x_spin = new QDoubleSpinBox(groupBox_15);
+        tracker_position_x_spin->setObjectName(QStringLiteral("tracker_position_x_spin"));
+        tracker_position_x_spin->setAccelerated(true);
+        tracker_position_x_spin->setMinimum(-1000);
+        tracker_position_x_spin->setMaximum(1000);
+        tracker_position_x_spin->setSingleStep(0.1);
 
-        horizontalLayout_4->addWidget(tracker_translation_x_spin);
+        horizontalLayout_4->addWidget(tracker_position_x_spin);
 
-        tracker_translation_y_spin = new QDoubleSpinBox(groupBox_15);
-        tracker_translation_y_spin->setObjectName(QStringLiteral("tracker_translation_y_spin"));
-        tracker_translation_y_spin->setAccelerated(true);
-        tracker_translation_y_spin->setMinimum(-1000);
-        tracker_translation_y_spin->setMaximum(1000);
-        tracker_translation_y_spin->setSingleStep(0.1);
+        tracker_position_y_spin = new QDoubleSpinBox(groupBox_15);
+        tracker_position_y_spin->setObjectName(QStringLiteral("tracker_position_y_spin"));
+        tracker_position_y_spin->setAccelerated(true);
+        tracker_position_y_spin->setMinimum(-1000);
+        tracker_position_y_spin->setMaximum(1000);
+        tracker_position_y_spin->setSingleStep(0.1);
 
-        horizontalLayout_4->addWidget(tracker_translation_y_spin);
+        horizontalLayout_4->addWidget(tracker_position_y_spin);
 
-        tracker_translation_z_spin = new QDoubleSpinBox(groupBox_15);
-        tracker_translation_z_spin->setObjectName(QStringLiteral("tracker_translation_z_spin"));
-        tracker_translation_z_spin->setAccelerated(true);
-        tracker_translation_z_spin->setMinimum(-1000);
-        tracker_translation_z_spin->setMaximum(1000);
-        tracker_translation_z_spin->setSingleStep(0.1);
+        tracker_position_z_spin = new QDoubleSpinBox(groupBox_15);
+        tracker_position_z_spin->setObjectName(QStringLiteral("tracker_position_z_spin"));
+        tracker_position_z_spin->setAccelerated(true);
+        tracker_position_z_spin->setMinimum(-1000);
+        tracker_position_z_spin->setMaximum(1000);
+        tracker_position_z_spin->setSingleStep(0.1);
 
-        horizontalLayout_4->addWidget(tracker_translation_z_spin);
+        horizontalLayout_4->addWidget(tracker_position_z_spin);
 
 
         verticalLayout_15->addWidget(groupBox_15);
@@ -698,32 +739,32 @@ public:
         groupBox_16->setObjectName(QStringLiteral("groupBox_16"));
         horizontalLayout_5 = new QHBoxLayout(groupBox_16);
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
-        tracker_rotation_x_spin = new QDoubleSpinBox(groupBox_16);
-        tracker_rotation_x_spin->setObjectName(QStringLiteral("tracker_rotation_x_spin"));
-        tracker_rotation_x_spin->setAccelerated(true);
-        tracker_rotation_x_spin->setMinimum(-1);
-        tracker_rotation_x_spin->setMaximum(1);
-        tracker_rotation_x_spin->setSingleStep(0.01);
+        tracker_direction_x_spin = new QDoubleSpinBox(groupBox_16);
+        tracker_direction_x_spin->setObjectName(QStringLiteral("tracker_direction_x_spin"));
+        tracker_direction_x_spin->setAccelerated(true);
+        tracker_direction_x_spin->setMinimum(-1);
+        tracker_direction_x_spin->setMaximum(1);
+        tracker_direction_x_spin->setSingleStep(0.01);
 
-        horizontalLayout_5->addWidget(tracker_rotation_x_spin);
+        horizontalLayout_5->addWidget(tracker_direction_x_spin);
 
-        tracker_rotation_y_spin = new QDoubleSpinBox(groupBox_16);
-        tracker_rotation_y_spin->setObjectName(QStringLiteral("tracker_rotation_y_spin"));
-        tracker_rotation_y_spin->setAccelerated(true);
-        tracker_rotation_y_spin->setMinimum(-1);
-        tracker_rotation_y_spin->setMaximum(1);
-        tracker_rotation_y_spin->setSingleStep(0.01);
+        tracker_direction_y_spin = new QDoubleSpinBox(groupBox_16);
+        tracker_direction_y_spin->setObjectName(QStringLiteral("tracker_direction_y_spin"));
+        tracker_direction_y_spin->setAccelerated(true);
+        tracker_direction_y_spin->setMinimum(-1);
+        tracker_direction_y_spin->setMaximum(1);
+        tracker_direction_y_spin->setSingleStep(0.01);
 
-        horizontalLayout_5->addWidget(tracker_rotation_y_spin);
+        horizontalLayout_5->addWidget(tracker_direction_y_spin);
 
-        tracker_rotation_z_spin = new QDoubleSpinBox(groupBox_16);
-        tracker_rotation_z_spin->setObjectName(QStringLiteral("tracker_rotation_z_spin"));
-        tracker_rotation_z_spin->setAccelerated(true);
-        tracker_rotation_z_spin->setMinimum(-1);
-        tracker_rotation_z_spin->setMaximum(1);
-        tracker_rotation_z_spin->setSingleStep(0.01);
+        tracker_direction_z_spin = new QDoubleSpinBox(groupBox_16);
+        tracker_direction_z_spin->setObjectName(QStringLiteral("tracker_direction_z_spin"));
+        tracker_direction_z_spin->setAccelerated(true);
+        tracker_direction_z_spin->setMinimum(-1);
+        tracker_direction_z_spin->setMaximum(1);
+        tracker_direction_z_spin->setSingleStep(0.01);
 
-        horizontalLayout_5->addWidget(tracker_rotation_z_spin);
+        horizontalLayout_5->addWidget(tracker_direction_z_spin);
 
 
         verticalLayout_15->addWidget(groupBox_16);
@@ -732,38 +773,60 @@ public:
         groupBox_17->setObjectName(QStringLiteral("groupBox_17"));
         horizontalLayout_6 = new QHBoxLayout(groupBox_17);
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
-        tracker_scale_x_spin = new QDoubleSpinBox(groupBox_17);
-        tracker_scale_x_spin->setObjectName(QStringLiteral("tracker_scale_x_spin"));
-        tracker_scale_x_spin->setAccelerated(true);
-        tracker_scale_x_spin->setMinimum(-1000);
-        tracker_scale_x_spin->setMaximum(1000);
-        tracker_scale_x_spin->setSingleStep(0.1);
+        tracker_up_x_spin = new QDoubleSpinBox(groupBox_17);
+        tracker_up_x_spin->setObjectName(QStringLiteral("tracker_up_x_spin"));
+        tracker_up_x_spin->setAccelerated(true);
+        tracker_up_x_spin->setMinimum(-1000);
+        tracker_up_x_spin->setMaximum(1000);
+        tracker_up_x_spin->setSingleStep(0.1);
 
-        horizontalLayout_6->addWidget(tracker_scale_x_spin);
+        horizontalLayout_6->addWidget(tracker_up_x_spin);
 
-        tracker_scale_y_spin = new QDoubleSpinBox(groupBox_17);
-        tracker_scale_y_spin->setObjectName(QStringLiteral("tracker_scale_y_spin"));
-        tracker_scale_y_spin->setAccelerated(true);
-        tracker_scale_y_spin->setMinimum(-1000);
-        tracker_scale_y_spin->setMaximum(1000);
-        tracker_scale_y_spin->setSingleStep(0.1);
+        tracker_up_y_spin = new QDoubleSpinBox(groupBox_17);
+        tracker_up_y_spin->setObjectName(QStringLiteral("tracker_up_y_spin"));
+        tracker_up_y_spin->setAccelerated(true);
+        tracker_up_y_spin->setMinimum(-1000);
+        tracker_up_y_spin->setMaximum(1000);
+        tracker_up_y_spin->setSingleStep(0.1);
 
-        horizontalLayout_6->addWidget(tracker_scale_y_spin);
+        horizontalLayout_6->addWidget(tracker_up_y_spin);
 
-        tracker_scale_z_spin = new QDoubleSpinBox(groupBox_17);
-        tracker_scale_z_spin->setObjectName(QStringLiteral("tracker_scale_z_spin"));
-        tracker_scale_z_spin->setAccelerated(true);
-        tracker_scale_z_spin->setMinimum(-1000);
-        tracker_scale_z_spin->setMaximum(1000);
-        tracker_scale_z_spin->setSingleStep(0.1);
+        tracker_up_z_spin = new QDoubleSpinBox(groupBox_17);
+        tracker_up_z_spin->setObjectName(QStringLiteral("tracker_up_z_spin"));
+        tracker_up_z_spin->setAccelerated(true);
+        tracker_up_z_spin->setMinimum(-1000);
+        tracker_up_z_spin->setMaximum(1000);
+        tracker_up_z_spin->setSingleStep(0.1);
 
-        horizontalLayout_6->addWidget(tracker_scale_z_spin);
+        horizontalLayout_6->addWidget(tracker_up_z_spin);
 
 
         verticalLayout_15->addWidget(groupBox_17);
 
+        groupBox_18 = new QGroupBox(groupBox_14);
+        groupBox_18->setObjectName(QStringLiteral("groupBox_18"));
+        horizontalLayout_7 = new QHBoxLayout(groupBox_18);
+        horizontalLayout_7->setObjectName(QStringLiteral("horizontalLayout_7"));
+        tracker_right_x_label = new QLabel(groupBox_18);
+        tracker_right_x_label->setObjectName(QStringLiteral("tracker_right_x_label"));
 
-        formLayout_3->setWidget(2, QFormLayout::SpanningRole, groupBox_14);
+        horizontalLayout_7->addWidget(tracker_right_x_label);
+
+        tracker_right_y_label = new QLabel(groupBox_18);
+        tracker_right_y_label->setObjectName(QStringLiteral("tracker_right_y_label"));
+
+        horizontalLayout_7->addWidget(tracker_right_y_label);
+
+        tracker_right_z_label = new QLabel(groupBox_18);
+        tracker_right_z_label->setObjectName(QStringLiteral("tracker_right_z_label"));
+
+        horizontalLayout_7->addWidget(tracker_right_z_label);
+
+
+        verticalLayout_15->addWidget(groupBox_18);
+
+
+        gridLayout_3->addWidget(groupBox_14, 2, 0, 1, 2);
 
         groupBox_13 = new QGroupBox(page_6);
         groupBox_13->setObjectName(QStringLiteral("groupBox_13"));
@@ -786,13 +849,40 @@ public:
         verticalLayout_14->addWidget(tracker_sensor_eye_tracker_check);
 
 
-        formLayout_3->setWidget(3, QFormLayout::LabelRole, groupBox_13);
+        gridLayout_3->addWidget(groupBox_13, 3, 0, 1, 2);
 
         verticalSpacer_2 = new QSpacerItem(20, 193, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        formLayout_3->setItem(4, QFormLayout::LabelRole, verticalSpacer_2);
+        gridLayout_3->addItem(verticalSpacer_2, 4, 0, 1, 1);
 
         toolBox->addItem(page_6, QStringLiteral("Tracker"));
+        page_7 = new QWidget();
+        page_7->setObjectName(QStringLiteral("page_7"));
+        formLayout = new QFormLayout(page_7);
+        formLayout->setObjectName(QStringLiteral("formLayout"));
+        groupBox_20 = new QGroupBox(page_7);
+        groupBox_20->setObjectName(QStringLiteral("groupBox_20"));
+        verticalLayout_17 = new QVBoxLayout(groupBox_20);
+        verticalLayout_17->setObjectName(QStringLiteral("verticalLayout_17"));
+        config_name_edit = new QLineEdit(groupBox_20);
+        config_name_edit->setObjectName(QStringLiteral("config_name_edit"));
+
+        verticalLayout_17->addWidget(config_name_edit);
+
+        config_save_button = new QPushButton(groupBox_20);
+        config_save_button->setObjectName(QStringLiteral("config_save_button"));
+
+        verticalLayout_17->addWidget(config_save_button);
+
+
+        formLayout->setWidget(1, QFormLayout::LabelRole, groupBox_20);
+
+        config_list_widget = new QListWidget(page_7);
+        config_list_widget->setObjectName(QStringLiteral("config_list_widget"));
+
+        formLayout->setWidget(0, QFormLayout::LabelRole, config_list_widget);
+
+        toolBox->addItem(page_7, QStringLiteral("Config"));
         splitter->addWidget(toolBox);
         stackedWidget = new QStackedWidget(splitter);
         stackedWidget->setObjectName(QStringLiteral("stackedWidget"));
@@ -870,9 +960,11 @@ public:
         groupBox_6->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Top Right", 0));
         groupBox_3->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Bottom Left", 0));
         groupBox_4->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Bottom Right", 0));
-        groupBox_7->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Near", 0));
         groupBox_8->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Far", 0));
+        groupBox_7->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Near", 0));
         groupBox_9->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Image Rotation", 0));
+        groupBox_19->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Add Screen", 0));
+        screen_add_button->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Add", 0));
         groupBox_10->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Image Flip", 0));
         screen_x_flip_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "X", 0));
         screen_y_flip_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Y", 0));
@@ -886,13 +978,20 @@ public:
         tracker_update_button->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Update", 0));
         tracker_update_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Continual", 0));
         groupBox_14->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Origin", 0));
-        groupBox_15->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Translation", 0));
-        groupBox_16->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Rotation", 0));
-        groupBox_17->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Scale", 0));
+        groupBox_15->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Position", 0));
+        groupBox_16->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Direction", 0));
+        groupBox_17->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Up", 0));
+        groupBox_18->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Right", 0));
+        tracker_right_x_label->setText(QApplication::translate("raaOctaveToolInterfaceQt", "0.00", 0));
+        tracker_right_y_label->setText(QApplication::translate("raaOctaveToolInterfaceQt", "0.00", 0));
+        tracker_right_z_label->setText(QApplication::translate("raaOctaveToolInterfaceQt", "0.00", 0));
         groupBox_13->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Sensors", 0));
         trackr_sensor_show_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Show", 0));
         tracker_sensor_eye_tracker_check->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Eye Tracker", 0));
         toolBox->setItemText(toolBox->indexOf(page_6), QApplication::translate("raaOctaveToolInterfaceQt", "Tracker", 0));
+        groupBox_20->setTitle(QApplication::translate("raaOctaveToolInterfaceQt", "Save Current Config", 0));
+        config_save_button->setText(QApplication::translate("raaOctaveToolInterfaceQt", "Save", 0));
+        toolBox->setItemText(toolBox->indexOf(page_7), QApplication::translate("raaOctaveToolInterfaceQt", "Config", 0));
     } // retranslateUi
 
 };

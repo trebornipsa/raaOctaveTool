@@ -34,6 +34,8 @@ public:
 
 	osg::Matrixf defaultPhysicalMatrix();
 	osg::Matrixf physicalMatrix();
+	osg::Matrixf physicalLeftMatrix();
+	osg::Matrixf physicalRightMatrix();
 	osg::Matrixf virtualMatrix();
 
 	void addListener(raaOctaveViewPointListener *pListener);
@@ -44,10 +46,16 @@ protected:
 	osg::Matrixf m_Virtual;
 	osg::Matrixf m_Physical;
 	osg::Matrixf m_DefaultPhysical;
+	osg::Matrixf m_LeftEye;
+	osg::Matrixf m_RightEye;
+
+	float m_fEyeSeperation;
 
 	raaOctaveViewPointListeners m_lListener;
 	unsigned int m_uiViewpointUpdateCount;
 
 	QMutex m_Mutex;
+
+	void calcStereoEyePostions();
 };
 

@@ -123,6 +123,14 @@ void raaDisplayScreen::screenMatrixChanged(osg::Matrixf& m)
 {
 	m_pCamera->setProjectionMatrix(m);
 }
+
+void raaDisplayScreen::screenStereoMatrixChanged(osg::Matrixf& mLeft, osg::Matrixf& mRight)
+{
+	m_pCamera->setProjectionMatrix(mRight);
+
+	// todo -> add stereo matrix
+}
+
 /*
 void raaDisplayScreen::nameChanged(raaScreen* pScreen)
 {
@@ -171,4 +179,11 @@ osg::Group* raaDisplayScreen::root()
 void raaDisplayScreen::setViewMatrix(osg::Matrixf& m)
 {
 	if (m_pCamera) m_pCamera->setViewMatrix(m);
+}
+
+void raaDisplayScreen::setStereoViewMatrix(osg::Matrixf& mLeft, osg::Matrixf& mRight)
+{
+	if (m_pCamera) m_pCamera->setViewMatrix(mRight);
+
+	//todo-> add stereo
 }

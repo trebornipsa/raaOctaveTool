@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1473</width>
-    <height>1121</height>
+    <height>1422</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,8 +41,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>283</width>
-          <height>927</height>
+          <width>282</width>
+          <height>1187</height>
          </rect>
         </property>
         <attribute name="label">
@@ -336,21 +336,21 @@
           <x>0</x>
           <y>0</y>
           <width>327</width>
-          <height>927</height>
+          <height>1157</height>
          </rect>
         </property>
         <attribute name="label">
          <string>Screen</string>
         </attribute>
-        <layout class="QFormLayout" name="formLayout">
-         <item row="0" column="0">
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0" colspan="2">
           <widget class="QPushButton" name="screen_updtae_button">
            <property name="text">
             <string>Update</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
+         <item row="0" column="2">
           <widget class="QCheckBox" name="screen_continual_update_check">
            <property name="text">
             <string>Continual</string>
@@ -360,10 +360,10 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0" colspan="2">
+         <item row="1" column="0">
           <widget class="QComboBox" name="screen_combo"/>
          </item>
-         <item row="2" column="0">
+         <item row="2" column="0" colspan="2">
           <widget class="QGroupBox" name="groupBox_5">
            <property name="title">
             <string>Top Left</string>
@@ -420,7 +420,7 @@
            </layout>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="2" column="2">
           <widget class="QGroupBox" name="groupBox_6">
            <property name="title">
             <string>Top Right</string>
@@ -477,7 +477,7 @@
            </layout>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="3" column="0" colspan="2">
           <widget class="QGroupBox" name="groupBox_3">
            <property name="title">
             <string>Bottom Left</string>
@@ -534,7 +534,7 @@
            </layout>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="3" column="2">
           <widget class="QGroupBox" name="groupBox_4">
            <property name="title">
             <string>Bottom Right</string>
@@ -591,26 +591,7 @@
            </layout>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QGroupBox" name="groupBox_7">
-           <property name="title">
-            <string>Near</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_8">
-            <item>
-             <widget class="QDoubleSpinBox" name="screen_near_spin">
-              <property name="maximum">
-               <double>1000.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="4" column="1">
+         <item row="4" column="2">
           <widget class="QGroupBox" name="groupBox_8">
            <property name="title">
             <string>Far</string>
@@ -629,7 +610,26 @@
            </layout>
           </widget>
          </item>
-         <item row="6" column="0" colspan="2">
+         <item row="5" column="2">
+          <widget class="QGroupBox" name="groupBox_7">
+           <property name="title">
+            <string>Near</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <item>
+             <widget class="QDoubleSpinBox" name="screen_near_spin">
+              <property name="maximum">
+               <double>1000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="6" column="2">
           <widget class="QGroupBox" name="groupBox_9">
            <property name="title">
             <string>Image Rotation</string>
@@ -651,7 +651,39 @@
            </layout>
           </widget>
          </item>
-         <item row="7" column="0" colspan="2">
+         <item row="7" column="0" colspan="3">
+          <widget class="QGroupBox" name="groupBox_19">
+           <property name="title">
+            <string>Add Screen</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_16">
+            <item>
+             <widget class="QLineEdit" name="screen_add_edit"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="screen_add_button">
+              <property name="text">
+               <string>Add</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <spacer name="verticalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>265</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="0" rowspan="3" colspan="2">
           <widget class="QGroupBox" name="groupBox_10">
            <property name="title">
             <string>Image Flip</string>
@@ -688,8 +720,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>327</width>
-          <height>927</height>
+          <width>283</width>
+          <height>1187</height>
          </rect>
         </property>
         <attribute name="label">
@@ -782,13 +814,13 @@
           <x>0</x>
           <y>0</y>
           <width>417</width>
-          <height>897</height>
+          <height>1157</height>
          </rect>
         </property>
         <attribute name="label">
          <string>Tracker</string>
         </attribute>
-        <layout class="QFormLayout" name="formLayout_3">
+        <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
           <widget class="QPushButton" name="tracker_update_button">
            <property name="text">
@@ -818,11 +850,11 @@
             <item>
              <widget class="QGroupBox" name="groupBox_15">
               <property name="title">
-               <string>Translation</string>
+               <string>Position</string>
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
-                <widget class="QDoubleSpinBox" name="tracker_translation_x_spin">
+                <widget class="QDoubleSpinBox" name="tracker_position_x_spin">
                  <property name="accelerated">
                   <bool>true</bool>
                  </property>
@@ -838,7 +870,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="tracker_translation_y_spin">
+                <widget class="QDoubleSpinBox" name="tracker_position_y_spin">
                  <property name="accelerated">
                   <bool>true</bool>
                  </property>
@@ -854,7 +886,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="tracker_translation_z_spin">
+                <widget class="QDoubleSpinBox" name="tracker_position_z_spin">
                  <property name="accelerated">
                   <bool>true</bool>
                  </property>
@@ -875,11 +907,11 @@
             <item>
              <widget class="QGroupBox" name="groupBox_16">
               <property name="title">
-               <string>Rotation</string>
+               <string>Direction</string>
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_5">
                <item>
-                <widget class="QDoubleSpinBox" name="tracker_rotation_x_spin">
+                <widget class="QDoubleSpinBox" name="tracker_direction_x_spin">
                  <property name="accelerated">
                   <bool>true</bool>
                  </property>
@@ -895,7 +927,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="tracker_rotation_y_spin">
+                <widget class="QDoubleSpinBox" name="tracker_direction_y_spin">
                  <property name="accelerated">
                   <bool>true</bool>
                  </property>
@@ -911,7 +943,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="tracker_rotation_z_spin">
+                <widget class="QDoubleSpinBox" name="tracker_direction_z_spin">
                  <property name="accelerated">
                   <bool>true</bool>
                  </property>
@@ -932,11 +964,11 @@
             <item>
              <widget class="QGroupBox" name="groupBox_17">
               <property name="title">
-               <string>Scale</string>
+               <string>Up</string>
               </property>
               <layout class="QHBoxLayout" name="horizontalLayout_6">
                <item>
-                <widget class="QDoubleSpinBox" name="tracker_scale_x_spin">
+                <widget class="QDoubleSpinBox" name="tracker_up_x_spin">
                  <property name="accelerated">
                   <bool>true</bool>
                  </property>
@@ -952,7 +984,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="tracker_scale_y_spin">
+                <widget class="QDoubleSpinBox" name="tracker_up_y_spin">
                  <property name="accelerated">
                   <bool>true</bool>
                  </property>
@@ -968,7 +1000,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="tracker_scale_z_spin">
+                <widget class="QDoubleSpinBox" name="tracker_up_z_spin">
                  <property name="accelerated">
                   <bool>true</bool>
                  </property>
@@ -986,10 +1018,40 @@
               </layout>
              </widget>
             </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_18">
+              <property name="title">
+               <string>Right</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
+               <item>
+                <widget class="QLabel" name="tracker_right_x_label">
+                 <property name="text">
+                  <string>0.00</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="tracker_right_y_label">
+                 <property name="text">
+                  <string>0.00</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="tracker_right_z_label">
+                 <property name="text">
+                  <string>0.00</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="3" column="0" colspan="2">
           <widget class="QGroupBox" name="groupBox_13">
            <property name="title">
             <string>Sensors</string>
@@ -1031,6 +1093,35 @@
             </size>
            </property>
           </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_7">
+        <attribute name="label">
+         <string>Config</string>
+        </attribute>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="1" column="0">
+          <widget class="QGroupBox" name="groupBox_20">
+           <property name="title">
+            <string>Save Current Config</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_17">
+            <item>
+             <widget class="QLineEdit" name="config_name_edit"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="config_save_button">
+              <property name="text">
+               <string>Save</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QListWidget" name="config_list_widget"/>
          </item>
         </layout>
        </widget>

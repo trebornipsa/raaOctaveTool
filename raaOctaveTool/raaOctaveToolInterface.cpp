@@ -129,15 +129,15 @@ raaOctaveToolInterface::raaOctaveToolInterface(std::string sConfig, std::string 
 	connect(tracker_combo, SIGNAL(currentIndexChanged(const QString&)), SLOT(trackerChanged(const QString&)));
 	connect(tracker_update_check, SIGNAL(stateChanged(int)), SLOT(trackerContUpdate(int)));
 	connect(tracker_update_button, SIGNAL(pressed()), SLOT(trackerUpdate()));
-	connect(tracker_translation_x_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
-	connect(tracker_translation_y_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
-	connect(tracker_translation_z_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
-	connect(tracker_rotation_x_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
-	connect(tracker_rotation_y_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
-	connect(tracker_rotation_z_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
-	connect(tracker_scale_x_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
-	connect(tracker_scale_y_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
-	connect(tracker_scale_z_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
+	connect(tracker_position_x_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
+	connect(tracker_position_y_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
+	connect(tracker_position_z_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
+	connect(tracker_direction_x_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
+	connect(tracker_direction_y_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
+	connect(tracker_direction_z_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
+	connect(tracker_up_x_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
+	connect(tracker_up_y_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
+	connect(tracker_up_z_spin, SIGNAL(valueChanged(double)), SLOT(trackerTransformChanged(double)));
 
 	connect(screen_continual_update_check, SIGNAL(stateChanged(int)), SLOT(screenContUpdate(int)));
 	connect(screen_updtae_button, SIGNAL(pressed()), SLOT(screenAllChanged()));
@@ -173,6 +173,10 @@ raaOctaveToolInterface::raaOctaveToolInterface(std::string sConfig, std::string 
 	connect(window_pos_y_spin, SIGNAL(valueChanged(int)), SLOT(windowParam(int)));
 	connect(window_width_spin, SIGNAL(valueChanged(int)), SLOT(windowParam(int)));
 	connect(window_height_spin, SIGNAL(valueChanged(int)), SLOT(windowParam(int)));
+
+	connect(screen_add_button, SIGNAL(pressed()), SLOT(screenAdd()));
+	connect(config_save_button, SIGNAL(pressed()), SLOT(configSave()));
+	connect(config_list_widget, SIGNAL(itemSelectionChanged()), SLOT(configCurrentChanged()));
 
 	m_pPhysicalViewpoint = new osg::MatrixTransform();
 	osg::Geode *pVPGeode = new osg::Geode();
@@ -619,6 +623,14 @@ void raaOctaveToolInterface::currentToolboxChanged(int iVal)
 		if (m_pTcpClient) m_pTcpClient->write(pMsg);
 		stackedWidget->setCurrentIndex(0);
 	}
+	else if (iVal == 4)
+	{
+		m_uiMode = csm_uiScreen;
+		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
+		pMsg->add(raaOctaveKernel::csm_uiOCListConfigs);
+		if (m_pTcpClient) m_pTcpClient->write(pMsg);
+		stackedWidget->setCurrentIndex(0);
+	}
 }
 
 void raaOctaveToolInterface::currentScreenChanged(const QString& s)
@@ -770,6 +782,44 @@ void raaOctaveToolInterface::screenContUpdate(int iVal)
 		m_bScreenUpdate = false;
 }
 
+void raaOctaveToolInterface::screenAdd()
+{
+	if (m_pTcpClient)
+	{
+		raaTcpMsg *pMsg = new raaTcpMsg(raaNet::csm_usTcpMsgRequest);
+		pMsg->add(raaOctaveKernel::csm_uiOCScreenAdd);
+		pMsg->add(screen_add_edit->text().toStdString());
+
+		m_pTcpClient->write(pMsg);
+	}
+
+}
+
+void raaOctaveToolInterface::configSave()
+{
+	if (m_pTcpClient)
+	{
+		raaTcpMsg *pMsg = new raaTcpMsg(raaNet::csm_usTcpMsgRequest);
+		pMsg->add(raaOctaveKernel::csm_uiOCSaveConfigAs);
+		pMsg->add(config_name_edit->text().toStdString());
+
+		m_pTcpClient->write(pMsg);
+	}
+}
+
+void raaOctaveToolInterface::configCurrentChanged()
+{
+	QList<QListWidgetItem*> items = config_list_widget->selectedItems();
+
+	if (items.length())
+	{
+		for (QList<QListWidgetItem*>::iterator it = items.begin(); it != items.end(); it++)
+			config_name_edit->setText((*it)->text());
+	}
+	else
+		config_name_edit->clear();
+}
+
 void raaOctaveToolInterface::trackerContUpdate(int iVal)
 {
 	if (iVal == Qt::Checked)
@@ -783,7 +833,7 @@ void raaOctaveToolInterface::trackerChanged(const QString& s)
 	if(s.length())
 	{
 		raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
-		pMsg->add(raaOctaveKernel::csm_uiOCTrackerInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCTrackerOriginTransform);
 		pMsg->add(s.toStdString());
 		m_pTcpClient->write(pMsg);
 	}
@@ -791,46 +841,120 @@ void raaOctaveToolInterface::trackerChanged(const QString& s)
 
 void raaOctaveToolInterface::trackerUpdate()
 {
-	float afTransform[9];
+	osg::Vec3f vPos, vDir, vUp, vRight;
 
-	afTransform[0] = (float)tracker_translation_x_spin->value();
-	afTransform[1] = (float)tracker_translation_y_spin->value();
-	afTransform[2] = (float)tracker_translation_z_spin->value();
-	afTransform[3] = (float)tracker_rotation_x_spin->value();
-	afTransform[4] = (float)tracker_rotation_y_spin->value();
-	afTransform[5] = (float)tracker_rotation_z_spin->value();
-	afTransform[6] = (float)tracker_scale_x_spin->value();
-	afTransform[7] = (float)tracker_scale_y_spin->value();
-	afTransform[8] = (float)tracker_scale_z_spin->value();
+	vPos[0] = (float)tracker_position_x_spin->value();
+	vPos[1] = (float)tracker_position_y_spin->value();
+	vPos[2] = (float)tracker_position_z_spin->value();
+	vDir[0] = (float)tracker_direction_x_spin->value();
+	vDir[1] = (float)tracker_direction_y_spin->value();
+	vDir[2] = (float)tracker_direction_z_spin->value();
+	vUp[0] = (float)tracker_up_x_spin->value();
+	vUp[1] = (float)tracker_up_y_spin->value();
+	vUp[2] = (float)tracker_up_z_spin->value();
+	vRight[0] = tracker_right_x_label->text().toFloat();
+	vRight[1] = tracker_right_x_label->text().toFloat();
+	vRight[2] = tracker_right_x_label->text().toFloat();
 
+	if (sender() == tracker_direction_x_spin || sender() == tracker_direction_y_spin || sender() == tracker_direction_z_spin)
+	{
+		tracker_direction_x_spin->blockSignals(true);
+		tracker_direction_y_spin->blockSignals(true);
+		tracker_direction_z_spin->blockSignals(true);
+
+		vDir.normalize();
+
+		tracker_direction_x_spin->setValue(vDir[0]);
+		tracker_direction_y_spin->setValue(vDir[1]);
+		tracker_direction_z_spin->setValue(vDir[2]);
+		
+		tracker_direction_x_spin->blockSignals(false);
+		tracker_direction_y_spin->blockSignals(false);
+		tracker_direction_z_spin->blockSignals(false);
+
+		if (sender() == tracker_direction_y_spin)
+		{
+			tracker_up_x_spin->blockSignals(true);
+			tracker_up_y_spin->blockSignals(true);
+			tracker_up_z_spin->blockSignals(true);
+
+			vUp = vRight^vDir;
+			vUp.normalize();
+
+			tracker_up_x_spin->setValue(vUp[0]);
+			tracker_up_y_spin->setValue(vUp[1]);
+			tracker_up_z_spin->setValue(vUp[2]);
+
+			tracker_up_x_spin->blockSignals(false);
+			tracker_up_y_spin->blockSignals(false);
+			tracker_up_z_spin->blockSignals(false);
+		}
+
+		vRight = vDir^vUp;
+		vRight.normalize();
+
+		tracker_right_x_label->setText(QString::number(vRight[0]));
+		tracker_right_y_label->setText(QString::number(vRight[1]));
+		tracker_right_z_label->setText(QString::number(vRight[2]));
+	}
+
+	if (sender() == tracker_up_x_spin || sender() == tracker_up_y_spin || sender() == tracker_up_z_spin)
+	{
+		tracker_up_x_spin->blockSignals(true);
+		tracker_up_y_spin->blockSignals(true);
+		tracker_up_z_spin->blockSignals(true);
+
+		vUp.normalize();
+
+		tracker_up_x_spin->setValue(vUp[0]);
+		tracker_up_y_spin->setValue(vUp[1]);
+		tracker_up_z_spin->setValue(vUp[2]);
+
+		tracker_up_x_spin->blockSignals(false);
+		tracker_up_y_spin->blockSignals(false);
+		tracker_up_z_spin->blockSignals(false);
+
+		if (sender() == tracker_up_y_spin)
+		{
+			tracker_direction_x_spin->blockSignals(true);
+			tracker_direction_y_spin->blockSignals(true);
+			tracker_direction_z_spin->blockSignals(true);
+
+			vDir= vUp^vRight;
+			vDir.normalize();
+
+			tracker_direction_x_spin->setValue(vDir[0]);
+			tracker_direction_y_spin->setValue(vDir[1]);
+			tracker_direction_z_spin->setValue(vDir[2]);
+
+			tracker_direction_x_spin->blockSignals(false);
+			tracker_direction_y_spin->blockSignals(false);
+			tracker_direction_z_spin->blockSignals(false);
+		}
+		vRight = vDir^vUp;
+		vRight.normalize();
+
+		tracker_right_x_label->setText(QString::number(vRight[0]));
+		tracker_right_y_label->setText(QString::number(vRight[1]));
+		tracker_right_z_label->setText(QString::number(vRight[2]));
+	}
+
+	
 	raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
 	pMsg->add(raaOctaveKernel::csm_uiOCTrackerOriginTransform);
 	pMsg->add(tracker_combo->currentText().toStdString());
-	pMsg->add(afTransform, 9);
+	pMsg->add(vPos);
+	pMsg->add(vDir);
+	pMsg->add(vUp);
 	m_pTcpClient->write(pMsg);
 }
 
 void raaOctaveToolInterface::trackerTransformChanged(double)
 {
+
 	if (m_bTrackerUpdate)
 	{
-		float afTransform[9];
-
-		afTransform[0] = (float)tracker_translation_x_spin->value();
-		afTransform[1] = (float)tracker_translation_y_spin->value();
-		afTransform[2] = (float)tracker_translation_z_spin->value();
-		afTransform[3] = (float)tracker_rotation_x_spin->value();
-		afTransform[4] = (float)tracker_rotation_y_spin->value();
-		afTransform[5] = (float)tracker_rotation_z_spin->value();
-		afTransform[6] = (float)tracker_scale_x_spin->value();
-		afTransform[7] = (float)tracker_scale_y_spin->value();
-		afTransform[8] = (float)tracker_scale_z_spin->value();
-	
-		raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
-		pMsg->add(raaOctaveKernel::csm_uiOCTrackerOriginTransform);
-		pMsg->add(tracker_combo->currentText().toStdString());
-		pMsg->add(afTransform, 9);
-		m_pTcpClient->write(pMsg);
+		trackerUpdate();
 	}
 }
 
@@ -905,6 +1029,30 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 			{
 				switch(pMsg->asUInt(2))
 				{
+					case raaOctaveKernel::csm_uiOCListConfigs:
+					{
+						try
+						{
+							config_list_widget->clear();
+
+							int iNum = pMsg->asInt(3);
+
+							if(iNum)
+							{
+								for(int i=0;i<iNum;i++)
+								{
+									config_list_widget->addItem(pMsg->asString(i + 4).c_str());
+								}
+							}
+						
+						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCListConfigs -> Bad Read Index" << std::endl;
+						}
+
+					}
+					break;
 					case raaOctaveKernel::csm_uiOCControllerScreenAdded:
 					{
 						try
@@ -980,6 +1128,7 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 					break;
 					case raaOctaveKernel::csm_uiOCScreenMatrixChanged:
 					{
+/* 0ld - before added stereo
 						try
 						{
 							std::string sName = pMsg->asString(3);
@@ -991,6 +1140,44 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 								m_mDisplays[sName]->screenMatrixChanged(mPersp);
 								m_mDisplays[sName]->setViewMatrix(mView);
 								if(m_bLockCamera) gl_widget->getView(0)->getCameraManipulator()->setByMatrix(osg::Matrix::inverse(mView));
+							}
+						}
+						catch (unsigned int e)
+						{
+							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCScreenMatrixChanged -> bad read index" << std::endl;
+						}
+*/
+
+						try
+						{
+							std::string sName = pMsg->asString(3);
+
+							if(pMsg->asBool(4))
+							{
+								osg::Matrixf mLeftPersp = pMsg->asMatrix(5);
+								osg::Matrixf mRightPersp = pMsg->asMatrix(6);
+								osg::Matrixf mLeftView = pMsg->asMatrix(7);
+								osg::Matrixf mRightView = pMsg->asMatrix(8);
+
+								if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end())
+								{
+									m_mDisplays[sName]->screenStereoMatrixChanged(mLeftPersp, mRightPersp);
+									m_mDisplays[sName]->setStereoViewMatrix(mLeftView, mRightView);
+									if (m_bLockCamera) gl_widget->getView(0)->getCameraManipulator()->setByMatrix(osg::Matrix::inverse(mRightView));
+								}
+
+							}
+							else
+							{
+								osg::Matrixf mPersp = pMsg->asMatrix(5);
+								osg::Matrixf mView = pMsg->asMatrix(6);
+
+								if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end())
+								{
+									m_mDisplays[sName]->screenMatrixChanged(mPersp);
+									m_mDisplays[sName]->setViewMatrix(mView);
+									if (m_bLockCamera) gl_widget->getView(0)->getCameraManipulator()->setByMatrix(osg::Matrix::inverse(mView));
+								}
 							}
 						}
 						catch (unsigned int e)
@@ -1180,7 +1367,7 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 									if (m_mTrackers.find(pMsg->asString(i + 4)) == m_mTrackers.end())
 									{
 										m_mTrackers[pMsg->asString(i + 4)] = new raaTracker(pMsg->asString(i + 4));
-										m_pVirtualScene->addChild(m_mTrackers[pMsg->asString(i + 4)]->root());
+										gl_widget->addToScene(0,m_mTrackers[pMsg->asString(i + 4)]->root());
 										raaTcpMsg *pM = new raaTcpMsg(raaNet::csm_usTcpMsgRequest);
 										pM->add(raaOctaveKernel::csm_uiOCTrackerAddRemoveListener);
 										pM->add(true);
@@ -1235,34 +1422,49 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 					{
 						try
 						{
-							if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
+							if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end() )
 							{
-								m_mTrackers[pMsg->asString(3)]->setOrigin(pMsg->asMatrix(4));
+								osg::Vec3f vPos, vDir, vUp, vRight;
+
+								vPos = pMsg->asVector(4);
+								vDir = pMsg->asVector(5);
+								vUp = pMsg->asVector(6);
+								vRight = vDir^vUp;
+								vRight.normalize();
+
+								osg::Matrixf m(vRight[0], vDir[0], vUp[0], 0.0f, vRight[1], vDir[1], vUp[1], 0.0f, vRight[2], vDir[2], vUp[2], 0.0f, vPos[0], vPos[2], vPos[2], 1.0f);
+
+								m_mTrackers[pMsg->asString(3)]->setOrigin(m);
+
+								if(tracker_combo->currentText() == pMsg->asString(3).c_str())
+								{
+									bool bUpdate = m_bTrackerUpdate;
+									m_bTrackerUpdate = false;
+
+									tracker_position_x_spin->setValue(vPos[0]);
+									tracker_position_y_spin->setValue(vPos[1]);
+									tracker_position_z_spin->setValue(vPos[2]);
+
+									tracker_direction_x_spin->setValue(vDir[0]);
+									tracker_direction_y_spin->setValue(vDir[1]);
+									tracker_direction_z_spin->setValue(vDir[2]);
+
+									tracker_up_x_spin->setValue(vUp[0]);
+									tracker_up_y_spin->setValue(vUp[1]);
+									tracker_up_z_spin->setValue(vUp[2]);
+									
+									tracker_right_x_label->setText(QString::number(vRight[0]));
+									tracker_right_y_label->setText(QString::number(vRight[1]));
+									tracker_right_z_label->setText(QString::number(vRight[2]));
+
+									m_bTrackerUpdate = bUpdate;
+								}
 							}
 						}
 						catch (unsigned int e)
 						{
 							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCTrackerOriginTransform -> bad read index" << std::endl;
 						}
-					}
-					break;
-					case raaOctaveKernel::csm_uiOCTrackerSensorTransform:
-					{
-						/*
-						try
-						{
-							if (m_mTrackers.find(pMsg->asString(3)) != m_mTrackers.end())
-							{
-								unsigned int uiSensor = pMsg->asUInt(4);
-								osg::Matrixf m = pMsg->asMatrix(5);
-								m_mTrackers[pMsg->asString(3)]->setSensor(uiSensor, m);
-							}
-						}
-						catch (unsigned int e)
-						{
-							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCTrackerSensorTransform -> bad read index" << std::endl;
-						}
-						*/
 					}
 					break;
 					case  raaOctaveKernel::csm_uiOCTrackerSensors:

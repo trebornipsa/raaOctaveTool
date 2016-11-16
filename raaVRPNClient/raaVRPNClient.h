@@ -54,6 +54,9 @@ public:
 	unsigned int activeSensors();
 	void setActiveSensors(unsigned int uiSensors);
 
+	std::string type();
+	std::string tracker();
+	unsigned int pollTime();
 
 	static void VRPN_CALLBACK tracker(void *pUsr, const vrpn_TRACKERCB data);
 
@@ -78,6 +81,7 @@ protected:
 	unsigned int m_uiSensors;
 	unsigned int m_uiPoll;
 	unsigned int m_uiEyeSensor;
+	std::string m_sType;
 
 	osg::Vec3f m_vPosition;
 	osg::Vec3f m_vUp;

@@ -4,6 +4,7 @@
 
 raaVRPNKinect2::raaVRPNKinect2(std::string sName, std::string sTracker, osg::Vec3f vTrackerPos, osg::Vec3f vTrackerDir, osg::Vec3f vTrackerUp, unsigned int uiMSecPoll, unsigned int uiEyeSensor): raaVRPNClient(sName, sTracker, vTrackerPos, vTrackerDir, vTrackerUp, uiMSecPoll, uiEyeSensor)
 {
+	m_sType = "raaKinect2";
 }
 
 raaVRPNKinect2::~raaVRPNKinect2()

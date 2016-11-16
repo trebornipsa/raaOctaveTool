@@ -121,10 +121,6 @@ void *raaOctaveControl::qt_metacast(const char *_clname)
         return static_cast<void*>(const_cast< raaOctaveControl*>(this));
     if (!strcmp(_clname, "raaOctaveControllerListener"))
         return static_cast< raaOctaveControllerListener*>(const_cast< raaOctaveControl*>(this));
-    if (!strcmp(_clname, "raaVRPN"))
-        return static_cast< raaVRPN*>(const_cast< raaOctaveControl*>(this));
-    if (!strcmp(_clname, "raaVRPNClientListener"))
-        return static_cast< raaVRPNClientListener*>(const_cast< raaOctaveControl*>(this));
     return QObject::qt_metacast(_clname);
 }
 

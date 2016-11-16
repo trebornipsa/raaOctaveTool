@@ -9,8 +9,6 @@
 #include <raaNetwork/raaUdpMsg.h>
 #include <raaNetwork/raaUdpThread.h>
 #include <raaNetwork/raaNetworkTypes.h>
-#include <raaVRPNClient/raaVRPN.h>
-#include <raaVRPNClient/raaVRPNClient.h>
 #include <raaOctaveController/raaOctaveController.h>
 
 using namespace raaNet;
@@ -19,18 +17,12 @@ class raaConnectionRecord;
 
 typedef std::map<raaTcpThread*, raaConnectionRecord*> raaConnectionRecordMap;
 
-class raaOctaveControl: public QObject, public raaOctaveControllerListener, public raaVRPN, public raaVRPNClientListener
+class raaOctaveControl: public QObject, public raaOctaveControllerListener
 {
 	Q_OBJECT
 public:
-	raaOctaveControl(std::string sTracker="");
+	raaOctaveControl(std::string sTracker="", std::string sConfDir="");
 	virtual ~raaOctaveControl();
-
-	virtual void updatedSensor(raaVRPNClient* pClient, unsigned uiSensor);
-	virtual void updatedSensors(raaVRPNClient* pClient);
-	virtual void updatedOrigin(raaVRPNClient* pClient);
-	virtual void timerSensorUpdate(raaVRPNClient* pClient);
-
 public slots:
 	void tcpRead(raaTcpMsg*);
 	void tcpState(raaTcpThread*, unsigned int);
@@ -48,14 +40,11 @@ protected:
 	virtual void screenAdded(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void screenRemoved(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
-	virtual void trackerAdded(raaVRPNClient* pClient);
-	virtual void trackerRemoved(raaVRPNClient* pClient);
-
 
 	void timerEvent(QTimerEvent *pEvent);
 	int m_iTimer;
 
-	raaVRPNClient *m_pEyeTracker;
+	std::string m_sConfDir;
 
 	unsigned int m_uiTcpCounter;
 

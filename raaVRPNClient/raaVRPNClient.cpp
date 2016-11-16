@@ -13,6 +13,7 @@ raaVRPNClient::raaVRPNClient(std::string sName, std::string sTracker, osg::Vec3f
 	m_vDir = vTrackerDir;
 	m_vUp = vTrackerUp;
 	makeTrackerTransform();
+	m_sType = "raaDefault";
 
 	m_pTimer = new QTimer(this);
 	connect(m_pTimer, SIGNAL(timeout()), SLOT(timerSensorUpdate()));
@@ -97,6 +98,21 @@ void raaVRPNClient::setActiveSensors(unsigned uiSensors)
 {
 	m_uiSensors = uiSensors;
 	tellListenersSensors();
+}
+
+std::string raaVRPNClient::type()
+{
+	return m_sType;
+}
+
+std::string raaVRPNClient::tracker()
+{
+	return m_sTracker;
+}
+
+unsigned raaVRPNClient::pollTime()
+{
+	return m_uiPoll;
 }
 
 unsigned raaVRPNClient::eyeTracker()

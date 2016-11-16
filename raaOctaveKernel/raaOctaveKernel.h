@@ -49,7 +49,11 @@ public:
 	const static unsigned int csm_uiOCTrackerEyeTracker = 66;
 	const static unsigned int csm_uiOCTrackerAddRemoveListener = 67;
 
-	
+	const static unsigned int csm_uiOCScreenAdd = 70;
+	const static unsigned int csm_uiOCScreenRemove = 71;
+
+	const static unsigned int csm_uiOCListConfigs = 80;
+
 	const static unsigned int csm_uiOCBL = 0;
 	const static unsigned int csm_uiOCBR = 1;
 	const static unsigned int csm_uiOCTL = 2;

@@ -11,6 +11,7 @@ raaOctaveViewPointListener::~raaOctaveViewPointListener()
 
 raaOctaveViewPoint::raaOctaveViewPoint()
 {
+	m_fEyeSeperation = 0.08f;
 	m_uiViewpointUpdateCount = 0;
 }
 
@@ -31,9 +32,10 @@ void raaOctaveViewPoint::setPhysicalMatrix(osg::Matrixf m)
 {
 	m_Physical = m;
 	m_uiViewpointUpdateCount++;
-	//m_Mutex.lock();
+
+	calcStereoEyePostions();
+
 	for (raaOctaveViewPointListeners::iterator it = m_lListener.begin(); it != m_lListener.end(); it++) (*it)->physicalViewpointChanged(this);
-	//m_Mutex.unlock();
 }
 
 void raaOctaveViewPoint::setDefaultPhysicalMatrix(osg::Matrixf m)
@@ -50,6 +52,16 @@ void raaOctaveViewPoint::setDefaultPhysicalMatrix()
 osg::Matrixf raaOctaveViewPoint::defaultPhysicalMatrix()
 {
 	return m_DefaultPhysical;
+}
+
+osg::Matrixf raaOctaveViewPoint::physicalLeftMatrix()
+{
+	return m_LeftEye;
+}
+
+osg::Matrixf raaOctaveViewPoint::physicalRightMatrix()
+{
+	return m_RightEye;
 }
 
 osg::Matrixf raaOctaveViewPoint::physicalMatrix()
@@ -81,3 +93,12 @@ unsigned raaOctaveViewPoint::currentScreenUpdate()
 	return m_uiViewpointUpdateCount;
 }
 
+void raaOctaveViewPoint::calcStereoEyePostions()
+{
+	osg::Matrixf mR, mL;
+	mR.makeTranslate(osg::Vec3f(m_fEyeSeperation*0.5f, 0.0f, 0.0f));
+	mL.makeTranslate(osg::Vec3f(-m_fEyeSeperation*0.5f, 0.0f, 0.0f));
+
+	m_LeftEye = mL*m_Physical;
+	m_RightEye = mR*m_Physical;
+}

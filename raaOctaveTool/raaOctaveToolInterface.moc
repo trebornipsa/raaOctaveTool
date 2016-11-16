@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_raaOctaveToolInterface_t {
-    QByteArrayData data[57];
-    char stringdata0[836];
+    QByteArrayData data[60];
+    char stringdata0[878];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -72,20 +72,23 @@ QT_MOC_LITERAL(39, 574, 16), // "screenRotChanged"
 QT_MOC_LITERAL(40, 591, 17), // "screenFlipChanged"
 QT_MOC_LITERAL(41, 609, 16), // "screenAllChanged"
 QT_MOC_LITERAL(42, 626, 16), // "screenContUpdate"
-QT_MOC_LITERAL(43, 643, 17), // "trackerContUpdate"
-QT_MOC_LITERAL(44, 661, 14), // "trackerChanged"
-QT_MOC_LITERAL(45, 676, 13), // "trackerUpdate"
-QT_MOC_LITERAL(46, 690, 23), // "trackerTransformChanged"
-QT_MOC_LITERAL(47, 714, 12), // "windowUpdate"
-QT_MOC_LITERAL(48, 727, 16), // "windowUpdateMode"
-QT_MOC_LITERAL(49, 744, 11), // "windowParam"
-QT_MOC_LITERAL(50, 756, 20), // "currentWindowChanged"
-QT_MOC_LITERAL(51, 777, 7), // "tcpRead"
-QT_MOC_LITERAL(52, 785, 10), // "raaTcpMsg*"
-QT_MOC_LITERAL(53, 796, 8), // "tcpState"
-QT_MOC_LITERAL(54, 805, 13), // "raaTcpThread*"
-QT_MOC_LITERAL(55, 819, 7), // "udpRead"
-QT_MOC_LITERAL(56, 827, 8) // "udpState"
+QT_MOC_LITERAL(43, 643, 9), // "screenAdd"
+QT_MOC_LITERAL(44, 653, 10), // "configSave"
+QT_MOC_LITERAL(45, 664, 20), // "configCurrentChanged"
+QT_MOC_LITERAL(46, 685, 17), // "trackerContUpdate"
+QT_MOC_LITERAL(47, 703, 14), // "trackerChanged"
+QT_MOC_LITERAL(48, 718, 13), // "trackerUpdate"
+QT_MOC_LITERAL(49, 732, 23), // "trackerTransformChanged"
+QT_MOC_LITERAL(50, 756, 12), // "windowUpdate"
+QT_MOC_LITERAL(51, 769, 16), // "windowUpdateMode"
+QT_MOC_LITERAL(52, 786, 11), // "windowParam"
+QT_MOC_LITERAL(53, 798, 20), // "currentWindowChanged"
+QT_MOC_LITERAL(54, 819, 7), // "tcpRead"
+QT_MOC_LITERAL(55, 827, 10), // "raaTcpMsg*"
+QT_MOC_LITERAL(56, 838, 8), // "tcpState"
+QT_MOC_LITERAL(57, 847, 13), // "raaTcpThread*"
+QT_MOC_LITERAL(58, 861, 7), // "udpRead"
+QT_MOC_LITERAL(59, 869, 8) // "udpState"
 
     },
     "raaOctaveToolInterface\0phyTrans\0\0"
@@ -107,7 +110,8 @@ QT_MOC_LITERAL(56, 827, 8) // "udpState"
     "screenTLChanged\0screenTRChanged\0"
     "screenNFChanged\0screenRotChanged\0"
     "screenFlipChanged\0screenAllChanged\0"
-    "screenContUpdate\0trackerContUpdate\0"
+    "screenContUpdate\0screenAdd\0configSave\0"
+    "configCurrentChanged\0trackerContUpdate\0"
     "trackerChanged\0trackerUpdate\0"
     "trackerTransformChanged\0windowUpdate\0"
     "windowUpdateMode\0windowParam\0"
@@ -122,7 +126,7 @@ static const uint qt_meta_data_raaOctaveToolInterface[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      53,   14, // methods
+      56,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -130,59 +134,62 @@ static const uint qt_meta_data_raaOctaveToolInterface[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    1,  279,    2, 0x0a /* Public */,
-       3,    1,  282,    2, 0x0a /* Public */,
-       4,    0,  285,    2, 0x0a /* Public */,
-       5,    0,  286,    2, 0x0a /* Public */,
-       6,    0,  287,    2, 0x0a /* Public */,
-       7,    0,  288,    2, 0x0a /* Public */,
-       8,    0,  289,    2, 0x0a /* Public */,
-       9,    0,  290,    2, 0x0a /* Public */,
-      10,    0,  291,    2, 0x0a /* Public */,
-      11,    0,  292,    2, 0x0a /* Public */,
-      12,    0,  293,    2, 0x0a /* Public */,
-      13,    0,  294,    2, 0x0a /* Public */,
-      14,    0,  295,    2, 0x0a /* Public */,
-      15,    0,  296,    2, 0x0a /* Public */,
-      16,    1,  297,    2, 0x0a /* Public */,
-      17,    1,  300,    2, 0x0a /* Public */,
-      18,    0,  303,    2, 0x0a /* Public */,
-      19,    0,  304,    2, 0x0a /* Public */,
-      20,    0,  305,    2, 0x0a /* Public */,
-      21,    0,  306,    2, 0x0a /* Public */,
-      22,    0,  307,    2, 0x0a /* Public */,
-      23,    0,  308,    2, 0x0a /* Public */,
-      24,    0,  309,    2, 0x0a /* Public */,
-      25,    0,  310,    2, 0x0a /* Public */,
-      26,    0,  311,    2, 0x0a /* Public */,
-      27,    0,  312,    2, 0x0a /* Public */,
-      28,    0,  313,    2, 0x0a /* Public */,
-      29,    0,  314,    2, 0x0a /* Public */,
-      30,    0,  315,    2, 0x0a /* Public */,
-      31,    1,  316,    2, 0x0a /* Public */,
-      32,    1,  319,    2, 0x0a /* Public */,
-      33,    1,  322,    2, 0x0a /* Public */,
-      34,    1,  325,    2, 0x0a /* Public */,
-      35,    1,  328,    2, 0x0a /* Public */,
-      36,    1,  331,    2, 0x0a /* Public */,
-      37,    1,  334,    2, 0x0a /* Public */,
-      38,    1,  337,    2, 0x0a /* Public */,
-      39,    1,  340,    2, 0x0a /* Public */,
-      40,    1,  343,    2, 0x0a /* Public */,
-      41,    0,  346,    2, 0x0a /* Public */,
-      42,    1,  347,    2, 0x0a /* Public */,
-      43,    1,  350,    2, 0x0a /* Public */,
-      44,    1,  353,    2, 0x0a /* Public */,
-      45,    0,  356,    2, 0x0a /* Public */,
-      46,    1,  357,    2, 0x0a /* Public */,
-      47,    0,  360,    2, 0x0a /* Public */,
-      48,    1,  361,    2, 0x0a /* Public */,
-      49,    1,  364,    2, 0x0a /* Public */,
-      50,    1,  367,    2, 0x0a /* Public */,
-      51,    1,  370,    2, 0x0a /* Public */,
-      53,    2,  373,    2, 0x0a /* Public */,
-      55,    1,  378,    2, 0x0a /* Public */,
-      56,    2,  381,    2, 0x0a /* Public */,
+       1,    1,  294,    2, 0x0a /* Public */,
+       3,    1,  297,    2, 0x0a /* Public */,
+       4,    0,  300,    2, 0x0a /* Public */,
+       5,    0,  301,    2, 0x0a /* Public */,
+       6,    0,  302,    2, 0x0a /* Public */,
+       7,    0,  303,    2, 0x0a /* Public */,
+       8,    0,  304,    2, 0x0a /* Public */,
+       9,    0,  305,    2, 0x0a /* Public */,
+      10,    0,  306,    2, 0x0a /* Public */,
+      11,    0,  307,    2, 0x0a /* Public */,
+      12,    0,  308,    2, 0x0a /* Public */,
+      13,    0,  309,    2, 0x0a /* Public */,
+      14,    0,  310,    2, 0x0a /* Public */,
+      15,    0,  311,    2, 0x0a /* Public */,
+      16,    1,  312,    2, 0x0a /* Public */,
+      17,    1,  315,    2, 0x0a /* Public */,
+      18,    0,  318,    2, 0x0a /* Public */,
+      19,    0,  319,    2, 0x0a /* Public */,
+      20,    0,  320,    2, 0x0a /* Public */,
+      21,    0,  321,    2, 0x0a /* Public */,
+      22,    0,  322,    2, 0x0a /* Public */,
+      23,    0,  323,    2, 0x0a /* Public */,
+      24,    0,  324,    2, 0x0a /* Public */,
+      25,    0,  325,    2, 0x0a /* Public */,
+      26,    0,  326,    2, 0x0a /* Public */,
+      27,    0,  327,    2, 0x0a /* Public */,
+      28,    0,  328,    2, 0x0a /* Public */,
+      29,    0,  329,    2, 0x0a /* Public */,
+      30,    0,  330,    2, 0x0a /* Public */,
+      31,    1,  331,    2, 0x0a /* Public */,
+      32,    1,  334,    2, 0x0a /* Public */,
+      33,    1,  337,    2, 0x0a /* Public */,
+      34,    1,  340,    2, 0x0a /* Public */,
+      35,    1,  343,    2, 0x0a /* Public */,
+      36,    1,  346,    2, 0x0a /* Public */,
+      37,    1,  349,    2, 0x0a /* Public */,
+      38,    1,  352,    2, 0x0a /* Public */,
+      39,    1,  355,    2, 0x0a /* Public */,
+      40,    1,  358,    2, 0x0a /* Public */,
+      41,    0,  361,    2, 0x0a /* Public */,
+      42,    1,  362,    2, 0x0a /* Public */,
+      43,    0,  365,    2, 0x0a /* Public */,
+      44,    0,  366,    2, 0x0a /* Public */,
+      45,    0,  367,    2, 0x0a /* Public */,
+      46,    1,  368,    2, 0x0a /* Public */,
+      47,    1,  371,    2, 0x0a /* Public */,
+      48,    0,  374,    2, 0x0a /* Public */,
+      49,    1,  375,    2, 0x0a /* Public */,
+      50,    0,  378,    2, 0x0a /* Public */,
+      51,    1,  379,    2, 0x0a /* Public */,
+      52,    1,  382,    2, 0x0a /* Public */,
+      53,    1,  385,    2, 0x0a /* Public */,
+      54,    1,  388,    2, 0x0a /* Public */,
+      56,    2,  391,    2, 0x0a /* Public */,
+      58,    1,  396,    2, 0x0a /* Public */,
+      59,    2,  399,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void, QMetaType::Bool,    2,
@@ -226,6 +233,9 @@ static const uint qt_meta_data_raaOctaveToolInterface[] = {
     QMetaType::Void, QMetaType::Int,    2,
     QMetaType::Void,
     QMetaType::Void, QMetaType::Int,    2,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void, QMetaType::Int,    2,
     QMetaType::Void, QMetaType::QString,    2,
     QMetaType::Void,
@@ -234,10 +244,10 @@ static const uint qt_meta_data_raaOctaveToolInterface[] = {
     QMetaType::Void, QMetaType::Int,    2,
     QMetaType::Void, QMetaType::Int,    2,
     QMetaType::Void, QMetaType::QString,    2,
-    QMetaType::Void, 0x80000000 | 52,    2,
-    QMetaType::Void, 0x80000000 | 54, QMetaType::UInt,    2,    2,
-    QMetaType::Void, 0x80000000 | 52,    2,
-    QMetaType::Void, 0x80000000 | 54, QMetaType::UInt,    2,    2,
+    QMetaType::Void, 0x80000000 | 55,    2,
+    QMetaType::Void, 0x80000000 | 57, QMetaType::UInt,    2,    2,
+    QMetaType::Void, 0x80000000 | 55,    2,
+    QMetaType::Void, 0x80000000 | 57, QMetaType::UInt,    2,    2,
 
        0        // eod
 };
@@ -289,18 +299,21 @@ void raaOctaveToolInterface::qt_static_metacall(QObject *_o, QMetaObject::Call _
         case 38: _t->screenFlipChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 39: _t->screenAllChanged(); break;
         case 40: _t->screenContUpdate((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 41: _t->trackerContUpdate((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 42: _t->trackerChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 43: _t->trackerUpdate(); break;
-        case 44: _t->trackerTransformChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
-        case 45: _t->windowUpdate(); break;
-        case 46: _t->windowUpdateMode((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 47: _t->windowParam((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 48: _t->currentWindowChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 49: _t->tcpRead((*reinterpret_cast< raaTcpMsg*(*)>(_a[1]))); break;
-        case 50: _t->tcpState((*reinterpret_cast< raaTcpThread*(*)>(_a[1])),(*reinterpret_cast< uint(*)>(_a[2]))); break;
-        case 51: _t->udpRead((*reinterpret_cast< raaTcpMsg*(*)>(_a[1]))); break;
-        case 52: _t->udpState((*reinterpret_cast< raaTcpThread*(*)>(_a[1])),(*reinterpret_cast< uint(*)>(_a[2]))); break;
+        case 41: _t->screenAdd(); break;
+        case 42: _t->configSave(); break;
+        case 43: _t->configCurrentChanged(); break;
+        case 44: _t->trackerContUpdate((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 45: _t->trackerChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 46: _t->trackerUpdate(); break;
+        case 47: _t->trackerTransformChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 48: _t->windowUpdate(); break;
+        case 49: _t->windowUpdateMode((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 50: _t->windowParam((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 51: _t->currentWindowChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 52: _t->tcpRead((*reinterpret_cast< raaTcpMsg*(*)>(_a[1]))); break;
+        case 53: _t->tcpState((*reinterpret_cast< raaTcpThread*(*)>(_a[1])),(*reinterpret_cast< uint(*)>(_a[2]))); break;
+        case 54: _t->udpRead((*reinterpret_cast< raaTcpMsg*(*)>(_a[1]))); break;
+        case 55: _t->udpState((*reinterpret_cast< raaTcpThread*(*)>(_a[1])),(*reinterpret_cast< uint(*)>(_a[2]))); break;
         default: ;
         }
     }
@@ -333,13 +346,13 @@ int raaOctaveToolInterface::qt_metacall(QMetaObject::Call _c, int _id, void **_a
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 53)
+        if (_id < 56)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 53;
+        _id -= 56;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 53)
+        if (_id < 56)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 53;
+        _id -= 56;
     }
     return _id;
 }
