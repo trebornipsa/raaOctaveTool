@@ -39,6 +39,8 @@ public:
 	const static unsigned int csm_uiOCScreenRequestImageFlip = 31;
 	const static unsigned int csm_uiOCScreenImageFlipInfo = 32;
 	const static unsigned int csm_uiOCWindowInfo = 33;
+	const static unsigned int csm_uiOCDisplayChanged = 34;
+	const static unsigned int csm_uiOCStereoChanged = 35;
 
 	const static unsigned int csm_uiOCTrackerAllNames = 60;
 	const static unsigned int csm_uiOCTrackerInfo = 61;
@@ -54,9 +56,17 @@ public:
 
 	const static unsigned int csm_uiOCListConfigs = 80;
 
+	const static unsigned int csm_uiOCDisplays = 90;
+
 	const static unsigned int csm_uiOCBL = 0;
 	const static unsigned int csm_uiOCBR = 1;
 	const static unsigned int csm_uiOCTL = 2;
 	const static unsigned int csm_uiOCTR = 3;
+
+	const static unsigned int csm_uiOCMono = 0;
+	const static unsigned int csm_uiOCLeftEye = 1;
+	const static unsigned int csm_uiOCRightEye = 2;
+	const static unsigned int csm_uiOCAnaglyphic = 3;
+	const static unsigned int csm_uiOCQuadBuffer = 4;
 };
 

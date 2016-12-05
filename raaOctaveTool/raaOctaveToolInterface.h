@@ -16,7 +16,21 @@ class raaOctaveController;
 class raaDisplayScreen;
 class raaTracker;
 
+typedef struct __raaDisplayPanel
+{
+	int m_iScreen;
+	int m_iWidth;
+	int m_iHeight;
+
+	int m_iX;
+	int m_iY;
+
+	QGraphicsItem *m_pItem;
+	QGraphicsItem *m_pText;
+} raaDisplayPanel;
+
 typedef std::map<std::string, raaDisplayScreen*>raaDisplayScreens;
+typedef std::map<int, raaDisplayPanel>raaDisplayPanelMap;
 
 using namespace raaNet;
 
@@ -25,6 +39,7 @@ typedef struct _raaWindow
 	std::string sName;
 	int m_aiParam[4];
 	QGraphicsRectItem *m_pItem;
+	QGraphicsItem *m_pText;
 } raaWindow;
 
 typedef std::map<std::string, raaWindow>raaWindows;
@@ -51,6 +66,8 @@ public:
 	const static unsigned int csm_uiTransform = 0;
 	const static unsigned int csm_uiScreen = 1;
 	const static unsigned int csm_uiWindow = 2;
+
+	const static int csm_iWindowScale = 2;
 
 
 	raaOctaveToolInterface(std::string sConfig, std::string sName, std::string sIp, unsigned short int usiPort);
@@ -160,5 +177,6 @@ protected:
 
 	std::string m_sConfig;
 	std::string m_sName;
+	raaDisplayPanelMap m_mDisplayPanels;
 };
 

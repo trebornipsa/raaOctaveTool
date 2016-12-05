@@ -14,6 +14,7 @@ using namespace raaNet;
 
 typedef std::map<std::string, osgViewer::View*>raaViews;
 typedef std::vector<class DepthPeeling*> raaDepthPeelings;
+typedef std::map<int, osgViewer::View*> raaDisplayContextMap;
 
 
 class RAAOCTAVESYSTEM_DLL_DEF raaOctaveSystem: public QObject, public osgViewer::CompositeViewer
@@ -44,6 +45,7 @@ protected:
 	raaNet::raaUdpThread *m_pUdpClient;
 
 	raaDepthPeelings m_vPeelings;
+	raaDisplayContextMap m_mDisplayContexts;
 
 	raaViews m_mViews;
 	int m_iScreen;

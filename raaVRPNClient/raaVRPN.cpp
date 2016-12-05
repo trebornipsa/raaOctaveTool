@@ -1,4 +1,5 @@
 #include "raaVRPNKinect2.h"
+#include "raaVRPNViconHead.h"
 
 #include "raaVRPN.h"
 
@@ -20,7 +21,8 @@ raaVRPNClient* raaVRPN::addClient(std::string sName, std::string sType, std::str
 	if(sName.length() && m_mClients.find(sName)==m_mClients.end())
 	{
 
-		if(sType=="raaKinect2") pClient = new raaVRPNKinect2(sName, sTrackerID, vTrackerPos, vTrackerDir, vTrackerUp, uiMSecPoll, UiEyeSensor);
+		if (sType == "raaKinect2") pClient = new raaVRPNKinect2(sName, sTrackerID, vTrackerPos, vTrackerDir, vTrackerUp, uiMSecPoll, UiEyeSensor);
+		else if (sType == "raaViconHead") pClient = new raaVRPNViconHead(sName, sTrackerID, vTrackerPos, vTrackerDir, vTrackerUp, uiMSecPoll, UiEyeSensor);
 
 		if (pClient)
 		{

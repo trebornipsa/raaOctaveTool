@@ -20,6 +20,13 @@
 class raaOctaveController;
 class raaScreen;
 
+typedef struct __raaDisplayScreen
+{
+	int m_iScreen;
+	int m_iWidth;
+	int m_iHeight;
+} raaDisplayScreen;
+
 class RAAOCTAVECONTROLLER_DLL_DEF raaOctaveControllerListener
 {
 	friend raaOctaveController;
@@ -31,9 +38,11 @@ protected:
 	virtual void originChanged(raaOctaveController *pController)=0;
 	virtual void screenAdded(raaOctaveController *pController, raaScreen *pScreen)=0;
 	virtual void screenRemoved(raaOctaveController *pController, raaScreen *pScreen)=0;
+	virtual void displayScreensChanged(raaOctaveController *pController) = 0;
 };
 
 typedef std::list<raaOctaveControllerListener*> raaOctaveControllerListeners;
+typedef std::map<int, raaDisplayScreen> raaDisplayScreensMap;
 
 class RAAOCTAVECONTROLLER_DLL_DEF raaOctaveController: public raaVRPN, public raaVRPNClientListener
 {
@@ -56,6 +65,8 @@ public:
 	raaScreen* getScreen(std::string sName);
 
 	const raaStringScreenMap& getScreens();
+	const raaDisplayScreensMap& getDisplays();
+
 
 	virtual void updatedSensor(raaVRPNClient* pClient, unsigned uiSensor);
 	virtual void updatedSensors(raaVRPNClient* pClient);
@@ -77,6 +88,6 @@ protected:
 
 	virtual void trackerAdded(raaVRPNClient* pClient);
 	virtual void trackerRemoved(raaVRPNClient* pClient);
-
+	raaDisplayScreensMap m_mDisplays;
 };
 

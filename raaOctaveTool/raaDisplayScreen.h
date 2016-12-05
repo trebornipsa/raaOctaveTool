@@ -117,6 +117,9 @@ public:
 	void screenMatrixChanged(osg::Matrixf &m);
 	void screenStereoMatrixChanged(osg::Matrixf &mLeft, osg::Matrixf &mRight);
 
+	void setDisplayScreen(int iScreen);
+	int displayScreen();
+
 	osg::Group* root();
 
 	void setViewMatrix(osg::Matrixf &m);
@@ -135,6 +138,7 @@ protected:
 	osg::Camera *m_pCamera;
 	osg::MatrixTransform *m_pCameraView;
 	osg::Vec3f m_vScreenRotation;
+	int m_iScreen;
 
 	raaScreen *m_pScreen;
 };

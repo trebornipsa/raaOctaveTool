@@ -13,6 +13,7 @@
 
 raaDisplayScreen::raaDisplayScreen(osg::Group *pVirtualScene, std::string sName, osg::Vec3f vbl, osg::Vec3f vbr, osg::Vec3f vtl, osg::Vec3f vtr, osg::Vec3f vNormal, osg::Matrixf mPersp)
 {
+	m_iScreen = 0;
 	m_pRoot = new osg::Group();
 	m_pRoot->ref();
 
@@ -129,6 +130,16 @@ void raaDisplayScreen::screenStereoMatrixChanged(osg::Matrixf& mLeft, osg::Matri
 	m_pCamera->setProjectionMatrix(mRight);
 
 	// todo -> add stereo matrix
+}
+
+void raaDisplayScreen::setDisplayScreen(int iScreen)
+{
+	m_iScreen = iScreen;
+}
+
+int raaDisplayScreen::displayScreen()
+{
+	return m_iScreen;
 }
 
 /*

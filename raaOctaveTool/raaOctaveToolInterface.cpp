@@ -611,9 +611,15 @@ void raaOctaveToolInterface::currentToolboxChanged(int iVal)
 	{
 		m_uiMode = csm_uiWindow;
 		stackedWidget->setCurrentIndex(1);
-		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
-		pMsg->add(raaOctaveKernel::csm_uiOCControllerRequestScreenNames);
-		if (m_pTcpClient) m_pTcpClient->write(pMsg);
+		raaNet::raaTcpMsg *pMsg1 = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
+		pMsg1->add(raaOctaveKernel::csm_uiOCControllerRequestScreenNames);
+		raaNet::raaTcpMsg *pMsg2 = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
+		pMsg2->add(raaOctaveKernel::csm_uiOCDisplays); 
+		if (m_pTcpClient)
+		{
+			m_pTcpClient->write(pMsg2);
+			m_pTcpClient->write(pMsg1);
+		}
 	}
 	else if (iVal == 3)
 	{
@@ -1029,6 +1035,52 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 			{
 				switch(pMsg->asUInt(2))
 				{
+					case raaOctaveKernel::csm_uiOCDisplayChanged:
+					{
+						std::string sName = pMsg->asString(3);
+						int iScreen = pMsg->asInt(4);
+
+						if(m_mDisplays.find(sName)!=m_mDisplays.end())
+						{
+							m_mDisplays[sName]->setDisplayScreen(iScreen);
+						}
+					}
+					break;
+					case raaOctaveKernel::csm_uiOCDisplays:
+					{
+						for(raaDisplayPanelMap::iterator it=m_mDisplayPanels.begin();it!=m_mDisplayPanels.end();it++)
+						{
+							m_Scene.removeItem(it->second.m_pItem);
+							delete it->second.m_pItem;
+							m_Scene.removeItem(it->second.m_pText);
+							delete it->second.m_pText;
+						}
+
+						m_mDisplayPanels.clear();
+
+						unsigned int iCount = pMsg->asUInt(3);
+						int iCurrentX = 0;
+
+						for(unsigned int i=0;i<iCount;i++)
+						{
+							int iScreen = pMsg->asInt(i * 3 + 4);
+							m_mDisplayPanels[iScreen].m_iScreen = iScreen;
+							m_mDisplayPanels[iScreen].m_iWidth = pMsg->asInt(i * 3 + 5);
+							m_mDisplayPanels[iScreen].m_iHeight = pMsg->asInt(i * 3 + 6);
+
+							m_mDisplayPanels[iScreen].m_iX = iCurrentX;
+							iCurrentX += m_mDisplayPanels[iScreen].m_iWidth + 40;
+							m_mDisplayPanels[iScreen].m_iY = 0;
+
+
+							m_mDisplayPanels[iScreen].m_pItem = m_Scene.addRect(m_mDisplayPanels[iScreen].m_iX / csm_iWindowScale, m_mDisplayPanels[iScreen].m_iY / csm_iWindowScale, m_mDisplayPanels[iScreen].m_iWidth / csm_iWindowScale, m_mDisplayPanels[iScreen].m_iHeight / csm_iWindowScale, QPen(), QBrush(QColor(10, 150, 250, 127), Qt::SolidPattern));
+							m_mDisplayPanels[iScreen].m_pText = m_Scene.addText(QString("Display Screen::%1").arg(iScreen));
+
+							m_mDisplayPanels[iScreen].m_pText->setPos(QPoint(m_mDisplayPanels[iScreen].m_iX / csm_iWindowScale, (m_mDisplayPanels[iScreen].m_iY / csm_iWindowScale) - 40));
+
+						}
+					}
+					break;
 					case raaOctaveKernel::csm_uiOCListConfigs:
 					{
 						try
@@ -1058,19 +1110,20 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 						try
 						{
 							std::string sName = pMsg->asString(3);
-							osg::Vec3f vbl = pMsg->asVector(4);
-							osg::Vec3f vbr = pMsg->asVector(5);
-							osg::Vec3f vtl = pMsg->asVector(6);
-							osg::Vec3f vtr = pMsg->asVector(7);
-							osg::Vec3f vn = pMsg->asVector(8);
-							float fN = pMsg->asFloat(9);
-							float fF = pMsg->asFloat(10);
-							float fR = pMsg->asFloat(11);
-							bool bX = pMsg->asBool(12);
-							bool bY = pMsg->asBool(13);
-							bool bZ = pMsg->asBool(14);
-							osg::Matrixf mPersp = pMsg->asMatrix(15);
-							osg::Matrixf mView = pMsg->asMatrix(16);
+							int iScreen = pMsg->asInt(4);
+							osg::Vec3f vbl = pMsg->asVector(5);
+							osg::Vec3f vbr = pMsg->asVector(6);
+							osg::Vec3f vtl = pMsg->asVector(7);
+							osg::Vec3f vtr = pMsg->asVector(8);
+							osg::Vec3f vn = pMsg->asVector(9);
+							float fN = pMsg->asFloat(10);
+							float fF = pMsg->asFloat(11);
+							float fR = pMsg->asFloat(12);
+							bool bX = pMsg->asBool(13);
+							bool bY = pMsg->asBool(14);
+							bool bZ = pMsg->asBool(15);
+							osg::Matrixf mPersp = pMsg->asMatrix(16);
+							osg::Matrixf mView = pMsg->asMatrix(17);
 
 							m_mDisplays[sName] = new raaDisplayScreen(m_pVirtualScene, sName, vbl, vbr, vtl, vtr, vn, mPersp);
 							m_mDisplays[sName]->setViewMatrix(mView);
@@ -1082,7 +1135,12 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 							m_mWindows[sName].m_aiParam[1] = 0;
 							m_mWindows[sName].m_aiParam[2] = 200;
 							m_mWindows[sName].m_aiParam[3] = 200;
-							m_mWindows[sName].m_pItem = m_Scene.addRect(m_mWindows[sName].m_aiParam[0], m_mWindows[sName].m_aiParam[1], m_mWindows[sName].m_aiParam[2], m_mWindows[sName].m_aiParam[3]);
+							m_mWindows[sName].m_pItem = m_Scene.addRect((m_mWindows[sName].m_aiParam[0]+m_mDisplayPanels[iScreen].m_iX)/ csm_iWindowScale, (m_mWindows[sName].m_aiParam[1] + m_mDisplayPanels[iScreen].m_iY)/ csm_iWindowScale, m_mWindows[sName].m_aiParam[2]/ csm_iWindowScale, m_mWindows[sName].m_aiParam[3]/ csm_iWindowScale, QPen(), QBrush(QColor(250, 150, 10, 100), Qt::SolidPattern));
+							m_mWindows[sName].m_pText = m_Scene.addText(QString("Screen::%0").arg(sName.c_str()));
+							m_mWindows[sName].m_pText->setPos(QPoint(((m_mWindows[sName].m_aiParam[0] + m_mDisplayPanels[iScreen].m_iX) / csm_iWindowScale)+20,
+								((m_mWindows[sName].m_aiParam[1] + m_mDisplayPanels[iScreen].m_iY) / csm_iWindowScale)+35));
+							
+
 
 							raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
 							pM->add(raaOctaveKernel::csm_uiOCWindowInfo);
@@ -1128,31 +1186,11 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 					break;
 					case raaOctaveKernel::csm_uiOCScreenMatrixChanged:
 					{
-/* 0ld - before added stereo
-						try
-						{
-							std::string sName = pMsg->asString(3);
-							osg::Matrixf mPersp = pMsg->asMatrix(4);
-							osg::Matrixf mView = pMsg->asMatrix(5);
-
-							if (sName.length() && m_mDisplays.find(sName) != m_mDisplays.end())
-							{
-								m_mDisplays[sName]->screenMatrixChanged(mPersp);
-								m_mDisplays[sName]->setViewMatrix(mView);
-								if(m_bLockCamera) gl_widget->getView(0)->getCameraManipulator()->setByMatrix(osg::Matrix::inverse(mView));
-							}
-						}
-						catch (unsigned int e)
-						{
-							if (e == raaNet::raaMsg::csm_uiMsgBadIndex) std::cout << "raaOctaveKernel::csm_uiOCScreenMatrixChanged -> bad read index" << std::endl;
-						}
-*/
-
 						try
 						{
 							std::string sName = pMsg->asString(3);
 
-							if(pMsg->asBool(4))
+							if(pMsg->asInt(4))
 							{
 								osg::Matrixf mLeftPersp = pMsg->asMatrix(5);
 								osg::Matrixf mRightPersp = pMsg->asMatrix(6);
@@ -1323,18 +1361,23 @@ void raaOctaveToolInterface::tcpRead(raaNet::raaTcpMsg* pMsg)
 						try
 						{
 							std::string sName = pMsg->asString(3);
-							int iX = pMsg->asInt(4);
-							int iY = pMsg->asInt(5);
-							int iW = pMsg->asInt(6);
-							int iH = pMsg->asInt(7);
+							int iScreen = pMsg->asInt(4);
+							int iX = pMsg->asInt(5);
+							int iY = pMsg->asInt(6);
+							int iW = pMsg->asInt(7);
+							int iH = pMsg->asInt(8);
+
+//							std::cout << "Window -> " << sName << "   " << iScreen << std::endl;
 
 							m_mWindows[sName].sName = sName;
 							m_mWindows[sName].m_aiParam[0] = iX;
 							m_mWindows[sName].m_aiParam[1] = iY;
 							m_mWindows[sName].m_aiParam[2] = iW;
-							m_mWindows[sName].m_aiParam[3] = iH;
+							m_mWindows[sName].m_aiParam[3] = iH; 
 
-							m_mWindows[sName].m_pItem->setRect(iX, iY, iW, iH);
+							m_mWindows[sName].m_pItem->setRect((iX+m_mDisplayPanels[iScreen].m_iX)/ csm_iWindowScale, (iY+m_mDisplayPanels[iScreen].m_iY)/ csm_iWindowScale, iW/csm_iWindowScale, iH/csm_iWindowScale);
+							m_mWindows[sName].m_pText->setPos(QPoint(((m_mWindows[sName].m_aiParam[0] + m_mDisplayPanels[iScreen].m_iX) / csm_iWindowScale) + 20,
+								((m_mWindows[sName].m_aiParam[1] + m_mDisplayPanels[iScreen].m_iY) / csm_iWindowScale) + 35));
 
 							if (m_sCurrentWindow == sName)
 							{

@@ -14,11 +14,10 @@ raaScreenListener::~raaScreenListener()
 {
 }
 
-raaScreen::raaScreen(std::string sName, int iScreen, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, int iX ,int iY, int iW, int iH, raaOctaveViewPoint *pViewpoint)
+raaScreen::raaScreen(std::string sName, int iScreen, int iStereo, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, int iX ,int iY, int iW, int iH, raaOctaveViewPoint *pViewpoint)
 {
 	initialise();
-//	m_bStereo = false;
-	m_bStereo = true;
+	m_iStereo = iStereo;
 	m_fNear = fNear;
 	m_fFar = fFar;
 	m_uiCurrentScreenUpdate = 0;
@@ -197,19 +196,26 @@ float raaScreen::projParam(unsigned uiIndex)
 	return m_afProjParam[uiIndex];
 }
 
-bool raaScreen::isStereo()
+void raaScreen::setStereo(int iStereo)
 {
-	return m_bStereo;
-}
-
-void raaScreen::setStereo(bool bStereo)
-{
-	m_bStereo = bStereo;
+	m_iStereo = iStereo;
+	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->stereoChanged(this);
 }
 
 int raaScreen::screen()
 {
 	return m_iScreen;
+}
+
+void raaScreen::setScreen(int iScreen)
+{
+	m_iStereo = iScreen;
+	for (raaScreenListeners::iterator it = m_lListeners.begin(); it != m_lListeners.end(); it++) (*it)->displayChanged(this);
+}
+
+int raaScreen::stereo()
+{
+	return m_iStereo;
 }
 
 void raaScreen::physicalViewpointChanged(raaOctaveViewPoint* pViewpoint)
@@ -256,7 +262,7 @@ void raaScreen::calcProjectionMatrix(raaOctaveViewPoint* pViewpoint)
 	mS.makeScale(m_abFlip[0] ? -1.0 : 1.0, m_abFlip[1] ? -1.0 : 1.0, m_abFlip[2] ? -1.0 : 1.0);
 	mR.makeRotate(osg::DegreesToRadians(m_fRotation), osg::Vec3f(0.0f, 1.0f, 0.0f));
 
-	if (!m_bStereo)
+	if (!m_iStereo)
 	{
 		pe = pe*pViewpoint->physicalMatrix();
 		va = m_vScreen[raaOctaveControllerTypes::csm_uiBL] - pe;

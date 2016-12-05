@@ -24,6 +24,9 @@
     <ClInclude Include="raaVRPN.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="raaVRPNViconHead.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="raaVRPNClient.cpp">
@@ -33,6 +36,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="raaVRPN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="raaVRPNViconHead.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -73,8 +73,6 @@ void raaOctaveControl::timerSensorUpdate(raaVRPNClient* pClient)
 
 void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 {
-	//std::cout << pMsg->tcpThread()->name().toStdString() << raaNet::tcpMsgTypeToString(pMsg->msgType()).toStdString() << pMsg->msgID() << QString(pMsg->data()).toStdString() << std::endl;
-
 	switch(pMsg->msgType())
 	{
 		case raaNet::csm_usTcpMsgRequest:
@@ -83,7 +81,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 			{
 				case raaOctaveKernel::csm_uiOCHasConfig:
 				{
-					//std::cout << "Request -> Has Config -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
+					std::cout << "Request -> Has Config -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
 					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgReply);
 					pM->add(m_pController->hasConfig() ? raaOctaveKernel::csm_uiOCHasConfigTrue : raaOctaveKernel::csm_uiOCHasConfigFalse);
 					pMsg->tcpThread()->write(pM);
@@ -112,6 +110,23 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 						m_pController->writeConfig(sName.c_str(), "raaOctave");
 					}
 				}
+				break;
+				case raaOctaveKernel::csm_uiOCDisplays:
+				{
+					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+					pM->add(raaOctaveKernel::csm_uiOCDisplays);
+					std::cout << "Request Displays" << std::endl;
+					pM->add((unsigned int)m_pController->getDisplays().size());
+
+					for (raaDisplayScreensMap::const_iterator cit = m_pController->getDisplays().begin(); cit != m_pController->getDisplays().end(); cit++)
+					{
+						pM->add(cit->second.m_iScreen);
+						pM->add(cit->second.m_iWidth);
+						pM->add(cit->second.m_iHeight);
+					}
+					pMsg->tcpThread()->write(pM);
+				}
+				break;
 				case raaOctaveKernel::csm_uiOCListConfigs:
 				{
 					QDir d(m_sConfDir.c_str());
@@ -141,8 +156,17 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				break;
 				case raaOctaveKernel::csm_uiOCLoadConfig:
 				{
-					//std::cout << "Request -> Load Config -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
-					m_pController->readConfig(pMsg->asString(3).c_str());
+					std::cout << "Request -> Load Config -> " << pMsg->tcpThread()->name().toStdString() << std::endl;
+					QString sConf = m_sConfDir.c_str();
+					sConf += "//";
+					sConf += pMsg->asString(3).c_str();
+
+					std::cout << "\tConfig dir -> " << m_sConfDir << std::endl;
+					std::cout << "\tConfig file -> " << pMsg->asString(3).c_str() << std::endl;
+
+
+					std::cout << "\tConfig -> " << sConf.toStdString() << std::endl;
+					m_pController->readConfig(sConf);
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCAttachControllerListener:
@@ -184,10 +208,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 				}
 				break;
 				case raaOctaveKernel::csm_uiOCControllerRequestScreenAll:
-//					std::cout << "Request -> Request Screen All-> " << pMsg->tcpThread()->name().toStdString() << std::endl;
-
 					m_mConnections[pMsg->tcpThread()]->sendScreenAll(m_pController);
-
 					break;
 				case raaOctaveKernel::csm_uiOCScreenInfo:
 				{
@@ -232,6 +253,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
 					pM->add(raaOctaveKernel::csm_uiOCWindowInfo);
 					pM->add(sName);
+					pM->add(m_pController->getScreen(sName)->screen());
 					pM->add(m_pController->getScreen(sName)->window(0));
 					pM->add(m_pController->getScreen(sName)->window(1));
 					pM->add(m_pController->getScreen(sName)->window(2));
@@ -297,6 +319,7 @@ void raaOctaveControl::tcpRead(raaTcpMsg* pMsg)
 						}
 					}
 				}
+				break;
 			}
 		}
 		break;
@@ -547,6 +570,10 @@ void raaOctaveControl::screenRemoved(raaOctaveController* pController, raaScreen
 }
 
 void raaOctaveControl::screenUpdated(raaOctaveController* pController, raaScreen* pScreen)
+{
+}
+
+void raaOctaveControl::displayScreensChanged(raaOctaveController* pController)
 {
 }
 

@@ -66,30 +66,33 @@ void raaOctaveSystem::addDisplay(int iScreen, std::string sName, int iX, int iY,
 	pTraits->height = iH;
 	pTraits->windowDecoration = false;
 	pTraits->doubleBuffer = true;
-	pTraits->sharedContext = getNumViews()? pTraits->sharedContext=getView(0)->getCamera()->getGraphicsContext():0;
+
+	osgViewer::View *pView = new osgViewer::View;
+
+	if (m_mDisplayContexts.find(iScreen) != m_mDisplayContexts.end())
+	{
+		pTraits->sharedContext = m_mDisplayContexts[iScreen]->getCamera()->getGraphicsContext();
+	}
+	else
+	{
+		pTraits->sharedContext = 0;
+		m_mDisplayContexts[iScreen] = pView;
+	}
 
 	osg::GraphicsContext *pGC = osg::GraphicsContext::createGraphicsContext(pTraits);
-	osgViewer::View *pView = new osgViewer::View;
 	osg::DisplaySettings *pDS = new raaDisplaySettings();
 	pDS->setStereo(true);
 	pDS->setStereoMode(osg::DisplaySettings::ANAGLYPHIC);
+//	pDS->setStereoMode(osg::DisplaySettings::QUAD_BUFFER);
 	pDS->setEyeSeparation(0.08f);
 	pView->setDisplaySettings(pDS);
 
 	m_mViews[sName] = pView;
 
-
 	osg::Matrixf m;
 	pView->setSceneData(m_pScene);
 
 	osg::Camera *pCamera = pView->getCamera();
-/*
-	osg::DisplaySettings *pDS = pCamera->getDisplaySettings();
-	pDS->setStereo(true);
-	pDS->setStereoMode(osg::DisplaySettings::ANAGLYPHIC);
-	pDS->setEyeSeparation(0.08f);
-	pCamera->setDisplaySettings(pDS);
-*/
 
 	pCamera->setGraphicsContext(pGC);	
 	pCamera->setDataVariance(osg::Object::DYNAMIC);
@@ -135,20 +138,21 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 				try
 				{
 					std::string sName = pMsg->asString(3);
-					osg::Vec3f vbl = pMsg->asVector(4);
-					osg::Vec3f vbr = pMsg->asVector(5);
-					osg::Vec3f vtl = pMsg->asVector(6);
-					osg::Vec3f vtr = pMsg->asVector(7);
-					osg::Vec3f vn = pMsg->asVector(8);
-					float fN = pMsg->asFloat(9);
-					float fF = pMsg->asFloat(10);
-					float fR = pMsg->asFloat(11);
-					bool bX = pMsg->asBool(12);
-					bool bY = pMsg->asBool(13);
-					bool bZ = pMsg->asBool(14);
-					osg::Matrixf mPersp = pMsg->asMatrix(15);
-					osg::Matrixf mView = pMsg->asMatrix(16);
-					addDisplay(0, sName, 0, 0, 200, 200, mPersp);
+					int iScreen = pMsg->asInt(4);
+					osg::Vec3f vbl = pMsg->asVector(5);
+					osg::Vec3f vbr = pMsg->asVector(6);
+					osg::Vec3f vtl = pMsg->asVector(7);
+					osg::Vec3f vtr = pMsg->asVector(8);
+					osg::Vec3f vn = pMsg->asVector(9);
+					float fN = pMsg->asFloat(10);
+					float fF = pMsg->asFloat(11);
+					float fR = pMsg->asFloat(12);
+					bool bX = pMsg->asBool(13);
+					bool bY = pMsg->asBool(14);
+					bool bZ = pMsg->asBool(15);
+					osg::Matrixf mPersp = pMsg->asMatrix(16);
+					osg::Matrixf mView = pMsg->asMatrix(17);
+					addDisplay(iScreen, sName, 0, 0, 200, 200, mPersp);
 					m_mViews[sName]->getCamera()->setViewMatrix(mView);
 
 					raaNet::raaTcpMsg *pM = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgRequest);
@@ -207,15 +211,15 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 				{
 					std::string sName = pMsg->asString(3);
 
-					if(pMsg->asBool(4))
+					if(pMsg->asInt(4))
 					{
 						osg::Matrixf mLeftPersp = pMsg->asMatrix(5);
 						osg::Matrixf mRightPersp = pMsg->asMatrix(6);
 						osg::Matrixf mLeftView = pMsg->asMatrix(7);
 						osg::Matrixf mRightView = pMsg->asMatrix(8);
 
-						m_mViews[sName]->getCamera()->setProjectionMatrix(mRightPersp);
-						m_mViews[sName]->getCamera()->setViewMatrix(mRightView);
+//						m_mViews[sName]->getCamera()->setProjectionMatrix(mRightPersp);
+//						m_mViews[sName]->getCamera()->setViewMatrix(mRightView);
 						// todo -> add stereo
 
 						raaDisplaySettings *pDS = (raaDisplaySettings*)m_mViews[sName]->getDisplaySettings();
@@ -232,6 +236,13 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 
 						m_mViews[sName]->getCamera()->setProjectionMatrix(mPersp);
 						m_mViews[sName]->getCamera()->setViewMatrix(mView);
+
+						raaDisplaySettings *pDS = (raaDisplaySettings*)m_mViews[sName]->getDisplaySettings();
+
+						pDS->setLeftEye(mPersp, mView);
+						pDS->setRightEye(mPersp, mView);
+
+
 					}
 				}
 				catch (unsigned int e)
@@ -250,15 +261,20 @@ void raaOctaveSystem::tcpRead(raaNet::raaTcpMsg* pMsg)
 				try
 				{
 					std::string sName = pMsg->asString(3);
-					int iX = pMsg->asInt(4);
-					int iY = pMsg->asInt(5);
-					int iW = pMsg->asInt(6);
-					int iH = pMsg->asInt(7);
+					int iScreen = pMsg->asInt(4);
+					int iX = pMsg->asInt(5);
+					int iY = pMsg->asInt(6);
+					int iW = pMsg->asInt(7);
+					int iH = pMsg->asInt(8);
 
 					if (m_mViews.find(sName) != m_mViews.end())
 					{
 						osgViewer::GraphicsWindow *pWindow = dynamic_cast<osgViewer::GraphicsWindow*>(m_mViews[sName]->getCamera()->getGraphicsContext());
-						if (pWindow) pWindow->setWindowRectangle(iX, iY, iW, iH);
+						if (pWindow)
+						{
+							pWindow->setWindowRectangle(iX, iY, iW, iH);
+//	todo						pWindow>-setDisplay
+						}
 					}
 				}
 				catch (unsigned int e)

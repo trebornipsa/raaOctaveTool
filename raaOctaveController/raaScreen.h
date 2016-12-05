@@ -26,6 +26,8 @@ public:
 	virtual void screenProjMatrixChanged(raaScreen *pScreen) = 0;
 	virtual void screenChanged(raaScreen *pScreen) = 0;
 	virtual void windowChanged(raaScreen *pScreen) = 0;
+	virtual void displayChanged(raaScreen *pScreen) = 0;
+	virtual void stereoChanged(raaScreen *pScreen) = 0;
 };
 
 typedef std::list<raaScreenListener*>raaScreenListeners;
@@ -33,7 +35,7 @@ typedef std::list<raaScreenListener*>raaScreenListeners;
 class RAAOCTAVECONTROLLER_DLL_DEF raaScreen: public raaOctaveViewPointListener
 {
 public:
-	raaScreen(std::string sName, int iScreen, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, int iX, int iY, int iW, int iH, raaOctaveViewPoint *pViewpoint);
+	raaScreen(std::string sName, int iScreen, int iStereo, osg::Vec3f vBL, osg::Vec3f vBR, osg::Vec3f vTR, osg::Vec3f vTL, float fNear, float fFar, float fRot, bool bFlipX, bool bFlipY, bool bFlipZ, int iX, int iY, int iW, int iH, raaOctaveViewPoint *pViewpoint);
 	virtual ~raaScreen();
 
 	void addListener(raaScreenListener *pListener);
@@ -64,9 +66,10 @@ public:
 	float projParam(unsigned int uiIndex);
 
 	int screen();
+	void setScreen(int iScreen);
 
-	bool isStereo();
-	void setStereo(bool bStereo);
+	int stereo();
+	void setStereo(int iStereo);
 
 protected:
 	virtual void physicalViewpointChanged(raaOctaveViewPoint *pViewpoint);
@@ -87,6 +90,7 @@ protected:
 	float m_fRotation;
 	int m_aiWindow[4];
 	int m_iScreen;
+	int m_iStereo;
 
 	float m_afProjParam[6];
 
@@ -115,7 +119,5 @@ protected:
 	raaOctaveViewPoint *m_pLastViewpoint;
 
 	QMutex m_Mutex;
-
-	bool m_bStereo;
 };
 

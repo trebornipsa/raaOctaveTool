@@ -58,6 +58,9 @@ protected:
 	virtual void screenProjMatrixChanged(raaScreen* pScreen);
 	virtual void screenChanged(raaScreen* pScreen);
 	virtual void windowChanged(raaScreen* pScreen);
+	virtual void displayChanged(raaScreen* pScreen);
+	virtual void stereoChanged(raaScreen* pScreen);
+	virtual void displayScreensChanged(raaOctaveController* pController);
 
 
 };

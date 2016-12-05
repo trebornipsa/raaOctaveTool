@@ -149,7 +149,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;RAAVRPNCLIENT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(QTDIR)\include; $(raaInst)\include; $(raaInst)\3rdParty\vrpn;$(QTDIR)\include\QtOpenGL; $(QTDIR)\include\QtCore</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QTDIR)\include; $(raaInst)\include; $(raaInst)\3rdParty\vrpn; $(QTDIR)\include\QtOpenGL; $(QTDIR)\include\QtCore</AdditionalIncludeDirectories>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
@@ -168,6 +168,7 @@
   <ItemGroup>
     <ClInclude Include="raaVRPN.h" />
     <ClInclude Include="raaVRPNKinect2.h" />
+    <ClInclude Include="raaVRPNViconHead.h" />
     <CustomBuild Include="raaVRPNClient.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">raaMOC %(Filename)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</Outputs>
@@ -180,6 +181,7 @@
     <ClCompile Include="raaVRPN.cpp" />
     <ClCompile Include="raaVRPNClient.cpp" />
     <ClCompile Include="raaVRPNKinect2.cpp" />
+    <ClCompile Include="raaVRPNViconHead.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

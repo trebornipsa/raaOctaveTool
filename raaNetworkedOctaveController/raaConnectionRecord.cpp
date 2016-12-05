@@ -203,6 +203,7 @@ void raaConnectionRecord::screenAdded(raaOctaveController* pController, raaScree
 		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
 		pMsg->add(raaOctaveKernel::csm_uiOCControllerScreenAdded);
 		pMsg->add(pScreen->name());
+		pMsg->add(pScreen->screen());
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiBL));
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiBR));
 		pMsg->add(pScreen->screenVert(raaOctaveControllerTypes::csm_uiTL));
@@ -272,9 +273,9 @@ void raaConnectionRecord::screenProjMatrixChanged(raaScreen* pScreen)
 		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
 		pMsg->add(raaOctaveKernel::csm_uiOCScreenMatrixChanged);
 		pMsg->add(pScreen->name());
-		pMsg->add(pScreen->isStereo());
+		pMsg->add(pScreen->stereo());
 		// todo -> need to update recievers of this and add left/right screen view
-		if(pScreen->isStereo())
+		if(pScreen->stereo())
 		{
 			pMsg->add(pScreen->screenLeftProjection());
 			pMsg->add(pScreen->screenRightProjection());
@@ -312,6 +313,48 @@ void raaConnectionRecord::screenChanged(raaScreen* pScreen)
 	}
 }
 
+void raaConnectionRecord::displayChanged(raaScreen* pScreen)
+{
+	if (m_pTcpThread)
+	{
+		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCDisplayChanged);
+		pMsg->add(pScreen->name());
+		pMsg->add(pScreen->screen());
+		m_pTcpThread->write(pMsg);
+	}
+}
+
+void raaConnectionRecord::stereoChanged(raaScreen* pScreen)
+{
+	if (m_pTcpThread)
+	{
+		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCStereoChanged);
+		pMsg->add(pScreen->name());
+		pMsg->add(pScreen->stereo());
+		m_pTcpThread->write(pMsg);
+	}
+}
+
+void raaConnectionRecord::displayScreensChanged(raaOctaveController* pController)
+{
+	if (m_pTcpThread)
+	{
+		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
+		pMsg->add(raaOctaveKernel::csm_uiOCDisplays);
+		pMsg->add((unsigned int)pController->getDisplays().size());
+
+		for (raaDisplayScreensMap::const_iterator cit = pController->getDisplays().begin(); cit != pController->getDisplays().end(); cit++)
+		{
+			pMsg->add(cit->second.m_iScreen);
+			pMsg->add(cit->second.m_iWidth);
+			pMsg->add(cit->second.m_iHeight);
+		}
+		m_pTcpThread->write(pMsg);
+	}
+}
+
 void raaConnectionRecord::windowChanged(raaScreen* pScreen)
 {
 	if (m_pTcpThread)
@@ -319,6 +362,7 @@ void raaConnectionRecord::windowChanged(raaScreen* pScreen)
 		raaNet::raaTcpMsg *pMsg = new raaNet::raaTcpMsg(raaNet::csm_usTcpMsgInfo);
 		pMsg->add(raaOctaveKernel::csm_uiOCWindowInfo);
 		pMsg->add(pScreen->name());
+		pMsg->add(pScreen->screen());
 		pMsg->add(pScreen->window(0));
 		pMsg->add(pScreen->window(1));
 		pMsg->add(pScreen->window(2));

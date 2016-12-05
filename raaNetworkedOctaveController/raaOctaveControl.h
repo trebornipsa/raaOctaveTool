@@ -40,6 +40,7 @@ protected:
 	virtual void screenAdded(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void screenRemoved(raaOctaveController* pController, raaScreen* pScreen);
 	virtual void screenUpdated(raaOctaveController* pController, raaScreen* pScreen);
+	virtual void displayScreensChanged(raaOctaveController* pController);
 
 	void timerEvent(QTimerEvent *pEvent);
 	int m_iTimer;
